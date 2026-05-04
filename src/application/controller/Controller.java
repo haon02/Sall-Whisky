@@ -6,8 +6,6 @@ import Iteration1.model.Medarbejder;
 import Iteration1.model.Produktionslinje;
 import storage.Storage;
 import Iteration1.model.Lager;
-import Iteration1.model.Medarbejder;
-import storage.Storage;
 
 import java.io.*;
 import java.util.HashMap;
