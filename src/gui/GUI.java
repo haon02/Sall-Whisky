@@ -1,5 +1,6 @@
 package gui;
 
+import application.controller.Controller;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -7,6 +8,7 @@ import javafx.stage.Stage;
 
 public class GUI extends Application {
     private Stage primaryStage;
+    private Controller controller = new Controller();
 
     @Override
     public void start(Stage primaryStage) throws Exception {

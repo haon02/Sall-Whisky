@@ -1,16 +1,12 @@
 package application.controller;
 
-import Iteration1.model.Gær;
-import Iteration1.model.Korn;
-import Iteration1.model.Medarbejder;
-import Iteration1.model.Produktionslinje;
-import storage.Storage;
-import Iteration1.model.Lager;
-import Iteration1.model.Medarbejder;
+import Iteration1.model.*;
 import storage.Storage;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,8 +16,8 @@ public class Controller {
 
     }
 
-    public void opretKorn(String navn, String mark, String beskrivelse, int produktionsÅr) {
-        Korn korn = new Korn(navn, mark, beskrivelse, produktionsÅr);
+    public void opretKorn(String navn, String mark, String beskrivelse, int produktionsÅr, String leverandør, boolean erØkologisk) {
+        Korn korn = new Korn(navn, mark, beskrivelse, produktionsÅr, leverandør, erØkologisk);
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("KornSorter.ser"))) {
             oos.writeObject(korn);
@@ -52,15 +48,15 @@ public class Controller {
         return lager;
     }
 
-    public Korn createKornType(String navn, String mark, String beskrivelse, int produktionsÅr) {
-        Korn korn = new Korn(navn, mark, beskrivelse, produktionsÅr);
+    public Korn createKornType(String navn, String mark, String beskrivelse, int produktionsÅr, String leverandør, boolean erØkologisk) {
+        Korn korn = new Korn(navn, mark, beskrivelse, produktionsÅr, leverandør, erØkologisk);
         Storage.addKornType(korn);
         return korn;
     }
 
     public Gær createGær(String navn, double maksTemperatur, String beskrivelse) {
         Gær gær = new Gær(navn, maksTemperatur, beskrivelse);
-        Storage.addGær(gær);
+        Storage.addGærType(gær);
         return gær;
     }
 
@@ -70,6 +66,27 @@ public class Controller {
         return medarbejder;
     }
 
+    public Fad createFad(double størrelseMiliLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør){
+        Fad fad = new Fad(størrelseMiliLiter, produktionsDato, beskrivelse, erTom, tidligereBrugt, leverandør);
+        Storage.addFad(fad);
+        return fad;
+    }
+
+    public List<Medarbejder> getMedarbejderList() {
+        return Storage.getMedarbejderList();
+    }
+
+    public List<Gær> getGærList() {
+        return Storage.getGærList();
+    }
+
+    public List<Korn> getKornList(){
+        return Storage.getKornList();
+    }
+
+    public List<Produktionslinje> getProduktionlinjeList(){
+        return Storage.getProduktionslinjeList();
+    }
 
 
 

@@ -1,5 +1,6 @@
 package gui;
 
+import application.controller.Controller;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -19,7 +20,7 @@ import javafx.stage.Stage;
  *  - Beskrivelse / smagsnoter
  */
 public class GaerTypeVindue {
-
+    private Controller controller = new Controller();
     private Stage stage;
     private Stage owner;
 
@@ -135,6 +136,7 @@ public class GaerTypeVindue {
         gemKnap.setOnAction(e -> {
             if (validerInput()) {
                 confirmed = true;
+                storeData();
                 printResultat();
                 stage.close();
             }
@@ -150,6 +152,10 @@ public class GaerTypeVindue {
         Scene scene = new Scene(root, 340, 580);
         stage.setScene(scene);
         stage.showAndWait();
+    }
+
+    private void storeData() {
+        controller.createGær(getNavn(), getTempMax(), getBeskrivelse());
     }
 
     private boolean validerInput() {

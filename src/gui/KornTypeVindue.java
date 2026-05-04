@@ -23,7 +23,7 @@ import java.util.List;
  * - Beskrivelse
  */
 public class KornTypeVindue {
-    private Controller controller;
+    private Controller controller = new Controller();
     private Stage stage;
     private Stage owner;
 
@@ -31,6 +31,8 @@ public class KornTypeVindue {
     private TextField navnField;
     private ComboBox<String> kornArtBox;
     private TextField leverandørField;
+    private TextField markField;
+    private TextField produktionsÅr;
     private CheckBox økologiskCheck;
     private TextArea beskrivelseArea;
     private List<Korn> altKorn = new ArrayList<>();
@@ -60,7 +62,7 @@ public class KornTypeVindue {
 
         // Kornart
         kornArtBox = new ComboBox<>();
-        kornArtBox.getItems().addAll("Byg, hvede, mark");
+        kornArtBox.getItems().addAll("Byg", "Hvede", "Majs", "Plasma", "Andet");
         kornArtBox.setPromptText("Vælg kornart...");
         kornArtBox.setPrefWidth(280);
         root.addLabeledNode("Kornart", kornArtBox);
@@ -72,10 +74,24 @@ public class KornTypeVindue {
 
         root.addSeparator();
 
+        // Mark
+        markField = new TextField();
+        markField.setPromptText("Hvilken mark, jordspecifikation, surhed, osv");
+        root.addLabeledNode("Mark", markField);
+
+        root.addSeparator();
+
         // Økologisk checkbox
         økologiskCheck = new CheckBox("Ja, dette korn er økologisk certificeret");
         økologiskCheck.setSelected(true); // Sall bruger primært øko
         root.addNode(økologiskCheck);
+
+        root.addSeparator();
+
+        // Produktionsår
+        produktionsÅr = new TextField();
+        produktionsÅr.setPromptText("År hvor korn er høstet... eks(2020)");
+        root.addLabeledNode("Produktionsår", produktionsÅr);
 
         root.addSeparator();
 
@@ -99,8 +115,6 @@ public class KornTypeVindue {
         gemKnap.setOnAction(e -> {
             if (validerInput()) {
                 confirmed = true;
-                // Opret objektet baseret på din Korn-model
-                // opret korn igennem controller her
                 storeData();
                 printResultat();
                 stage.close();
@@ -114,7 +128,7 @@ public class KornTypeVindue {
         knapRaekke.getChildren().addAll(gemKnap, annullerKnap);
         root.addNode(knapRaekke);
 
-        Scene scene = new Scene(root, 340, 450);
+        Scene scene = new Scene(root, 340, 600);
         stage.setScene(scene);
         stage.showAndWait();
     }
@@ -122,7 +136,8 @@ public class KornTypeVindue {
     private void storeData() {
         // Her skal dataen sendes til controlleren i UC-implementationen, f.eks.:
         // controller.opretKornType(getNavn(), getKornArt(), getLeverandør(), isØkologisk(), getBeskrivelse());
-
+         controller.createKornType(getNavn(),getMark(),getBeskrivelse(),getProduktionsår(),getLeverandør(),isØkologisk());
+         controller.opretKorn(getNavn(),getMark(),getBeskrivelse(),getProduktionsår(),getLeverandør(),isØkologisk());
     }
 
     private boolean validerInput() {
@@ -137,6 +152,14 @@ public class KornTypeVindue {
         if (leverandørField.getText().isBlank())
             fejl.append("• Angiv leverandør\n");
 
+        if (produktionsÅr.getText().isBlank()){
+            fejl.append("• Angiv produktionsår\n");
+        }
+
+        if (!produktionsÅr.getText().toLowerCase().equals(produktionsÅr.getText().toUpperCase())) {
+            fejl.append("• Der er ikke bogstaver i årstal");
+        }
+
         if (!fejl.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Manglende oplysninger");
@@ -150,11 +173,13 @@ public class KornTypeVindue {
 
     private void printResultat() {
         System.out.println("=== Ny korntype oprettet ===");
-        System.out.println("Navn:        " + navnField.getText());
-        System.out.println("Kornart:     " + kornArtBox.getValue());
-        System.out.println("Leverandør:  " + leverandørField.getText());
-        System.out.println("Økologisk:   " + (økologiskCheck.isSelected() ? "Ja" : "Nej"));
-        System.out.println("Beskrivelse: " + beskrivelseArea.getText());
+        System.out.println("Navn:         " + navnField.getText());
+        System.out.println("Kornart:      " + kornArtBox.getValue());
+        System.out.println("Leverandør:   " + leverandørField.getText());
+        System.out.println("Mark:         " + markField.getText());
+        System.out.println("Produktionsår:" + produktionsÅr.getText());
+        System.out.println("Økologisk:    " + (økologiskCheck.isSelected() ? "Ja" : "Nej"));
+        System.out.println("Beskrivelse:  " + beskrivelseArea.getText());
     }
 
     public boolean isConfirmed() {
@@ -173,11 +198,18 @@ public class KornTypeVindue {
         return leverandørField.getText();
     }
 
+    public int getProduktionsår(){
+        return Integer.parseInt(produktionsÅr.getText());
+    }
+
     public boolean isØkologisk() {
         return økologiskCheck.isSelected();
     }
 
     public String getBeskrivelse() {
         return beskrivelseArea.getText();
+    }
+    public String getMark(){
+        return markField.getText();
     }
 }

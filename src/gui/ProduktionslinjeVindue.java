@@ -1,5 +1,8 @@
 package gui;
 
+import Iteration1.model.Gær;
+import Iteration1.model.Korn;
+import application.controller.Controller;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -21,7 +24,7 @@ import java.time.LocalDate;
  *  - Kommentar / noter
  */
 public class ProduktionslinjeVindue {
-
+    private Controller controller = new Controller();
     private Stage stage;
     private Stage owner;
 
@@ -58,23 +61,14 @@ public class ProduktionslinjeVindue {
 
         // Korntype dropdown
         kornTypeBox = new ComboBox<>();
-        kornTypeBox.getItems().addAll(
-                "Økologisk byg – Lars' mark",
-                "Hvede",
-                "Rug",
-                "Havre"
-        );
+        kornTypeBox.getItems().addAll(controller.getKornList().stream().map(Korn::toString).toList());
         kornTypeBox.setPromptText("Vælg korntype...");
         kornTypeBox.setPrefWidth(280);
         root.addLabeledNode("Korntype", kornTypeBox);
 
         // Gærtype dropdown
         gaerTypeBox = new ComboBox<>();
-        gaerTypeBox.getItems().addAll(
-                "Whisky gær – WY3787",
-                "Ale gær – WY1056",
-                "Champagne gær"
-        );
+        gaerTypeBox.getItems().addAll(controller.getGærList().stream().map(Gær::toString).toList());
         gaerTypeBox.setPromptText("Vælg gærtype...");
         gaerTypeBox.setPrefWidth(280);
         root.addLabeledNode("Gærtype", gaerTypeBox);
