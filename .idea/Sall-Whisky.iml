@@ -24,6 +24,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="javafx.base" level="application" />
+    <orderEntry type="library" exported="" name="javafx.base" level="application" />
+    <orderEntry type="library" exported="" name="openjfx.javafx.controls" level="application" />
   </component>
 </module>

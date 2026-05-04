@@ -42,4 +42,13 @@ public class Fad {
     public boolean isTidligereBrugt() {
         return tidligereBrugt;
     }
+
+    @Override
+    public String toString() {
+        if (isErTom() == true) {
+            return "Fad " + beskrivelse + " tomt fad";
+        } else {
+            return "Fad " + beskrivelse + " fuldt fad";
+        }
+    }
 }

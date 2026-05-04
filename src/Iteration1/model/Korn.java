@@ -1,6 +1,9 @@
 package Iteration1.model;
 
-public class Korn {
+import java.io.Serializable;
+
+public class Korn implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String navn;
     private String mark;
     private String beskrivelse;
@@ -11,6 +14,11 @@ public class Korn {
         this.mark = mark;
         this.beskrivelse = beskrivelse;
         this.produktionsÅr = produktionsÅr;
+    }
+
+    @Override
+    public String toString() {
+        return navn + " (" + mark + ") ";
     }
 
     public String getNavn() {

@@ -21,18 +21,22 @@ public class GUI extends Application {
 
     private void initContent(GridPane pane) {
         SectionVBox hovedMenu = new SectionVBox("Hoved menu");
-        hovedMenu.addButton("tilføj ny produktionslinje", event -> {
+        hovedMenu.addButton("Tilføj ny produktionslinje", event -> {
             ProduktionslinjeVindue addProductionLine = new ProduktionslinjeVindue(primaryStage);
             addProductionLine.showAndWait();
+        });
+        hovedMenu.addButton("Lager" , event -> {
+            LagerVindue lagerVindue = new LagerVindue(primaryStage);
+            lagerVindue.showAndWait();
         });
         pane.add(hovedMenu, 0, 0);
 
         SectionVBox resourceMenu = new SectionVBox("Ressourcer");
-        resourceMenu.addButton("tilføj ny korntype", event -> {
+        resourceMenu.addButton("Tilføj ny korntype", event -> {
             KornTypeVindue addKornType = new KornTypeVindue(primaryStage);
             addKornType.showAndWait();
         });
-        resourceMenu.addButton("tilføj ny gærtype", event -> {
+        resourceMenu.addButton("Tilføj ny gærtype", event -> {
             GaerTypeVindue addGaerType = new GaerTypeVindue(primaryStage);
             addGaerType.showAndWait();
         });

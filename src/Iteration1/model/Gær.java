@@ -1,6 +1,8 @@
 package Iteration1.model;
 
-public class Gær {
+import java.io.Serializable;
+
+public class Gær implements Serializable {
     private String navn;
     private double maksTemperatur;
     private String beskrivelse;
@@ -21,5 +23,10 @@ public class Gær {
 
     public String getBeskrivelse() {
         return beskrivelse;
+    }
+
+    @Override
+    public String toString() {
+        return "gærtype: " +navn;
     }
 }
