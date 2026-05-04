@@ -25,7 +25,7 @@ public class GUI extends Application {
             ProduktionslinjeVindue addProductionLine = new ProduktionslinjeVindue(primaryStage);
             addProductionLine.showAndWait();
         });
-        hovedMenu.addButton("Lager" , event -> {
+        hovedMenu.addButton("LagerOversigt" , event -> {
             LagerVindue lagerVindue = new LagerVindue(primaryStage);
             lagerVindue.showAndWait();
         });
