@@ -12,22 +12,17 @@ import java.util.Set;
 
 public class Controller {
 
-    public Controller() {
+    public Controller() {}
 
+    // Controller.java - add this method
+    public void init() {
+        Storage.loadFromDisk();
     }
 
-    public void opretKorn(String navn, String mark, String beskrivelse, int produktionsÅr, String leverandør, boolean erØkologisk) {
+    public Korn createKornType(String navn, String mark, String beskrivelse, int produktionsÅr, String leverandør, boolean erØkologisk) {
         Korn korn = new Korn(navn, mark, beskrivelse, produktionsÅr, leverandør, erØkologisk);
-
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("KornSorter.ser"))) {
-            oos.writeObject(korn);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void hentAltKorn() {
-
+        Storage.addKornType(korn);
+        return korn;
     }
 
     public Produktionslinje createProduktionslinje(Korn korn, double kornMængde, Gær gær, double gærMængde, double vandMængdeMiliLiter, int mæskeTidMinutter, Set<Medarbejder> medarbejderSet, int idProduktionslinje) {
@@ -48,11 +43,6 @@ public class Controller {
         return lager;
     }
 
-    public Korn createKornType(String navn, String mark, String beskrivelse, int produktionsÅr, String leverandør, boolean erØkologisk) {
-        Korn korn = new Korn(navn, mark, beskrivelse, produktionsÅr, leverandør, erØkologisk);
-        Storage.addKornType(korn);
-        return korn;
-    }
 
     public Gær createGær(String navn, double maksTemperatur, String beskrivelse) {
         Gær gær = new Gær(navn, maksTemperatur, beskrivelse);
@@ -72,6 +62,7 @@ public class Controller {
         return fad;
     }
 
+    // Getters
     public List<Medarbejder> getMedarbejderList() {
         return Storage.getMedarbejderList();
     }

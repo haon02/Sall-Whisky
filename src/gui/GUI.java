@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import storage.Storage;
 
 public class GUI extends Application {
     private Stage primaryStage;
@@ -12,6 +13,7 @@ public class GUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        controller.init();
         this.primaryStage = primaryStage;
         GridPane pane = new GridPane();
         initContent(pane);
