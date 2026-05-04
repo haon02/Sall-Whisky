@@ -27,6 +27,6 @@ public class Gær implements Serializable {
 
     @Override
     public String toString() {
-        return "gærtype: " +navn;
+        return navn;
     }
 }

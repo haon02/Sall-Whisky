@@ -11,6 +11,8 @@ public class Fad implements Serializable {
     private boolean erTom;
     private boolean tidligereBrugt;
     private Leverandør leverandør;
+    private int fadNummer;
+    private static int fadNummerCounter = 1;
 
     public Fad(double størrelseMiliLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør) {
         this.størrelseMiliLiter = størrelseMiliLiter;
@@ -19,6 +21,8 @@ public class Fad implements Serializable {
         this.erTom = erTom;
         this.tidligereBrugt = tidligereBrugt;
         this.leverandør = leverandør;
+        this.fadNummer = fadNummerCounter;
+        fadNummerCounter++;
     }
 
     public Leverandør getLeverandør() {
