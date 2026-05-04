@@ -5,7 +5,7 @@ public class Medarbejder {
     private String adresse;
     private int medarbejderID;
     private String mobil;
-    private int idCounter = 1;
+    private static int idCounter = 1;
 
     public Medarbejder(String navn, String adresse, String mobil) {
         this.navn = navn;
