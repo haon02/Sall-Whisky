@@ -1,5 +1,7 @@
 package gui;
 
+import Iteration1.model.Korn;
+import application.controller.Controller;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -7,18 +9,21 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * UC2 – Tilføj ny korntype
- *
+ * <p>
  * Opretter en ny korntype med:
- *  - Navn på korntype
- *  - Kornart (byg, hvede, rug, havre)
- *  - Leverandør
- *  - Økologisk (ja/nej)
- *  - Beskrivelse
+ * - Navn på korntype
+ * - Kornart (byg, hvede, rug, havre)
+ * - Leverandør
+ * - Økologisk (ja/nej)
+ * - Beskrivelse
  */
 public class KornTypeVindue {
-
+    private Controller controller;
     private Stage stage;
     private Stage owner;
 
@@ -28,6 +33,7 @@ public class KornTypeVindue {
     private TextField leverandørField;
     private CheckBox økologiskCheck;
     private TextArea beskrivelseArea;
+    private List<Korn> altKorn = new ArrayList<>();
 
     // Resultat
     private boolean confirmed = false;
@@ -54,7 +60,7 @@ public class KornTypeVindue {
 
         // Kornart
         kornArtBox = new ComboBox<>();
-        kornArtBox.getItems().addAll("Byg", "Hvede", "Rug", "Havre", "Majs", "Andet");
+        kornArtBox.getItems().addAll("Byg, hvede, mark");
         kornArtBox.setPromptText("Vælg kornart...");
         kornArtBox.setPrefWidth(280);
         root.addLabeledNode("Kornart", kornArtBox);
@@ -93,6 +99,8 @@ public class KornTypeVindue {
         gemKnap.setOnAction(e -> {
             if (validerInput()) {
                 confirmed = true;
+                // Opret objektet baseret på din Korn-model
+                // opret korn igennem controller her
                 storeData();
                 printResultat();
                 stage.close();
@@ -149,10 +157,27 @@ public class KornTypeVindue {
         System.out.println("Beskrivelse: " + beskrivelseArea.getText());
     }
 
-    public boolean isConfirmed()     { return confirmed; }
-    public String getNavn()          { return navnField.getText(); }
-    public String getKornArt()       { return kornArtBox.getValue(); }
-    public String getLeverandør()    { return leverandørField.getText(); }
-    public boolean isØkologisk()     { return økologiskCheck.isSelected(); }
-    public String getBeskrivelse()   { return beskrivelseArea.getText(); }
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public String getNavn() {
+        return navnField.getText();
+    }
+
+    public String getKornArt() {
+        return kornArtBox.getValue();
+    }
+
+    public String getLeverandør() {
+        return leverandørField.getText();
+    }
+
+    public boolean isØkologisk() {
+        return økologiskCheck.isSelected();
+    }
+
+    public String getBeskrivelse() {
+        return beskrivelseArea.getText();
+    }
 }

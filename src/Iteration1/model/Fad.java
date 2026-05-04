@@ -1,8 +1,10 @@
 package Iteration1.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Fad {
+public class Fad implements Serializable {
+    private static final long serialVersionUID = 1L;
     private double størrelseMiliLiter;
     private LocalDate produktionsDato;
     private String beskrivelse;
