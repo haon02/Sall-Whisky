@@ -5,6 +5,9 @@ import Iteration1.model.Korn;
 import Iteration1.model.Medarbejder;
 import Iteration1.model.Produktionslinje;
 import storage.Storage;
+import Iteration1.model.Lager;
+import Iteration1.model.Medarbejder;
+import storage.Storage;
 
 import java.io.*;
 import java.util.HashMap;
@@ -41,6 +44,33 @@ public class Controller {
         Storage.addProduktionslinje(produktionslinje);
         return produktionslinje;
     }
+
+
+    public Lager createLager(int pladser, String adresse, int maksKapacitet) {
+        Lager lager = new Lager(pladser, adresse, maksKapacitet);
+        Storage.addLager(lager);
+        return lager;
+    }
+
+    public Korn createKornType(String navn, String mark, String beskrivelse, int produktionsÅr) {
+        Korn korn = new Korn(navn, mark, beskrivelse, produktionsÅr);
+        Storage.addKornType(korn);
+        return korn;
+    }
+
+    public Gær createGær(String navn, double maksTemperatur, String beskrivelse) {
+        Gær gær = new Gær(navn, maksTemperatur, beskrivelse);
+        Storage.addGær(gær);
+        return gær;
+    }
+
+    public Medarbejder createMedarbejder(String navn, String adresse, String mobil) {
+        Medarbejder medarbejder = new Medarbejder(navn, adresse, mobil);
+        Storage.addMedarbejder(medarbejder);
+        return medarbejder;
+    }
+
+
 
 
 }
