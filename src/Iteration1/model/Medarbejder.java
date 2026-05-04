@@ -5,11 +5,13 @@ public class Medarbejder {
     private String adresse;
     private int medarbejderID;
     private String mobil;
+    private int idCounter = 1;
 
     public Medarbejder(String navn, String adresse, String mobil) {
         this.navn = navn;
         this.adresse = adresse;
-        this.medarbejderID = medarbejderID;
+        this.medarbejderID = idCounter;
+        idCounter++;
         this.mobil = mobil;
     }
 
