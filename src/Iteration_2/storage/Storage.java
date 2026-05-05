@@ -47,7 +47,11 @@ public class Storage {
             fadList = state.fadList != null ? state.fadList : new ArrayList<>();
             produktionslinjeList = state.produktionslinjeList != null ? state.produktionslinjeList : new ArrayList<>();
             leverandørList = state.leverandørList != null ? state.leverandørList : new ArrayList<>();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (ClassCastException | ClassNotFoundException e) {
+            // Old/incompatible save file – start fresh
+            System.err.println("Inkompatibel save fil, starter forfra: " + e.getMessage());
+            file.delete(); // delete the bad file
+        } catch (IOException e) {
             System.err.println("Kunne ikke indlæse data: " + e.getMessage());
         }
     }
