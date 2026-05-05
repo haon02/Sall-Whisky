@@ -17,6 +17,9 @@ public class Storage {
     private static List<Fad> fadList = new ArrayList<>();
     private static List<Produktionslinje> produktionslinjeList = new ArrayList<>();
 
+    //
+     // Storage to Serializable object so it holds element even after system restart
+    //
     private static class StorageState implements Serializable {
         private static final long serialVersionUID = 1L;
         List<Korn> kornList;
@@ -29,8 +32,8 @@ public class Storage {
 
     public static void loadFromDisk() {
         File file = new File(SAVE_FILE);
-        if (!file.exists()) return; // First run – nothing to load
 
+        if (!file.exists()) return; // First run – nothing to load
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             StorageState state = (StorageState) ois.readObject();
             kornList = state.kornList != null ? state.kornList : new ArrayList<>();
@@ -46,6 +49,7 @@ public class Storage {
 
     private static void saveToDisk() {
         StorageState state = new StorageState();
+
         state.kornList = new ArrayList<>(kornList);
         state.gærList = new ArrayList<>(gærList);
         state.medarbejderList = new ArrayList<>(medarbejderList);
