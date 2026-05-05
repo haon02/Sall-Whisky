@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public class Fad implements Serializable {
     private static final long serialVersionUID = 1L;
-    private double størrelseMiliLiter;
+    private double størrelseLiter;
     private LocalDate produktionsDato;
     private String beskrivelse;
     private boolean erTom;
@@ -13,24 +13,35 @@ public class Fad implements Serializable {
     private Leverandør leverandør;
     private int fadNummer;
     private static int fadNummerCounter = 1;
+    private Lager lager;
 
-    public Fad(double størrelseMiliLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør) {
-        this.størrelseMiliLiter = størrelseMiliLiter;
+    public Fad(double størrelseLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
+        this.størrelseLiter = størrelseLiter;
         this.produktionsDato = produktionsDato;
         this.beskrivelse = beskrivelse;
         this.erTom = erTom;
         this.tidligereBrugt = tidligereBrugt;
         this.leverandør = leverandør;
         this.fadNummer = fadNummerCounter;
+        this.lager = lager;
         fadNummerCounter++;
+
+    }
+
+    public int getFadNummer() {
+        return fadNummer;
     }
 
     public Leverandør getLeverandør() {
         return leverandør;
     }
 
-    public double getStørrelseMiliLiter() {
-        return størrelseMiliLiter;
+    public Lager getLager() {
+        return lager;
+    }
+
+    public double getStørrelseLiter() {
+        return størrelseLiter;
     }
 
     public LocalDate getProduktionsDato() {
@@ -48,6 +59,7 @@ public class Fad implements Serializable {
     public boolean isTidligereBrugt() {
         return tidligereBrugt;
     }
+
 
     @Override
     public String toString() {

@@ -6,21 +6,29 @@ public class Gær implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String navn;
-    private double maksTemperatur;
+    private String produktKode;
+    private boolean erVæske;
+    private double minTemp;
+    private double maksTemp;
+    private double alkoholTolerance;
     private String beskrivelse;
 
-    public Gær(String navn, double maksTemperatur, String beskrivelse) {
-        this.navn = navn;
-        this.maksTemperatur = maksTemperatur;
-        this.beskrivelse = beskrivelse;
+    public Gær(String navn, String produktKode, boolean erVæske, double minTemp, double maksTemp, double alkoholTolerance, String beskrivelse) {
+       this.navn = navn;
+       this.produktKode = produktKode;
+       this.erVæske = erVæske;
+       this.minTemp = minTemp;
+       this.maksTemp = maksTemp;
+       this.alkoholTolerance = alkoholTolerance;
+       this.beskrivelse = beskrivelse;
     }
 
     public String getNavn() {
         return navn;
     }
 
-    public double getMaksTemperatur() {
-        return maksTemperatur;
+    public double getMaksTemp() {
+        return maksTemp;
     }
 
     public String getBeskrivelse() {

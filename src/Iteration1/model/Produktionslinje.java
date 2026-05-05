@@ -10,20 +10,18 @@ public class Produktionslinje {
 
     private Map<Korn, Double> kornMap;
     private Map<Gær, Double> gærMap;
-    private double vandMængdeMiliLiter;
+    private double vandMængdeLiter;
     private int mæskeTidMinutter;
     private Set<Medarbejder> medarbejderSet;
     private int idProduktionslinje;
 
-    public Produktionslinje(Map<Korn, Double> kornMap, Map<Gær, Double> gærMap, double vandMængdeMiliLiter, int mæskeTidMinutter, Medarbejder medarbejder) {
+    public Produktionslinje(Map<Korn, Double> kornMap, Map<Gær, Double> gærMap, double vandMængdeLiter, int mæskeTidMinutter, Set<Medarbejder> medarbejderSet) {
         this.kornMap = kornMap;
         this.gærMap = gærMap;
-        this.vandMængdeMiliLiter = vandMængdeMiliLiter;
+        this.vandMængdeLiter = vandMængdeLiter;
         this.mæskeTidMinutter = mæskeTidMinutter;
-        this.medarbejderSet = new HashSet<>();
-        medarbejderSet.add(medarbejder);
+        this.medarbejderSet = medarbejderSet;
         this.idProduktionslinje = næsteId++;
-
     }
 
     public void addMedarbejder(Medarbejder medarbejder){
@@ -50,8 +48,8 @@ public class Produktionslinje {
         return new HashMap<>(gærMap);
     }
 
-    public double getVandMængdeMiliLiter() {
-        return vandMængdeMiliLiter;
+    public double getVandMængdeLiter() {
+        return vandMængdeLiter;
     }
 
     public int getMæskeTidMinutter() {

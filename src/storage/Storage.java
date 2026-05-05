@@ -16,9 +16,11 @@ public class Storage {
     private static List<Lager> lagerList = new ArrayList<>();
     private static List<Fad> fadList = new ArrayList<>();
     private static List<Produktionslinje> produktionslinjeList = new ArrayList<>();
+    private static List<Leverandør> leverandørList = new ArrayList<>();
+
 
     //
-     // Storage to Serializable object so it holds element even after system restart
+    // Storage to Serializable object so it holds element even after system restart
     //
     private static class StorageState implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -28,6 +30,7 @@ public class Storage {
         List<Lager> lagerList;
         List<Fad> fadList;
         List<Produktionslinje> produktionslinjeList;
+        List<Leverandør> leverandørList;
     }
 
     public static void loadFromDisk() {
@@ -42,6 +45,7 @@ public class Storage {
             lagerList = state.lagerList != null ? state.lagerList : new ArrayList<>();
             fadList = state.fadList != null ? state.fadList : new ArrayList<>();
             produktionslinjeList = state.produktionslinjeList != null ? state.produktionslinjeList : new ArrayList<>();
+            leverandørList = state.leverandørList != null ? state.leverandørList : new ArrayList<>();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Kunne ikke indlæse data: " + e.getMessage());
         }
@@ -56,6 +60,7 @@ public class Storage {
         state.lagerList = new ArrayList<>(lagerList);
         state.fadList = new ArrayList<>(fadList);
         state.produktionslinjeList = new ArrayList<>(produktionslinjeList);
+        state.leverandørList = new ArrayList<>(leverandørList);
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
             oos.writeObject(state);
@@ -68,6 +73,7 @@ public class Storage {
     public static void addProduktionslinje(Produktionslinje produktionslinje) {
         if (produktionslinje != null && !produktionslinjeList.contains(produktionslinje)) {
             produktionslinjeList.add(produktionslinje);
+            saveToDisk();
         }
     }
 
@@ -106,6 +112,13 @@ public class Storage {
         }
     }
 
+    public static void addLeverandør(Leverandør leverandør) {
+        if (leverandør != null && !leverandørList.contains(leverandør)) {
+            leverandørList.add(leverandør);
+            saveToDisk();
+        }
+    }
+
     // GETTERS
     public static List<Lager> getLagerList() {
         return Collections.unmodifiableList(lagerList);
@@ -123,8 +136,16 @@ public class Storage {
         return Collections.unmodifiableList(medarbejderList);
     }
 
+    public static List<Fad> getFadlist() {
+        return Collections.unmodifiableList(fadList);
+    }
+
     public static List<Produktionslinje> getProduktionslinjeList() {
         return Collections.unmodifiableList(produktionslinjeList);
+    }
+
+    public static List<Leverandør> getLeverandørList() {
+        return Collections.unmodifiableList(leverandørList);
     }
 
     public static void clearAll() {

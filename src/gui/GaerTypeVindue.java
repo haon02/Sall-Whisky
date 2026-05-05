@@ -155,7 +155,7 @@ public class GaerTypeVindue {
     }
 
     private void storeData() {
-        controller.createGær(getNavn(), getTempMax(), getBeskrivelse());
+        controller.createGær(getNavn(), getProduktKode(), isTørGær(), getTempMin(), getTempMax(), getAlkoholTolerance(), getBeskrivelse());
     }
 
     private boolean validerInput() {

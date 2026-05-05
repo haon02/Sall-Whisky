@@ -26,5 +26,7 @@ public class Lager {
 
     public int getMaksKapacitet() {
         return maksKapacitet;
+
     }
+
 }

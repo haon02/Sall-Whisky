@@ -44,6 +44,11 @@ public class GUI extends Application {
             GaerTypeVindue addGaerType = new GaerTypeVindue(primaryStage);
             addGaerType.showAndWait();
         });
+        resourceMenu.addButton("Tilføj nyt fad", event -> {
+            FadVindue fadVindue = new FadVindue(primaryStage);
+            fadVindue.showAndWait();
+        });
+
         pane.add(resourceMenu, 0, 1);
     }
 
