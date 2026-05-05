@@ -1,6 +1,8 @@
 package Iteration1.model;
 
-public class Lager {
+import java.io.Serializable;
+
+public class Lager implements Serializable {
     private int pladser;
     private String adresse;
     private int maksKapacitet;
@@ -29,4 +31,8 @@ public class Lager {
 
     }
 
+    @Override
+    public String toString() {
+        return adresse + " - " + pladser + " pladser, maks kapacitet: " + maksKapacitet;
+    }
 }

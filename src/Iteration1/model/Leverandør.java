@@ -1,6 +1,8 @@
 package Iteration1.model;
 
-public class Leverandør {
+import java.io.Serializable;
+
+public class Leverandør implements Serializable {
     private String navn;
     private int id;
     private String beskrivelse;
@@ -21,5 +23,10 @@ public class Leverandør {
 
     public String getBeskrivelse() {
         return beskrivelse;
+    }
+
+    @Override
+    public String toString() {
+        return navn;
     }
 }

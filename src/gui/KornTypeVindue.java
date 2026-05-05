@@ -1,6 +1,7 @@
 package gui;
 
 import Iteration1.model.Korn;
+import Iteration1.model.Leverandør;
 import application.controller.Controller;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -30,7 +31,7 @@ public class KornTypeVindue {
     // Felter
     private TextField navnField;
     private ComboBox<String> kornArtBox;
-    private TextField leverandørField;
+    private ComboBox<Leverandør> leverandørField;
     private TextField markField;
     private TextField produktionsÅr;
     private CheckBox økologiskCheck;
@@ -68,8 +69,10 @@ public class KornTypeVindue {
         root.addLabeledNode("Kornart", kornArtBox);
 
         // Leverandør
-        leverandørField = new TextField();
-        leverandørField.setPromptText("f.eks. Lars' mark, Sall");
+        leverandørField = new ComboBox<>();
+        leverandørField.getItems().addAll(controller.getLeverandørList().stream().toList());
+        leverandørField.setPromptText("Vælg leverandør...");
+        leverandørField.setPrefWidth(280);
         root.addLabeledNode("Leverandør", leverandørField);
 
         root.addSeparator();
@@ -148,7 +151,7 @@ public class KornTypeVindue {
         if (kornArtBox.getValue() == null)
             fejl.append("• Vælg en kornart\n");
 
-        if (leverandørField.getText().isBlank())
+        if (leverandørField.getValue() == null)
             fejl.append("• Angiv leverandør\n");
 
         if (produktionsÅr.getText().isBlank()){
@@ -174,7 +177,7 @@ public class KornTypeVindue {
         System.out.println("=== Ny korntype oprettet ===");
         System.out.println("Navn:         " + navnField.getText());
         System.out.println("Kornart:      " + kornArtBox.getValue());
-        System.out.println("Leverandør:   " + leverandørField.getText());
+        System.out.println("Leverandør:   " + leverandørField.getValue());
         System.out.println("Mark:         " + markField.getText());
         System.out.println("Produktionsår:" + produktionsÅr.getText());
         System.out.println("Økologisk:    " + (økologiskCheck.isSelected() ? "Ja" : "Nej"));
@@ -192,9 +195,8 @@ public class KornTypeVindue {
     public String getKornArt() {
         return kornArtBox.getValue();
     }
-
-    public String getLeverandør() {
-        return leverandørField.getText();
+    public Leverandør getLeverandør() {
+        return leverandørField.getValue();
     }
 
     public int getProduktionsår(){

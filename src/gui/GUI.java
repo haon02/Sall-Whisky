@@ -5,7 +5,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import storage.Storage;
 
 public class GUI extends Application {
     private Stage primaryStage;
@@ -25,17 +24,18 @@ public class GUI extends Application {
 
     private void initContent(GridPane pane) {
         SectionVBox hovedMenu = new SectionVBox("Hoved menu");
-        hovedMenu.addButton("Tilføj ny produktionslinje", event -> {
-            ProduktionslinjeVindue addProductionLine = new ProduktionslinjeVindue(primaryStage);
-            addProductionLine.showAndWait();
-        });
         hovedMenu.addButton("LagerOversigt" , event -> {
-            LagerVindue lagerVindue = new LagerVindue(primaryStage);
+            LagerStatusVindue lagerVindue = new LagerStatusVindue(primaryStage);
             lagerVindue.showAndWait();
         });
         pane.add(hovedMenu, 0, 0);
 
         SectionVBox resourceMenu = new SectionVBox("Ressourcer");
+
+        resourceMenu.addButton("Tilføj ny produktionslinje", event -> {
+            ProduktionslinjeVindue addProductionLine = new ProduktionslinjeVindue(primaryStage);
+            addProductionLine.showAndWait();
+        });
         resourceMenu.addButton("Tilføj ny korntype", event -> {
             KornTypeVindue addKornType = new KornTypeVindue(primaryStage);
             addKornType.showAndWait();
@@ -47,6 +47,14 @@ public class GUI extends Application {
         resourceMenu.addButton("Tilføj nyt fad", event -> {
             FadVindue fadVindue = new FadVindue(primaryStage);
             fadVindue.showAndWait();
+        });
+        resourceMenu.addButton("Tilføj nyt lager", event -> {
+            LagerTilføjVindue lagerVindue = new LagerTilføjVindue(primaryStage);
+            lagerVindue.showAndWait();
+        });
+        resourceMenu.addButton("Tilføj ny leverandør", event -> {
+            LeverandørTilføjVindue leverandørVindue = new LeverandørTilføjVindue(primaryStage);
+            leverandørVindue.showAndWait();
         });
 
         pane.add(resourceMenu, 0, 1);

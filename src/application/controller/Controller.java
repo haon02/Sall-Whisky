@@ -21,7 +21,7 @@ public class Controller {
         Storage.loadFromDisk();
     }
 
-    public Korn createKornType(String navn, String mark, String beskrivelse, int produktionsÅr, String leverandør, boolean erØkologisk) {
+    public Korn createKornType(String navn, String mark, String beskrivelse, int produktionsÅr, Leverandør leverandør, boolean erØkologisk) {
         Korn korn = new Korn(navn, mark, beskrivelse, produktionsÅr, leverandør, erØkologisk);
         Storage.addKornType(korn);
         return korn;
@@ -99,5 +99,4 @@ public class Controller {
     public List<Leverandør> getLeverandørList() {
         return Storage.getLeverandørList();
     }
-
 }

@@ -8,10 +8,10 @@ public class Korn implements Serializable {
     private String mark;
     private String beskrivelse;
     private int produktionsÅr;
-    private String leverandør;
+    private Leverandør leverandør;
     private boolean erØkologisk;
 
-    public Korn(String navn, String mark, String beskrivelse, int produktionsÅr, String leverandør, boolean erØkologisk) {
+    public Korn(String navn, String mark, String beskrivelse, int produktionsÅr, Leverandør leverandør, boolean erØkologisk) {
         this.navn = navn;
         this.mark = mark;
         this.beskrivelse = beskrivelse;
@@ -33,7 +33,7 @@ public class Korn implements Serializable {
         return mark;
     }
 
-    public String getleverandør(){return leverandør;}
+    public Leverandør getleverandør(){return leverandør;}
 
     public String getBeskrivelse() {
         return beskrivelse;

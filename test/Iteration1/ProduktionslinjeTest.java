@@ -1,9 +1,6 @@
 package Iteration1;
 
-import Iteration1.model.Gær;
-import Iteration1.model.Korn;
-import Iteration1.model.Medarbejder;
-import Iteration1.model.Produktionslinje;
+import Iteration1.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +21,8 @@ class ProduktionslinjeTest {
 
     @BeforeEach
     void setUp() {
-        korn = new Korn("Byg", "mark 67", "Et fyldig og god sommerfrisk basse", 2024, "Arla",true);
+        Leverandør leverandør = new Leverandør("Arla", 1, "En stor dansk mejerigigant");
+        korn = new Korn("Byg", "mark 67", "Et fyldig og god sommerfrisk basse", 2024, leverandør,true);
         gær = new Gær("Saccharomyces cerevisiae", "35", true,15,18,50,"Hej");
         medarbejder = new Medarbejder("Rodi", "Gellerupparken 1", "12345678");
         produktionslinje1 = new Produktionslinje(new HashMap<>(), new HashMap<>(), 0.00, 60, medarbejdere);

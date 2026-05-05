@@ -10,12 +10,12 @@ import javafx.stage.Stage;
 /**
  * Vindue til lagerstyring (Designstruktur)
  */
-public class LagerVindue {
+public class LagerStatusVindue {
 
     private Stage stage;
     private Stage owner;
 
-    public LagerVindue(Stage owner) {
+    public LagerStatusVindue(Stage owner) {
         this.owner = owner;
     }
 

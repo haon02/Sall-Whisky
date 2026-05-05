@@ -36,6 +36,7 @@ public class GaerTypeVindue {
     private Label alkoholLabel;
     private TextArea beskrivelseArea;
 
+
     // Resultat
     private boolean confirmed = false;
 
