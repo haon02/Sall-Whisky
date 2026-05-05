@@ -6,13 +6,15 @@ import storage.Storage;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 
 public class Controller {
 
-    public Controller() {}
+    public Controller() {
+    }
 
     // Controller.java - add this method
     public void init() {
@@ -25,13 +27,14 @@ public class Controller {
         return korn;
     }
 
-    public Produktionslinje createProduktionslinje(Korn korn, double kornMængde, Gær gær, double gærMængde, double vandMængdeMiliLiter, int mæskeTidMinutter, Set<Medarbejder> medarbejderSet, int idProduktionslinje) {
-        Medarbejder medarbejder = new Medarbejder("Jens", "Jensvej 1", "12345678");
+    public Produktionslinje createProduktionslinje(Korn korn, double kornMængde, Gær gær, double gærMængde, double vandMængdeLiter, int mæskeTidMinutter, Medarbejder medarbejder) {
         Map<Korn, Double> kornMap = new HashMap<>();
         kornMap.put(korn, kornMængde);
         Map<Gær, Double> gærMap = new HashMap<>();
         gærMap.put(gær, gærMængde);
-        Produktionslinje produktionslinje = new Produktionslinje(kornMap, gærMap, vandMængdeMiliLiter, mæskeTidMinutter, medarbejder);
+        HashSet<Medarbejder> medarbejderHashSet = new HashSet<>();
+        medarbejderHashSet.add(medarbejder);
+        Produktionslinje produktionslinje = new Produktionslinje(kornMap, gærMap, vandMængdeLiter, mæskeTidMinutter, medarbejderHashSet);
         Storage.addProduktionslinje(produktionslinje);
         return produktionslinje;
     }
@@ -44,8 +47,8 @@ public class Controller {
     }
 
 
-    public Gær createGær(String navn, double maksTemperatur, String beskrivelse) {
-        Gær gær = new Gær(navn, maksTemperatur, beskrivelse);
+    public Gær createGær(String navn, String produktKode, boolean erVæske, double minTemp, double maksTemp, double alkoholTolerance, String beskrivelse) {
+        Gær gær = new Gær(navn, produktKode, erVæske, minTemp, maksTemp, alkoholTolerance, beskrivelse);
         Storage.addGærType(gær);
         return gær;
     }
@@ -56,8 +59,8 @@ public class Controller {
         return medarbejder;
     }
 
-    public Fad createFad(double størrelseMiliLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør){
-        Fad fad = new Fad(størrelseMiliLiter, produktionsDato, beskrivelse, erTom, tidligereBrugt, leverandør);
+    public Fad createFad(double størrelseLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
+        Fad fad = new Fad(størrelseLiter, produktionsDato, beskrivelse, erTom, tidligereBrugt, leverandør, lager);
         Storage.addFad(fad);
         return fad;
     }
@@ -71,14 +74,20 @@ public class Controller {
         return Storage.getGærList();
     }
 
-    public List<Korn> getKornList(){
+    public List<Korn> getKornList() {
         return Storage.getKornList();
     }
 
-    public List<Produktionslinje> getProduktionlinjeList(){
+    public List<Produktionslinje> getProduktionlinjeList() {
         return Storage.getProduktionslinjeList();
     }
 
+    public List<Fad> getFadList() {
+        return Storage.getFadlist();
+    }
 
+    public List<Lager> getLagerList(){
+        return Storage.getLagerList();
+    }
 
 }

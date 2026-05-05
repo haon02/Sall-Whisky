@@ -7,6 +7,7 @@ import Iteration1.model.Produktionslinje;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,14 +19,16 @@ class ProduktionslinjeTest {
     Korn korn;
     Gær gær;
     Medarbejder medarbejder;
+    HashSet<Medarbejder> medarbejdere;
     Produktionslinje produktionslinje1;
 
     @BeforeEach
     void setUp() {
-        korn = new Korn("Byg", "mark 67", "Et fyldig og god sommerfrisk basse", 2024);
-        gær = new Gær("Saccharomyces cerevisiae", 35, "normal supermarked gær");
+        korn = new Korn("Byg", "mark 67", "Et fyldig og god sommerfrisk basse", 2024, "Arla",true);
+        gær = new Gær("Saccharomyces cerevisiae", "35", true,15,18,50,"Hej");
         medarbejder = new Medarbejder("Rodi", "Gellerupparken 1", "12345678");
-        produktionslinje1 = new Produktionslinje(new HashMap<>(), new HashMap<>(), 0.00, 60, medarbejder);
+        produktionslinje1 = new Produktionslinje(new HashMap<>(), new HashMap<>(), 0.00, 60, medarbejdere);
+        medarbejdere.add(medarbejder);
         produktionslinje1.addKorn(korn, 0.00);
         produktionslinje1.addGær(gær, 0.00);
     }
@@ -50,8 +53,8 @@ class ProduktionslinjeTest {
     void test_ProduktlinjeIdOptælling() {
         //arrange
         //act
-        Produktionslinje produktionslinje2 = new Produktionslinje(new HashMap<>(), new HashMap<>(), 0.00, 60, medarbejder);
-        Produktionslinje produktionslinje3 = new Produktionslinje(new HashMap<>(), new HashMap<>(), 0.00, 60, medarbejder);
+        Produktionslinje produktionslinje2 = new Produktionslinje(new HashMap<>(), new HashMap<>(), 0.00, 60, medarbejdere);
+        Produktionslinje produktionslinje3 = new Produktionslinje(new HashMap<>(), new HashMap<>(), 0.00, 60, medarbejdere);
         //assert
 
         assertEquals(1,produktionslinje1.getIdProduktionslinje());

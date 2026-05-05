@@ -17,6 +17,8 @@ public class Storage {
     private static List<Fad> fadList = new ArrayList<>();
     private static List<Produktionslinje> produktionslinjeList = new ArrayList<>();
 
+
+
     //
      // Storage to Serializable object so it holds element even after system restart
     //
@@ -122,6 +124,7 @@ public class Storage {
     public static List<Medarbejder> getMedarbejderList() {
         return Collections.unmodifiableList(medarbejderList);
     }
+    public static List<Fad> getFadlist() { return Collections.unmodifiableList(fadList);}
 
     public static List<Produktionslinje> getProduktionslinjeList() {
         return Collections.unmodifiableList(produktionslinjeList);
