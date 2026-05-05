@@ -1,10 +1,9 @@
 package Iteration1;
 
-import Iteration1.model.*;
+import Iteration_1.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
