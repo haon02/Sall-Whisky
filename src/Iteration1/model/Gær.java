@@ -3,6 +3,8 @@ package Iteration1.model;
 import java.io.Serializable;
 
 public class Gær implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String navn;
     private double maksTemperatur;
     private String beskrivelse;

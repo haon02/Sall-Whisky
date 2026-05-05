@@ -137,7 +137,6 @@ public class KornTypeVindue {
         // Her skal dataen sendes til controlleren i UC-implementationen, f.eks.:
         // controller.opretKornType(getNavn(), getKornArt(), getLeverandør(), isØkologisk(), getBeskrivelse());
          controller.createKornType(getNavn(),getMark(),getBeskrivelse(),getProduktionsår(),getLeverandør(),isØkologisk());
-         controller.opretKorn(getNavn(),getMark(),getBeskrivelse(),getProduktionsår(),getLeverandør(),isØkologisk());
     }
 
     private boolean validerInput() {
