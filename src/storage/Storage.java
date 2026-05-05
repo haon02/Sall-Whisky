@@ -139,9 +139,6 @@ public class Storage {
     }
     public static List<Fad> getFadlist() { return Collections.unmodifiableList(fadList);}
 
-    public static List<Fad> getFadlist() {
-        return Collections.unmodifiableList(fadList);
-    }
 
     public static List<Produktionslinje> getProduktionslinjeList() {
         return Collections.unmodifiableList(produktionslinjeList);
