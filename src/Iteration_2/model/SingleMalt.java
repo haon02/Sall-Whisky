@@ -1,20 +1,27 @@
 package Iteration_2.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SingleMalt implements DestillatType {
-    HashMap<Destillat,Double> destillater;
+public class SingleMalt implements Mix {
+    private ArrayList<Mix> destillater;
+    private String navn;
 
-    public SingleMalt(HashMap<Destillat, Double> destillater) {
+    public SingleMalt(ArrayList<Mix> destillater, String navn) {
         this.destillater = destillater;
+        this.navn = navn;
     }
 
     @Override
-    public HashMap<Destillat, Double> getIndhold() {
+    public DestillatType getIndhold() {
         return null;
     }
 
-    public HashMap<Destillat, Double> getDestillater() {
+    public String getNavn() {
+        return navn;
+    }
+
+    public ArrayList<Mix> getDestillater() {
         return destillater;
     }
 }

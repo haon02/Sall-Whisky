@@ -12,7 +12,7 @@ public class SingleCask implements DestillatType{
     }
 
     @Override
-    public HashMap<Destillat, Double> getIndhold() {
+    public DestillatType getIndhold()  {
         return null;
     }
 }
