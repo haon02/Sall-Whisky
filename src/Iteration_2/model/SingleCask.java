@@ -1,11 +1,18 @@
 package Iteration_2.model;
 
+import java.util.HashMap;
+
 public class SingleCask implements DestillatType{
     private Destillat destillat;
     private double mængdeLiter;
 
-    @Override
-    public void getindhold() {
+    public SingleCask(double mængdeLiter, Destillat destillat) {
+        this.mængdeLiter = mængdeLiter;
+        this.destillat = destillat;
+    }
 
+    @Override
+    public HashMap<Destillat, Double> getIndhold() {
+        return null;
     }
 }

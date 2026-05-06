@@ -1,6 +1,9 @@
 package Iteration_2.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public interface DestillatType {
 
-    void getindhold();
+    HashMap<Destillat, Double> getIndhold();
 }
