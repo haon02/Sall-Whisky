@@ -2,7 +2,7 @@ package Iteration_2.model;
 
 import java.util.HashMap;
 
-public class Single implements Blended {
+public class Single implements Mix {
     private Destillat destillat;
     private double mængdeLiter;
     private String destilleri;
@@ -15,7 +15,7 @@ public class Single implements Blended {
     }
 
     @Override
-    public HashMap<Destillat, Double> getIndhold() {
+    public DestillatType getIndhold() {
         return null;
     }
 
