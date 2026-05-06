@@ -16,7 +16,7 @@ public class Single implements Mix {
 
     @Override
     public DestillatType getIndhold() {
-        return null;
+        return this;
     }
 
 

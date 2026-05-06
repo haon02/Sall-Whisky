@@ -13,6 +13,6 @@ public class Blended implements Mix {
 
     @Override
     public DestillatType getIndhold() {
-        return null;
+        return this;
     }
 }
