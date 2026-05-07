@@ -6,8 +6,8 @@ public class SingleMalt implements Mix {
     private ArrayList<Mix> destillater;
     private String navn;
 
-    public SingleMalt(ArrayList<Mix> destillater, String navn) {
-        this.destillater = destillater;
+    public SingleMalt(String navn) {
+        this.destillater = new ArrayList<>();
         this.navn = navn;
     }
 

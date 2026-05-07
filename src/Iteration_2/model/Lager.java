@@ -11,6 +11,12 @@ public class Lager implements Serializable {
         this.adresse = adresse;
     }
 
+    public Reol createReol(Lager lager) {
+        Reol reol = new Reol();
+        reoler.add(reol);
+        return reol;
+    }
+
     public ArrayList<Reol> getReoler() {
         return new ArrayList<>(reoler);
     }
@@ -19,7 +25,7 @@ public class Lager implements Serializable {
         int antal = 0;
         for (Reol r : reoler) {
             for (Hylde h : r.getHylder()) {
-                antal = +h.getPladser() - h.getFade().size();
+                antal = +h.getPladser() - h.getFade().length;
             }
         }
         return antal;
@@ -42,7 +48,7 @@ public class Lager implements Serializable {
     }
 
     public void addReol(Reol reol) {
-        if (reol == null){
+        if (reol == null) {
             throw new IllegalArgumentException("Ingen reoler på lageret");
         }
         if (!reoler.contains(reol)) {

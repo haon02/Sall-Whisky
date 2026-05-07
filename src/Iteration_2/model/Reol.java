@@ -3,10 +3,22 @@ package Iteration_2.model;
 import java.util.ArrayList;
 
 public class Reol {
-    private ArrayList<Hylde> hylder = new ArrayList<>();
+    private ArrayList<Hylde> hylder;
+
+
+    Reol(){
+        this.hylder = new ArrayList<>();
+    }
 
     public ArrayList<Hylde> getHylder() {
         return new ArrayList<>(hylder);
+    }
+
+
+    public Hylde createHylde(int pladser){
+        Hylde hylde = new Hylde(pladser);
+        hylder.add(hylde);
+        return hylde;
     }
 
     public void addHylde(Hylde hylde) {
