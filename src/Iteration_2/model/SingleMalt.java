@@ -17,6 +17,16 @@ public class SingleMalt implements Mix {
         return destillatTyper;
     }
 
+    public void add(Single s) {
+        if (destillater.isEmpty())
+            destillater.add(s);
+        if (s.getDestilleri().equals(((Single) destillater.getLast()).getDestilleri())) {
+            destillater.add(s);
+        } else {
+            throw new IllegalArgumentException("Dette destillat kan ikke tilføjes, da det ikke er fra samme destilleri");
+        }
+    }
+
     public String getNavn() {
         return navn;
     }
