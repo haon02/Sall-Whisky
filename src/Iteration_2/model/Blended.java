@@ -12,7 +12,8 @@ public class Blended implements Mix {
     }
 
     @Override
-    public DestillatType getIndhold() {
-        return null;
+    public ArrayList<DestillatType> getIndhold() {
+        ArrayList<DestillatType> destillatTyper = new ArrayList<>(destillater);
+        return destillatTyper;
     }
 }

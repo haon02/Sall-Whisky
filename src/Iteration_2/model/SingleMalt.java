@@ -1,7 +1,6 @@
 package Iteration_2.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SingleMalt implements Mix {
     private ArrayList<Mix> destillater;
@@ -13,8 +12,9 @@ public class SingleMalt implements Mix {
     }
 
     @Override
-    public DestillatType getIndhold() {
-        return null;
+    public ArrayList<DestillatType> getIndhold() {
+        ArrayList<DestillatType> destillatTyper = new ArrayList<>(destillater);
+        return destillatTyper;
     }
 
     public String getNavn() {

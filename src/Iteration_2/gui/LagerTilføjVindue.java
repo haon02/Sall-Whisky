@@ -93,11 +93,7 @@ public class LagerTilføjVindue {
 
     private void storeData() {
         // Kalder controllerens metode til at oprette lager[cite: 25]
-        controller.createLager(
-                getPladser(),
-                getAdresse(),
-                getMaksKapacitet()
-        );
+        controller.createLager(getAdresse());
     }
 
     private boolean validerInput() {

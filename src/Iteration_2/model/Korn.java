@@ -33,7 +33,9 @@ public class Korn implements Serializable {
         return mark;
     }
 
-    public Leverandør getleverandør(){return leverandør;}
+    public Leverandør getleverandør(){
+        return leverandør;
+    }
 
     public String getBeskrivelse() {
         return beskrivelse;
@@ -43,5 +45,7 @@ public class Korn implements Serializable {
         return produktionsÅr;
     }
 
-    public boolean getØkologisk(){return erØkologisk;}
+    public boolean getØkologisk(){
+        return erØkologisk;
+    }
 }

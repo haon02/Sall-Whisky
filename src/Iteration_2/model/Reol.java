@@ -10,9 +10,17 @@ public class Reol {
     }
 
     public void addHylde(Hylde hylde) {
-        if (!hylder.contains(hylde)) {
-            hylder.add(hylde);
+        if (hylde == null) {
+            throw new IllegalArgumentException("Ingen hylder i reolen");
         }
+            if (!hylder.contains(hylde)) {
+                hylder.add(hylde);
+            }
+        }
+
+
+    public void removeHylde(Hylde hylde) {
+        hylder.remove(hylde);
     }
 }
 

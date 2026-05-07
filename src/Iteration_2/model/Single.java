@@ -1,6 +1,6 @@
 package Iteration_2.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Single implements Mix {
     private Destillat destillat;
@@ -15,11 +15,11 @@ public class Single implements Mix {
     }
 
     @Override
-    public DestillatType getIndhold() {
-        return null;
+    public ArrayList<DestillatType> getIndhold() {
+        ArrayList<DestillatType> destillat = new ArrayList<>();
+        destillat.add(this);
+        return destillat;
     }
-
-
 
     public Destillat getDestillat() {
         return destillat;
