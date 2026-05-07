@@ -4,24 +4,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Lager implements Serializable {
-    private int pladser;
     private String adresse;
-    private int maksKapacitet;
     private ArrayList<Reol> reoler = new ArrayList<>();
 
-    public Lager (int pladser, String adresse, int maksKapacitet){
-        this.pladser = pladser;
+    public Lager(String adresse) {
         this.adresse = adresse;
-        this.maksKapacitet = maksKapacitet;
     }
 
-    public void setMaksKapacitet(int antal){
-        //TODO Der skal laves en if sætning, så vi ikke kan fjerne brugte pladser, dette sker først i senere iterrationer
-        this.maksKapacitet = antal;
+    public ArrayList<Reol> getReoler() {
+        return new ArrayList<>(reoler);
     }
 
-    public int getPladser() {
-        return pladser;
+    public int getAntalLedigePladser() {
+        int antal = 0;
+        for (Reol r : reoler) {
+            for (Hylde h : r.getHylder()) {
+                antal = +h.getPladser() - h.getFade().size();
+            }
+        }
+        return antal;
     }
 
     public String getAdresse() {
@@ -29,18 +30,34 @@ public class Lager implements Serializable {
     }
 
     public int getMaksKapacitet() {
-        return maksKapacitet;
+        int antal = 0;
+        for (Reol r : reoler) {
+            for (Hylde h : r.getHylder()) {
+                antal = +h.getPladser();
+            }
+        }
+
+        return antal;
 
     }
-    public void addReol(Reol reol){
-        if (!reoler.contains(reol)){
+
+    public void addReol(Reol reol) {
+        if (reol == null){
+            throw new IllegalArgumentException("Ingen reoler på lageret");
+        }
+        if (!reoler.contains(reol)) {
             reoler.add(reol);
         }
+    }
+
+    public void removeReol(Reol reol) {
+        reoler.remove(reol);
+
     }
 
 
     @Override
     public String toString() {
-        return adresse + " - " + pladser + " pladser, maks kapacitet: " + maksKapacitet;
+        return adresse + " - " + getAntalLedigePladser() + " ledige pladser, maks kapacitet: " + getMaksKapacitet();
     }
 }

@@ -39,8 +39,8 @@ public class Controller {
     }
 
 
-    public Lager createLager(int pladser, String adresse, int maksKapacitet) {
-        Lager lager = new Lager(pladser, adresse, maksKapacitet);
+    public Lager createLager(String adresse) {
+        Lager lager = new Lager( adresse);
         Storage.addLager(lager);
         return lager;
     }
