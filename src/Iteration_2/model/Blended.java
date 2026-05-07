@@ -6,13 +6,26 @@ public class Blended implements Mix {
     private ArrayList<Mix> destillater;
     private String navn;
 
-    public Blended(ArrayList<Mix> destillater, String navn) {
+    public Blended(String navn) {
         this.destillater = new ArrayList<>();
         this.navn = navn;
     }
 
+    public void addDestillat(Mix destillat) {
+        if (!destillater.contains(destillat) && destillat != null)
+            destillater.add(destillat);
+    }
+
+    public void removeDestillat(Mix destillat) {
+        destillater.remove(destillat);
+    }
+
+    public String getNavn() {
+        return navn;
+    }
+
     @Override
-    public DestillatType getIndhold() {
-        return this;
+    public ArrayList<DestillatType> getIndhold() {
+        return new ArrayList<>(destillater);
     }
 }

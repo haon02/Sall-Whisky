@@ -17,6 +17,8 @@ public class Storage {
     private static List<Fad> fadList = new ArrayList<>();
     private static List<Produktionslinje> produktionslinjeList = new ArrayList<>();
     private static List<Leverandør> leverandørList = new ArrayList<>();
+    private static List<Destillat> destillatList = new ArrayList<>();
+    private static List<Single> singleList = new ArrayList<>();
 
     //
     // Storage to Serializable object so it holds element even after system restart
@@ -122,6 +124,23 @@ public class Storage {
             leverandørList.add(leverandør);
             saveToDisk();
         }
+    }
+    public static void addDestillat(Destillat destillat){
+        if (destillat != null && !destillatList.contains(destillat)){
+            destillatList.add(destillat);
+            saveToDisk();
+        }
+    }
+
+    public static void addSingle(Single single){
+        if (single != null && !singleList.contains(single)){
+            singleList.add(single);
+            saveToDisk();
+        }
+    }
+
+    public static void removeSingle(Single single){
+        singleList.remove(single);
     }
 
     // GETTERS

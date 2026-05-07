@@ -14,6 +14,7 @@ public class Fad implements Serializable {
     private int fadNummer;
     private static int fadNummerCounter = 1;
     private Lager lager;
+    private DestillatType destillatType;
 
     public Fad(double størrelseLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
         this.størrelseLiter = størrelseLiter;
@@ -24,8 +25,8 @@ public class Fad implements Serializable {
         this.leverandør = leverandør;
         this.fadNummer = fadNummerCounter;
         this.lager = lager;
+        this.destillatType = null;
         fadNummerCounter++;
-
     }
 
     public int getFadNummer() {
@@ -58,6 +59,18 @@ public class Fad implements Serializable {
 
     public boolean isTidligereBrugt() {
         return tidligereBrugt;
+    }
+
+    public void fyldFad(DestillatType destillat) {
+        this.destillatType = destillat;
+    }
+
+    public void tømFad() {
+        this.destillatType = null;
+    }
+
+    public DestillatType getDestillatType() {
+        return destillatType;
     }
 
 

@@ -1,5 +1,7 @@
 package Iteration_2.model;
 
+import Iteration_2.storage.Storage;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,30 +16,46 @@ public class Produktionslinje {
     private int mæskeTidMinutter;
     private Set<Medarbejder> medarbejderSet;
     private int idProduktionslinje;
+    private boolean afsluttet;
+    private int antalDestilleringer;
 
-    public Produktionslinje(Map<Korn, Double> kornMap, Map<Gær, Double> gærMap, double vandMængdeLiter, int mæskeTidMinutter, Set<Medarbejder> medarbejderSet) {
+    public Produktionslinje(Map<Korn, Double> kornMap, Map<Gær, Double> gærMap, double vandMængdeLiter, int mæskeTidMinutter, Set<Medarbejder> medarbejderSet, int antalDestilleringer) {
         this.kornMap = kornMap;
         this.gærMap = gærMap;
         this.vandMængdeLiter = vandMængdeLiter;
         this.mæskeTidMinutter = mæskeTidMinutter;
         this.medarbejderSet = medarbejderSet;
         this.idProduktionslinje = næsteId++;
+        this.afsluttet = false;
+        this.antalDestilleringer = antalDestilleringer;
     }
 
-    public void addMedarbejder(Medarbejder medarbejder){
-        medarbejderSet.add(medarbejder);
+    public Destillat createDestillat(double rentDestillatLiter, double vandTilføjetLiter, double slutAlkoholProcent) {
+        Destillat destillat = new Destillat(rentDestillatLiter, vandTilføjetLiter, slutAlkoholProcent, this);
+        return destillat;
+    }
+
+    public void afslutProdukitonsLinje() {
+        afsluttet = true;
+    }
+
+    public void genopstartProduktionsLinje() {
+        afsluttet = false;
+    }
+
+    public void addMedarbejder(Medarbejder medarbejder) {
+        if (!afsluttet)
+            medarbejderSet.add(medarbejder);
     }
 
     public void addKorn(Korn korn, double vægt) {
-        kornMap.put(korn,vægt);
+        if (!afsluttet)
+            kornMap.put(korn, vægt);
     }
 
     public void addGær(Gær gær, double vægt) {
-        gærMap.put(gær,vægt);
-    }
-
-    public static int getNæsteId() {
-        return næsteId;
+        if (!afsluttet)
+            gærMap.put(gær, vægt);
     }
 
     public Map<Korn, Double> getKornMap() {
