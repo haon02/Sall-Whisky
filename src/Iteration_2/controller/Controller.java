@@ -150,10 +150,10 @@ public class Controller {
 
     }
 
-    public void sætPåLager(Lager lager, Fad fad, Reol reol) {
+    public void sætPåLager(Lager lager, Fad fad) {
         boolean fundet = false;
         for (Reol r : lager.getReoler()) {
-            for (Hylde h : reol.getHylder()) {
+            for (Hylde h : r.getHylder()) {
                 if (!fundet) {
                     if (h.addFad(fad) > -1)
                         fundet = true;
@@ -163,6 +163,10 @@ public class Controller {
         if (!fundet) {
             System.out.println("Ingen ledige pladser");
         }
+    }
+
+    public void fyldFad(Fad fad, Produktionslinje produktionslinje, LocalDate dato) {
+        
     }
 
     // Getters
