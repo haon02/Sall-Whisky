@@ -42,14 +42,14 @@ public class Controller {
         return lager;
     }
 
-    public Hylde createHylde(int pladser, Reol reol){
+    public Hylde createHylde(int pladser, Reol reol) {
         Hylde hylde = reol.createHylde(pladser);
         reol.addHylde(hylde);
         return hylde;
     }
 
-    public Reol creatReol(Lager lager, Reol reol){
-        lager.createReol(lager);
+    public Reol creatReol(Lager lager, Reol reol) {
+        lager.createReol();
         lager.addReol(reol);
         return reol;
     }
@@ -132,6 +132,16 @@ public class Controller {
         return single;
     }
 
+    public void fjernFraLager(Fad fad) {
+        for (Reol r : fad.getLager().getReoler()) {
+            for (Hylde h : r.getHylder()) {
+                h.removeFad(fad);
+            }
+        }
+    }
+
+
+    // på en specifik hyldes plads
     public void sætPåLager(Lager lager, Reol reol, Hylde hylde, int plads, Fad fad) {
         if (!lager.getReoler().contains(reol))
             return;
@@ -141,6 +151,7 @@ public class Controller {
             return;
         if (hylde.contains(fad))
             return;
+        fjernFraLager(fad);
 
         if (hylde.addFad(fad, plads - 1)) {
             System.out.println("Sat på hylde");
@@ -150,19 +161,28 @@ public class Controller {
 
     }
 
+    // på første ledige plads på en reol
     public void sætPåLager(Lager lager, Fad fad, Reol reol) {
+        if (lager.getReoler().contains(reol)) {
+            fjernFraLager(fad);
+        }
         boolean fundet = false;
         for (Reol r : lager.getReoler()) {
             for (Hylde h : reol.getHylder()) {
                 if (!fundet) {
-                    if (h.addFad(fad) > -1)
+                    if (h.addFad(fad) > -1) {
                         fundet = true;
+                    }
                 }
             }
         }
         if (!fundet) {
             System.out.println("Ingen ledige pladser");
         }
+    }
+
+    public void fyldFad(Fad fad, DestillatType destillatType) {
+        fad.fyldFad(destillatType);
     }
 
     // Getters

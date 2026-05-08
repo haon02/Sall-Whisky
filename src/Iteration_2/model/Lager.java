@@ -11,7 +11,7 @@ public class Lager implements Serializable {
         this.adresse = adresse;
     }
 
-    public Reol createReol(Lager lager) {
+    public Reol createReol() {
         Reol reol = new Reol();
         reoler.add(reol);
         return reol;

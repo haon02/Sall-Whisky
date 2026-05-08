@@ -35,6 +35,10 @@ public class Produktionslinje {
         return destillat;
     }
 
+    public boolean erAfsluttet() {
+        return afsluttet;
+    }
+
     public void afslutProdukitonsLinje() {
         afsluttet = true;
     }

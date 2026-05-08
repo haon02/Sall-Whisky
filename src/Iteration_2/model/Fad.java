@@ -53,7 +53,7 @@ public class Fad implements Serializable {
         return beskrivelse;
     }
 
-    public boolean isErTom() {
+    public boolean ErTom() {
         return erTom;
     }
 
@@ -62,6 +62,8 @@ public class Fad implements Serializable {
     }
 
     public void fyldFad(DestillatType destillat) {
+        if (!erTom)
+            throw new IllegalArgumentException("Fadet skal være tomt");
         this.destillatType = destillat;
     }
 
@@ -76,7 +78,7 @@ public class Fad implements Serializable {
 
     @Override
     public String toString() {
-        if (isErTom() == true) {
+        if (ErTom() == true) {
             return "Fad " + beskrivelse + " tomt fad";
         } else {
             return "Fad " + beskrivelse + " fuldt fad";
