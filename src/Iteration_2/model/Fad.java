@@ -37,6 +37,10 @@ public class Fad implements Serializable {
         return leverandør;
     }
 
+    public void setLager(Lager lager) {
+        this.lager = lager;
+    }
+
     public Lager getLager() {
         return lager;
     }
