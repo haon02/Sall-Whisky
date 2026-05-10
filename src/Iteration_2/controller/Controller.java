@@ -133,6 +133,9 @@ public class Controller {
     }
 
     public void fjernFraLager(Fad fad) {
+        if (fad.getLager() == null) {
+            return;
+        }
         for (Reol r : fad.getLager().getReoler()) {
             for (Hylde h : r.getHylder()) {
                 h.removeFad(fad);
@@ -142,18 +145,18 @@ public class Controller {
 
 
     // på en specifik hyldes plads
-    public void sætPåLager(Lager lager, Reol reol, Hylde hylde, int plads, Fad fad) {
+    public void sætPåLager(Lager lager, Reol reol, Hylde hylde, Fad fad, int plads) {
         if (!lager.getReoler().contains(reol))
             return;
         if (!reol.getHylder().contains(hylde))
             return;
         if (hylde.getPladser() < plads)
             return;
-        if (hylde.contains(fad))
-            return;
+
         fjernFraLager(fad);
 
         if (hylde.addFad(fad, plads - 1)) {
+            fad.setLager(lager);
             System.out.println("Sat på hylde");
         } else {
             System.out.println("Kan ikke placeres på denne plads");
@@ -162,7 +165,7 @@ public class Controller {
     }
 
     // på første ledige plads på en reol
-    public void sætPåLager(Lager lager, Fad fad, Reol reol) {
+    public void sætPåLager(Lager lager, Reol reol, Fad fad) {
         if (lager.getReoler().contains(reol)) {
             fjernFraLager(fad);
         }
@@ -172,6 +175,7 @@ public class Controller {
                 if (!fundet) {
                     if (h.addFad(fad) > -1) {
                         fundet = true;
+                        fad.setLager(lager);
                     }
                 }
             }

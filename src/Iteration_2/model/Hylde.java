@@ -6,6 +6,7 @@ public class Hylde {
 
     Hylde(int pladser) {
         fade = new Fad[pladser];
+        this.pladser = pladser;
     }
 
     public int getPladser() {
