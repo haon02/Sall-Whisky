@@ -1,6 +1,10 @@
 package Iteration_2.model;
 
-public class Medarbejder {
+import java.io.Serializable;
+
+public class Medarbejder implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String navn;
     private String adresse;
     private int medarbejderID;

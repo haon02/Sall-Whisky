@@ -1,6 +1,10 @@
 package Iteration_2.model;
 
-public class Destillat {
+import java.io.Serializable;
+
+public class Destillat implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private double rentDestillatLiter;
     private double vandTilføjetLiter;
     private double slutAlkoholProcent;

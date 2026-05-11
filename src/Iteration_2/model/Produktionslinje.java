@@ -2,12 +2,16 @@ package Iteration_2.model;
 
 import Iteration_2.storage.Storage;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class Produktionslinje {
+public class Produktionslinje implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+
     private static int næsteId = 1;  // deles på tværs af alle instanser
 
     private Map<Korn, Double> kornMap;
