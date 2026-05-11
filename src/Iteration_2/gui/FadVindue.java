@@ -150,7 +150,7 @@ public class FadVindue {
         knapRaekke.getChildren().addAll(gemKnap, annullerKnap);
         root.addNode(knapRaekke);
 
-        Scene scene = new Scene(root, 340, 500);
+        Scene scene = new Scene(root, 340, 600);
         stage.setScene(scene);
         stage.showAndWait();
 
