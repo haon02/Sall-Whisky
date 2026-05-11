@@ -2,6 +2,8 @@ package Iteration_2.gui;
 
 import Iteration_2.controller.Controller;
 import Iteration_2.model.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -14,6 +16,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.List;
 
@@ -32,6 +35,7 @@ public class LagerStatusVindue {
     private Label infoTitel, infoStørrelse, infoType, infoStatus, infoLeverandør;
     private GridPane grid;
     private ScrollPane scrollPane;
+    private Timeline refreshTimeline;
 
     public LagerStatusVindue(Stage owner) {
         this.owner = owner;
@@ -70,6 +74,16 @@ public class LagerStatusVindue {
             opdaterGrid();
         }
 
+        // Opdater grid hvert sekund automatisk
+        refreshTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), e -> opdaterGrid())
+        );
+        refreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        refreshTimeline.play();
+
+        // Stop timeline når vinduet lukkes
+        stage.setOnHiding(e -> refreshTimeline.stop());
+
         Scene scene = new Scene(root, 920, 600);
         stage.setScene(scene);
         stage.showAndWait();
@@ -77,6 +91,13 @@ public class LagerStatusVindue {
 
     private void opdaterGrid() {
         if (aktivLager == null) return;
+
+        // Synkroniser aktivLager med den opdaterede liste fra storage
+        List<Lager> lagre = controller.getLagerList();
+        int idx = lagre.indexOf(aktivLager);
+        if (idx >= 0) {
+            aktivLager = lagre.get(idx);
+        }
 
         grid = new GridPane();
         grid.setHgap(CELLE_GAP);
@@ -138,12 +159,14 @@ public class LagerStatusVindue {
             pane.getChildren().add(cirkel);
 
             pane.setOnMouseEntered(e -> {
-                cirkel.setScaleX(1.1); cirkel.setScaleY(1.1);
+                cirkel.setScaleX(1.1);
+                cirkel.setScaleY(1.1);
                 visInfo(fad);
                 pane.setCursor(Cursor.HAND);
             });
             pane.setOnMouseExited(e -> {
-                cirkel.setScaleX(1.0); cirkel.setScaleY(1.0);
+                cirkel.setScaleX(1.0);
+                cirkel.setScaleY(1.0);
             });
 
             pane.setOnDragDetected(e -> {
@@ -272,7 +295,8 @@ public class LagerStatusVindue {
         bund.setStyle("-fx-background-color: #F0EFE8; -fx-border-color: #DDDDDD transparent transparent transparent;");
         Button luk = new Button("Tilbage");
         luk.setOnAction(e -> stage.close());
-        Region s = new Region(); HBox.setHgrow(s, Priority.ALWAYS);
+        Region s = new Region();
+        HBox.setHgrow(s, Priority.ALWAYS);
         bund.getChildren().addAll(new Label("Rød = Fyldt, Cirkel = Fad, Firkant = Ledig"), s, luk);
         return bund;
     }
