@@ -28,4 +28,9 @@ public class Destillat {
     public Produktionslinje getProduktionslinje() {
         return produktionslinje;
     }
+
+    public double reducer(double mængde) {
+        double nyDestillatmængde = (getRentDestillatLiter() + getVandTilføjetLiter()) - mængde;
+        return nyDestillatmængde;
+    }
 }
