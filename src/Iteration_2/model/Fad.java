@@ -15,6 +15,7 @@ public class Fad implements Serializable {
     private static int fadNummerCounter = 1;
     private Lager lager;
     private DestillatType destillatType;
+    private double mængdeDestillatLiter;
 
     public Fad(double størrelseLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
         this.størrelseLiter = størrelseLiter;
@@ -27,6 +28,11 @@ public class Fad implements Serializable {
         this.lager = lager;
         this.destillatType = null;
         fadNummerCounter++;
+        mængdeDestillatLiter = 0;
+    }
+
+    public double getMængdeDestillatLiter() {
+        return mængdeDestillatLiter;
     }
 
     public int getFadNummer() {
@@ -57,7 +63,7 @@ public class Fad implements Serializable {
         return beskrivelse;
     }
 
-    public boolean ErTom() {
+    public boolean erTom() {
         return erTom;
     }
 
@@ -65,24 +71,31 @@ public class Fad implements Serializable {
         return tidligereBrugt;
     }
 
-    public void fyldFad(DestillatType destillat) {
-        if (!erTom)
+    public DestillatType getDestillatType() {
+        return destillatType;
+    }
+    public void fyldFad(DestillatType destillat, double mængde) {
+        if (!erTom) {
             throw new IllegalArgumentException("Fadet skal være tomt");
+        }
+        if (mængde > størrelseLiter) {
+            throw new IllegalArgumentException("Mængde er større end fadet");
+        }
         this.destillatType = destillat;
+        this.mængdeDestillatLiter = mængde;
+        this.erTom = false;
     }
 
     public void tømFad() {
         this.destillatType = null;
+        this.erTom = true;
     }
 
-    public DestillatType getDestillatType() {
-        return destillatType;
-    }
 
 
     @Override
     public String toString() {
-        if (ErTom() == true) {
+        if (erTom() == true) {
             return "Fad " + beskrivelse + " tomt fad";
         } else {
             return "Fad " + beskrivelse + " fuldt fad";

@@ -1,5 +1,6 @@
 package Iteration_2;
 
+import Iteration_2.controller.Controller;
 import Iteration_2.model.*;
 import org.junit.jupiter.api.*;
 
@@ -11,97 +12,43 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * UC5 – Påfyldning af fad
- *
+ * <p>
  * Lager-hierarki: Lager → Reol → Hylde → Fad[]
- *
+ * <p>
  * UC4 er IKKE en klasse – det er blot logikken der:
- *   - trin 1: fjerner fadet fra sin hylde (sætter plads til null)
- *   - trin 3: placerer fadet på en hylde igen
+ * - trin 1: fjerner fadet fra sin hylde (sætter plads til null)
+ * - trin 3: placerer fadet på en hylde igen
  * Det udtrykkes her som to private hjælpemetoder i controlleren.
  */
 class PåfyldningControllerTest {
-
-    // ── Controller (spejler UC5-flowet) ───────────────────────────────────────
-
-    static class PåfyldningController {
-
-        /**
-         * UC4 (fjern fra lager): find det første tomme fad på lageret.
-         * Fadet "fjernes" ved at dets lager-reference sættes til null.
-         * Kaster IllegalStateException hvis ingen tomme fade findes.
-         */
-        Fad vælgFad(Lager lager) {
-            for (Reol reol : lager.getReoler()) {
-                for (Hylde hylde : reol.getHylder()) {
-                    for (Fad fad : hylde.getFade()) {
-                        if (fad != null && fad.ErTom()) {
-                            fad.setLager(null); // fjern fra lager
-                            return fad;
-                        }
-                    }
-                }
-            }
-            throw new IllegalStateException("Ingen tomme fade på lager");
-        }
-
-        /**
-         * Trin 2: Påfyld fadet med destillat.
-         * - mængde må ikke overstige fadets størrelse
-         * - destillat.reducer() returnerer restmængden (muterer ikke feltet)
-         * - fyldFad() markerer fadet som ikke-tomt
-         *
-         * Returnerer den beregnede restmængde.
-         */
-        double tilføjDestillat(Fad fad, Destillat destillat,
-                               DestillatType destillatType, double mængde) {
-            if (mængde < 0)
-                throw new IllegalArgumentException("Mængde må ikke være negativ");
-            if (mængde > fad.getStørrelseLiter())
-                throw new IllegalArgumentException("Mængden overstiger fadets kapacitet");
-
-            double restmængde = destillat.reducer(mængde);
-            fad.fyldFad(destillatType);
-            return restmængde;
-        }
-
-        /**
-         * UC4 (sæt på lager): placer fadet på den første ledige plads på hylden.
-         * Kaster IllegalStateException hvis hylden er fuld.
-         */
-        void sætPåLager(Fad fad, Hylde hylde, Lager lager) {
-            hylde.addFad(fad);   // kaster exception hvis ingen plads
-            fad.setLager(lager);
-        }
-    }
-
     // ── Fixtures ──────────────────────────────────────────────────────────────
 
-    private static final double RENT_DESTILLAT   = 300.0;
-    private static final double VAND_TILFØJET    = 200.0;
+    private static final double RENT_DESTILLAT = 300.0;
+    private static final double VAND_TILFØJET = 200.0;
     private static final double TOTAL_BEHOLDNING = RENT_DESTILLAT + VAND_TILFØJET; // 500.0
-    private static final double FAD_STØRRELSE    = 200.0;
+    private static final double FAD_STØRRELSE = 200.0;
 
-    private PåfyldningController controller;
-    private Destillat             destillat;
-    private Fad                   fad;
-    private Lager                 lager;
-    private Reol                  reol;
-    private Hylde                 hylde;
-    private Leverandør            leverandør;
-    private DestillatType         destillatType;
-    private Produktionslinje      produktionslinje;
+    private Controller controller;
+    private Destillat destillat;
+    private Fad fad;
+    private Lager lager;
+    private Reol reol;
+    private Hylde hylde;
+    private Leverandør leverandør;
+    private DestillatType destillatType;
+    private Produktionslinje produktionslinje;
 
     @BeforeEach
     void setUp() {
-        controller = new PåfyldningController();
+        controller = new Controller();
 
         // Lager-hierarki: Lager → Reol → Hylde (3 pladser)
         lager = new Lager("Testvej 1");
-        reol  = lager.createReol();
+        reol = lager.createReol();
         hylde = reol.createHylde(3);
 
         // Leverandør til Fad-konstruktøren
-        leverandør = new Leverandør("Jens",1232,"Ham der den høje fra novo");
+        leverandør = new Leverandør("Jens", 1232, "Ham der den høje fra novo");
 
         // Tomt fad placeret på hylden
         fad = new Fad(
@@ -124,8 +71,8 @@ class PåfyldningControllerTest {
                 new HashSet<>(),
                 2
         );
-        destillat    = produktionslinje.createDestillat(RENT_DESTILLAT, VAND_TILFØJET, 63.5);
-        DestillatType destillatType = new SingleCask(100,destillat);
+        destillat = produktionslinje.createDestillat(RENT_DESTILLAT, VAND_TILFØJET, 63.5);
+        DestillatType destillatType = new SingleCask(100, destillat);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -173,13 +120,13 @@ class PåfyldningControllerTest {
     void vælgFad_kun_fyldte_fade_giver_exception() {
         // Fyld fadet manuelt så det ikke er tomt
         // assign
-
+        double mængde = 150;
         //act
-        fad.fyldFad(destillatType);
+        controller.fyldFad(fad, destillatType, mængde);
 
         // assert
-        assertThrows(IllegalStateException.class,
-                () -> controller.vælgFad(lager));
+        assertThrows(IllegalArgumentException.class,
+                () -> controller.fyldFad(fad, destillatType, mængde));
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -205,14 +152,14 @@ class PåfyldningControllerTest {
         controller.tilføjDestillat(fad, destillat, destillatType, 150.0);
 
         // assert
-        assertFalse(fad.ErTom());
+        assertFalse(fad.erTom());
     }
 
     @Test
     @DisplayName("Trin 2: massebalance – fad-mængde + restmængde = original beholdning")
     void påfyldning_massebalance_er_bevaret() {
         // assign
-        double påfyldt    = 150.0;
+        double påfyldt = 150.0;
         double restmængde = controller.tilføjDestillat(fad, destillat, destillatType, påfyldt);
 
         //act & assert
@@ -243,7 +190,7 @@ class PåfyldningControllerTest {
         assertThrows(IllegalArgumentException.class,
                 () -> controller.tilføjDestillat(fad, destillat, destillatType, FAD_STØRRELSE + 1));
 
-        assertTrue(fad.ErTom(), "Fadet skal stadig være tomt når påfyldning afvises");
+        assertTrue(fad.erTom(), "Fadet skal stadig være tomt når påfyldning afvises");
     }
 
     @Test
@@ -252,7 +199,7 @@ class PåfyldningControllerTest {
         // assert
 
         //act
-        fad.fyldFad(destillatType); // fyld fadet manuelt
+        fad.fyldFad(destillatType, 1); // fyld fadet manuelt
 
         // assert
         // fyldFad() kaster selv IllegalArgumentException når fadet ikke er tomt
@@ -313,8 +260,8 @@ class PåfyldningControllerTest {
         controller.sætPåLager(valgt, hylde, lager);
 
         assertAll("Slutkontrol",
-                () -> assertFalse(valgt.ErTom(),                       "Fad skal ikke være tomt"),
-                () -> assertSame(lager, valgt.getLager(),              "Fad skal pege på lageret"),
+                () -> assertFalse(valgt.erTom(), "Fad skal ikke være tomt"),
+                () -> assertSame(lager, valgt.getLager(), "Fad skal pege på lageret"),
                 () -> assertSame(destillatType, valgt.getDestillatType(), "Fad skal have korrekt destillatType"),
                 () -> assertEquals(TOTAL_BEHOLDNING - påfyldt, restmængde, 1e-9,
                         "Restmængde skal svare til beholdning minus påfyldt"),

@@ -92,7 +92,8 @@ public class Controller {
             throw new IllegalArgumentException("Vælg et konkret fad");
         }
         SingleCask singleCask = new SingleCask(mængdeLiter, destillat);
-        fad.fyldFad(singleCask);
+        fad.fyldFad(singleCask, mængdeLiter);
+        destillat.reducer(mængdeLiter); // benytter ikke single derfor kalder den selv reducer
         return singleCask;
     }
 
@@ -101,13 +102,15 @@ public class Controller {
             throw new IllegalArgumentException("Vælg et konkret fad");
         }
         Blended blended = new Blended(navn);
+        double mængde = 0;
         for (Mix m : destillater) {
             if (m instanceof Single single) {
                 blended.addDestillat(m);
+                mængde += single.getMængdeLiter();
                 Storage.removeSingle(single);
             }
         }
-        fad.fyldFad(blended);
+        fad.fyldFad(blended, mængde);
         return blended;
     }
 
@@ -116,18 +119,21 @@ public class Controller {
             throw new IllegalArgumentException("Vælg et konkret fad");
         }
         SingleMalt singleMalt = new SingleMalt(navn);
+        double mængde = 0;
         for (Mix m : destillater) {
             if (m instanceof Single single) {
                 singleMalt.add(single);
+                mængde += single.getMængdeLiter();
                 Storage.removeSingle(single);
             }
         }
-        fad.fyldFad(singleMalt);
+        fad.fyldFad(singleMalt, mængde);
         return singleMalt;
     }
 
     public Single createSingle(Destillat destillat, double mængdeLiter, String destilleri) {
         Single single = new Single(destillat, mængdeLiter, destilleri);
+        destillat.reducer(mængdeLiter); // alle andre destillattyper pånær singlecask benytter sig single derfor kaldes den her istedet for på hver.
         Storage.addSingle(single);
         return single;
     }
@@ -171,7 +177,7 @@ public class Controller {
         }
         boolean fundet = false;
         for (Reol r : lager.getReoler()) {
-            for (Hylde h : reol.getHylder()) {
+            for (Hylde h : r.getHylder()) {
                 if (!fundet) {
                     if (h.addFad(fad) > -1) {
                         fundet = true;
@@ -185,8 +191,41 @@ public class Controller {
         }
     }
 
-    public void fyldFad(Fad fad, DestillatType destillatType) {
-        fad.fyldFad(destillatType);
+   public double tilføjDestillat(Fad fad, Destillat destillat,
+                           DestillatType destillatType, double mængde) {
+        if (mængde < 0)
+            throw new IllegalArgumentException("Mængde må ikke være negativ");
+        if (mængde > fad.getStørrelseLiter())
+            throw new IllegalArgumentException("Mængden overstiger fadets kapacitet");
+
+        destillat.reducer(mængde);
+        double restmængde = destillat.getResterendeMængde();
+        fad.fyldFad(destillatType, mængde);
+        return restmængde;
+    }
+
+    public Fad vælgFad(Lager lager) {
+        for (Reol reol : lager.getReoler()) {
+            for (Hylde hylde : reol.getHylder()) {
+                for (Fad fad : hylde.getFade()) {
+                    if (fad != null && fad.erTom()) {
+                        fad.setLager(null); // fjern fra lager
+                        return fad;
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException("Ingen tomme fade på lager");
+    }
+
+    public void sætPåLager(Fad fad, Hylde hylde, Lager lager) {
+        hylde.addFad(fad);   // kaster exception hvis ingen plads
+        fad.setLager(lager);
+    }
+
+    public void fyldFad(Fad fad, DestillatType destillatType, double mængde) {
+
+        fad.fyldFad(destillatType,mængde);
     }
 
     // Getters
