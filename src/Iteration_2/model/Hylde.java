@@ -5,8 +5,8 @@ public class Hylde {
     private Fad[] fade;
 
     Hylde(int pladser) {
-        fade = new Fad[pladser];
         this.pladser = pladser;
+        fade = new Fad[pladser];
     }
 
     public int getPladser() { return pladser; }

@@ -183,6 +183,14 @@ public class FadVindue {
             alert.showAndWait();
             return false;
         }
+        try {
+            Integer.parseInt(størrelseField.getText());
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Fejl i fadstørrelse");
+            alert.setHeaderText("Fadstørrelsen skal være et tal (f.eks. 100). Du har skrevet:" + størrelseField.getText());
+            return false;
+        }
         return true;
     }
 

@@ -36,10 +36,19 @@ public class Controller {
     }
 
 
-    public Lager createLager(String adresse) {
-        Lager lager = new Lager(adresse);
-        Storage.addLager(lager);
-        return lager;
+    public Lager createLager(String adresse, int antalReoler, int hylderPrReol, int pladserPrHylde) {
+        // 1. Opret selve lageret
+        Lager nytLager = new Lager(adresse);
+        Storage.addLager(nytLager);
+
+        // 2. Byg strukturen
+        for (int r = 0; r < antalReoler; r++) {
+            Reol reol = nytLager.createReol(); // Bruger metoden i din Lager-klasse
+            for (int h = 0; h < hylderPrReol; h++) {
+                reol.createHylde(pladserPrHylde); // Bruger metoden i din Reol-klasse
+            }
+        }
+        return nytLager;
     }
 
     public Hylde createHylde(int pladser, Reol reol) {
