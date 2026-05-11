@@ -53,16 +53,8 @@ public class Controller {
 
     public Hylde createHylde(int pladser, Reol reol) {
         Hylde hylde = reol.createHylde(pladser);
-        reol.addHylde(hylde);
         return hylde;
     }
-
-    public Reol creatReol(Lager lager, Reol reol) {
-        lager.createReol();
-        lager.addReol(reol);
-        return reol;
-    }
-
 
     public Gær createGær(String navn, String produktKode, boolean erVæske, double minTemp, double maksTemp, double alkoholTolerance, String beskrivelse) {
         Gær gær = new Gær(navn, produktKode, erVæske, minTemp, maksTemp, alkoholTolerance, beskrivelse);

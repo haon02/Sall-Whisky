@@ -173,7 +173,7 @@ public class LagerStatusVindue {
         pane.setOnDragDropped(e -> {
             if (dragFad != null) {
                 controller.fjernFraLager(dragFad);
-                // Pladsindeks i din controller er typisk 1-baseret (plads 1, 2, 3...)
+                // sætPåLager() trækker selv 1 fra (plads - 1)
                 controller.sætPåLager(aktivLager, reol, hylde, dragFad, pladsIndex + 1);
                 dragFad = null;
                 opdaterGrid();

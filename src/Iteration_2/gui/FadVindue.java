@@ -203,7 +203,7 @@ public class FadVindue {
         return confirmed;
     }
 
-    public int getFadstørrelse() {
+    public double getFadstørrelse() {
         return Integer.parseInt(størrelseField.getText());
     }
 

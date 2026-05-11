@@ -1,12 +1,15 @@
 package Iteration_2.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Reol {
+public class Reol implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private ArrayList<Hylde> hylder;
 
 
-    Reol(){
+    public Reol(){
         this.hylder = new ArrayList<>();
     }
 

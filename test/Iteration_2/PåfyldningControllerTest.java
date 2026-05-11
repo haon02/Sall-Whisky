@@ -72,7 +72,7 @@ class PåfyldningControllerTest {
                 2
         );
         destillat = produktionslinje.createDestillat(RENT_DESTILLAT, VAND_TILFØJET, 63.5);
-        DestillatType destillatType = new SingleCask(100, destillat);
+        destillatType = new SingleCask(100, destillat);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
