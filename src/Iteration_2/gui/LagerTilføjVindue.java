@@ -11,7 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class LagerTilføjVindue {
-    private final Controller controller = new Controller();
+    private final Controller controller;
     private Stage stage;
     private final Stage owner;
 
@@ -22,9 +22,9 @@ public class LagerTilføjVindue {
 
     private boolean confirmed = false;
 
-    public LagerTilføjVindue(Stage owner) {
+    public LagerTilføjVindue(Stage owner, Controller controller) {
         this.owner = owner;
-        controller.init();
+        this.controller = controller;
     }
 
     public void showAndWait() {

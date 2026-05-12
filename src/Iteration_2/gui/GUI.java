@@ -25,7 +25,7 @@ public class GUI extends Application {
     private void initContent(GridPane pane) {
         SectionVBox hovedMenu = new SectionVBox("Hoved menu");
         hovedMenu.addButton("LagerOversigt" , event -> {
-            LagerStatusVindue lagerVindue = new LagerStatusVindue(primaryStage);
+            LagerStatusVindue lagerVindue = new LagerStatusVindue(primaryStage, controller);
             lagerVindue.showAndWait();
         });
         pane.add(hovedMenu, 0, 0);
@@ -33,27 +33,27 @@ public class GUI extends Application {
         SectionVBox resourceMenu = new SectionVBox("Ressourcer");
 
         resourceMenu.addButton("Tilføj ny produktionslinje", event -> {
-            ProduktionslinjeVindue addProductionLine = new ProduktionslinjeVindue(primaryStage);
+            ProduktionslinjeVindue addProductionLine = new ProduktionslinjeVindue(primaryStage, controller);
             addProductionLine.showAndWait();
         });
         resourceMenu.addButton("Tilføj ny korntype", event -> {
-            KornTypeVindue addKornType = new KornTypeVindue(primaryStage);
+            KornTypeVindue addKornType = new KornTypeVindue(primaryStage, controller);
             addKornType.showAndWait();
         });
         resourceMenu.addButton("Tilføj ny gærtype", event -> {
-            GaerTypeVindue addGaerType = new GaerTypeVindue(primaryStage);
+            GaerTypeVindue addGaerType = new GaerTypeVindue(primaryStage, controller);
             addGaerType.showAndWait();
         });
         resourceMenu.addButton("Tilføj nyt fad", event -> {
-            FadVindue fadVindue = new FadVindue(primaryStage);
+            FadVindue fadVindue = new FadVindue(primaryStage, controller);
             fadVindue.showAndWait();
         });
         resourceMenu.addButton("Tilføj nyt lager", event -> {
-            LagerTilføjVindue lagerVindue = new LagerTilføjVindue(primaryStage);
+            LagerTilføjVindue lagerVindue = new LagerTilføjVindue(primaryStage, controller);
             lagerVindue.showAndWait();
         });
         resourceMenu.addButton("Tilføj ny leverandør", event -> {
-            LeverandørTilføjVindue leverandørVindue = new LeverandørTilføjVindue(primaryStage);
+            LeverandørTilføjVindue leverandørVindue = new LeverandørTilføjVindue(primaryStage, controller);
             leverandørVindue.showAndWait();
         });
 

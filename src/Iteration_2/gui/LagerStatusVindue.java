@@ -25,21 +25,27 @@ public class LagerStatusVindue {
     private static final int CELLE_SIZE = 36;
     private static final int CELLE_GAP = 4;
 
-    private final Controller controller = new Controller();
+    private final Controller controller;
     private Stage stage;
     private final Stage owner;
 
     private Fad dragFad;
-    private Lager aktivLager;
+    private int aktivIndex = 0;
 
-    private Label infoTitel, infoStørrelse, infoType, infoStatus, infoLeverandør;
+    private Label infoTitel, infoStørrelse, infoStatus;
     private GridPane grid;
     private ScrollPane scrollPane;
     private Timeline refreshTimeline;
 
-    public LagerStatusVindue(Stage owner) {
+    public LagerStatusVindue(Stage owner, Controller controller) {
         this.owner = owner;
-        controller.init();
+        this.controller = controller;
+    }
+
+    private Lager getAktivLager() {
+        List<Lager> lagre = controller.getLagerList();
+        if (lagre.isEmpty()) return null;
+        return lagre.get(Math.min(aktivIndex, lagre.size() - 1));
     }
 
     public void showAndWait() {
@@ -58,6 +64,7 @@ public class LagerStatusVindue {
         center.setPadding(new Insets(12, 16, 12, 16));
 
         scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(false);
         scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
         HBox.setHgrow(scrollPane, Priority.ALWAYS);
 
@@ -69,20 +76,16 @@ public class LagerStatusVindue {
         root.setCenter(center);
         root.setBottom(byggBund());
 
-        List<Lager> lagre = controller.getLagerList();
-        if (!lagre.isEmpty()) {
-            aktivLager = lagre.get(0);
+        if (!controller.getLagerList().isEmpty()) {
             opdaterGrid();
         }
 
-        // Opdater grid hvert sekund automatisk
         refreshTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(1), e -> opdaterGrid())
         );
         refreshTimeline.setCycleCount(Timeline.INDEFINITE);
         refreshTimeline.play();
 
-        // Stop timeline når vinduet lukkes
         stage.setOnHiding(e -> refreshTimeline.stop());
 
         Scene scene = new Scene(root, 920, 600);
@@ -90,15 +93,23 @@ public class LagerStatusVindue {
         stage.showAndWait();
     }
 
+    /**
+     * Grid layout:
+     * <p>
+     * col 0        = R-labels (R1, R2 ...)
+     * col 1+       = one column per FAD SLOT across all shelves
+     * <p>
+     * Header row (row 0):
+     * Each shelf gets a separator label "| H1 |" that spans its fad-slot columns,
+     * and each individual fad slot gets a thin slot-number sub-header in row 1.
+     * <p>
+     * Data rows start at row 2.
+     * <p>
+     * This means H-headers and fad circles are perfectly aligned.
+     */
     private void opdaterGrid() {
+        Lager aktivLager = getAktivLager();
         if (aktivLager == null) return;
-
-        // Synkroniser aktivLager med den opdaterede liste fra storage
-        List<Lager> lagre = controller.getLagerList();
-        int idx = lagre.indexOf(aktivLager);
-        if (idx >= 0) {
-            aktivLager = lagre.get(idx);
-        }
 
         grid = new GridPane();
         grid.setHgap(CELLE_GAP);
@@ -107,38 +118,77 @@ public class LagerStatusVindue {
         grid.setStyle("-fx-background-color: #F0EFE8; -fx-background-radius: 6;");
 
         List<Reol> reoler = aktivLager.getReoler();
-        int maxHylder = reoler.stream().mapToInt(r -> r.getHylder().size()).max().orElse(0);
 
-        for (int h = 0; h < maxHylder; h++) {
-            Label hl = new Label("H" + (h + 1));
-            hl.setStyle("-fx-font-size: 10px; -fx-text-fill: #888888;");
-            hl.setMinWidth(CELLE_SIZE);
-            hl.setAlignment(Pos.CENTER);
-            grid.add(hl, h + 1, 0);
+        // Find the maximum number of shelves across all reoler,
+        // and the max number of fad slots per shelf (pladser).
+        // We need the total column count = sum of pladser across all hylder in one reol.
+        // Since every reol has the same structure (created via createLager), we use reol 0.
+        // If for some reason they differ, we take the maximum.
+        int maxSlotsPerReol = 0;
+        int maxHylder = 0;
+        for (Reol r : reoler) {
+            maxHylder = Math.max(maxHylder, r.getHylder().size());
+            int slotsThisReol = 0;
+            for (Hylde h : r.getHylder()) {
+                slotsThisReol += h.getPladser();
+            }
+            maxSlotsPerReol = Math.max(maxSlotsPerReol, slotsThisReol);
         }
 
+        // ── Header row 0: shelf labels (Hx) ──────────────────────────────────
+        // We iterate the first reol to know how wide each shelf is,
+        // then place a spanning label for each shelf.
+        // col 0 is reserved for R-labels. Shelf columns start at col 1.
+        int gridCol = 1; // current grid column cursor
+        if (!reoler.isEmpty()) {
+            Reol referenceReol = reoler.get(0);
+            for (int hi = 0; hi < referenceReol.getHylder().size(); hi++) {
+                Hylde hylde = referenceReol.getHylder().get(hi);
+                int pladser = hylde.getPladser();
+
+                Label hyldeLbl = new Label("H" + (hi + 1));
+                hyldeLbl.setStyle(
+                        "-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #555555;" +
+                                "-fx-border-color: transparent transparent #AAAAAA transparent;" +
+                                "-fx-padding: 0 4 2 4;"
+                );
+                hyldeLbl.setMaxWidth(Double.MAX_VALUE);
+                hyldeLbl.setAlignment(Pos.CENTER);
+
+                // Span across as many grid columns as this shelf has fad slots
+                GridPane.setColumnSpan(hyldeLbl, pladser);
+                grid.add(hyldeLbl, gridCol, 0);
+
+                gridCol += pladser;
+            }
+        }
+
+        // ── Data rows: one per reol ────────────────────────────────────────────
         for (int ri = 0; ri < reoler.size(); ri++) {
             Reol reol = reoler.get(ri);
-            Label rl = new Label("R" + (ri + 1));
-            rl.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #1A1A2E;");
-            rl.setMinWidth(28);
-            rl.setAlignment(Pos.CENTER_RIGHT);
-            grid.add(rl, 0, ri + 1);
 
+            // R-label in column 0
+            Label reolLbl = new Label("R" + (ri + 1));
+            reolLbl.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #1A1A2E;");
+            reolLbl.setMinWidth(28);
+            reolLbl.setAlignment(Pos.CENTER_RIGHT);
+            grid.add(reolLbl, 0, ri + 1);
+
+            // Fad slots: each slot is its own grid column
+            int col = 1;
             List<Hylde> hylder = reol.getHylder();
             for (int hi = 0; hi < hylder.size(); hi++) {
                 Hylde hylde = hylder.get(hi);
                 Fad[] fade = hylde.getFade();
 
-                HBox hyldeBox = new HBox(2);
-                hyldeBox.setAlignment(Pos.CENTER);
-
                 for (int fi = 0; fi < fade.length; fi++) {
-                    hyldeBox.getChildren().add(byggCelle(fade[fi], reol, hylde, fi));
+                    StackPane celle = byggCelle(fade[fi], reol, hylde, fi);
+                    grid.add(celle, col, ri + 1);
+                    col++;
                 }
-                grid.add(hyldeBox, hi + 1, ri + 1);
             }
         }
+
         scrollPane.setContent(grid);
     }
 
@@ -196,8 +246,8 @@ public class LagerStatusVindue {
 
         pane.setOnDragDropped(e -> {
             if (dragFad != null) {
+                Lager aktivLager = getAktivLager();
                 controller.fjernFraLager(dragFad);
-                // sætPåLager() trækker selv 1 fra (plads - 1)
                 controller.sætPåLager(aktivLager, reol, hylde, dragFad, pladsIndex + 1);
                 dragFad = null;
                 opdaterGrid();
@@ -215,7 +265,7 @@ public class LagerStatusVindue {
         return rect;
     }
 
-    // ── HJÆLPE METODER (Layout & Navigation) ──────────────────────────────────
+    // ── Layout helpers ────────────────────────────────────────────────────────
 
     private HBox byggTop() {
         HBox top = new HBox(8);
@@ -231,6 +281,7 @@ public class LagerStatusVindue {
 
         Button forrige = new Button("‹");
         forrige.setStyle(navKnapStyle());
+
         Label lagerNavn = new Label();
         lagerNavn.setStyle("-fx-text-fill: white; -fx-min-width: 140px; -fx-alignment: center;");
         opdaterLagerLabel(lagerNavn);
@@ -238,8 +289,14 @@ public class LagerStatusVindue {
         Button næste = new Button("›");
         næste.setStyle(navKnapStyle());
 
-        forrige.setOnAction(e -> { skiftLager(-1); opdaterLagerLabel(lagerNavn); });
-        næste.setOnAction(e -> { skiftLager(1); opdaterLagerLabel(lagerNavn); });
+        forrige.setOnAction(e -> {
+            skiftLager(-1);
+            opdaterLagerLabel(lagerNavn);
+        });
+        næste.setOnAction(e -> {
+            skiftLager(1);
+            opdaterLagerLabel(lagerNavn);
+        });
 
         top.getChildren().addAll(titel, spacer, forrige, lagerNavn, næste);
         return top;
@@ -248,14 +305,13 @@ public class LagerStatusVindue {
     private void skiftLager(int retning) {
         List<Lager> lagre = controller.getLagerList();
         if (lagre.isEmpty()) return;
-        int idx = lagre.indexOf(aktivLager);
-        idx = Math.floorMod(idx + retning, lagre.size());
-        aktivLager = lagre.get(idx);
+        aktivIndex = Math.floorMod(aktivIndex + retning, lagre.size());
         opdaterGrid();
     }
 
     private void opdaterLagerLabel(Label label) {
-        label.setText(aktivLager != null ? "\"" + aktivLager.getAdresse() + "\"" : "– intet lager –");
+        Lager l = getAktivLager();
+        label.setText(l != null ? "\"" + l.getAdresse() + "\"" : "– intet lager –");
     }
 
     private VBox byggInfoPanel() {
@@ -268,14 +324,15 @@ public class LagerStatusVindue {
 
         infoTitel = new Label("–");
         infoStørrelse = new Label("–");
-        infoType = new Label("–");
         infoStatus = new Label("–");
-        infoLeverandør = new Label("–");
 
-        panel.getChildren().addAll(overskrift, new Separator(),
+        panel.getChildren().addAll(
+                overskrift,
+                new Separator(),
                 new HBox(5, new Label("Navn:"), infoTitel),
                 new HBox(5, new Label("Liter:"), infoStørrelse),
-                new HBox(5, new Label("Status:"), infoStatus));
+                new HBox(5, new Label("Status:"), infoStatus)
+        );
         return panel;
     }
 
@@ -284,7 +341,6 @@ public class LagerStatusVindue {
         infoTitel.setText(fad.getBeskrivelse());
         infoStørrelse.setText(fad.getStørrelseLiter() + " L");
         infoStatus.setText(fad.erTom() ? "Tom" : "Fyldt");
-        infoLeverandør.setText(fad.getLeverandør().getBeskrivelse());
     }
 
     private String navKnapStyle() {
@@ -299,7 +355,11 @@ public class LagerStatusVindue {
         luk.setOnAction(e -> stage.close());
         Region s = new Region();
         HBox.setHgrow(s, Priority.ALWAYS);
-        bund.getChildren().addAll(new Label("Rød = Fyldt, Cirkel = Fad, Firkant = Ledig"), s, luk);
+        bund.getChildren().addAll(
+                new Label("● Fyldt  ○ Tom  □ Ledig plads"),
+                s,
+                luk
+        );
         return bund;
     }
 }

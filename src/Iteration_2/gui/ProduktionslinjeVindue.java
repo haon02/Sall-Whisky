@@ -24,7 +24,7 @@ import java.time.LocalDate;
  * - Kommentar / noter
  */
 public class ProduktionslinjeVindue {
-    private Controller controller = new Controller();
+    private Controller controller;
     private Stage stage;
     private Stage owner;
 
@@ -39,10 +39,9 @@ public class ProduktionslinjeVindue {
     // Resultat
     private boolean confirmed = false;
 
-    public ProduktionslinjeVindue(Stage owner) {
+    public ProduktionslinjeVindue(Stage owner, Controller controller) {
         this.owner = owner;
-        controller.init();
-
+        this.controller = controller;
     }
 
     public void showAndWait() {

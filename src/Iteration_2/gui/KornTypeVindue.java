@@ -24,7 +24,7 @@ import java.util.List;
  * - Beskrivelse
  */
 public class KornTypeVindue {
-    private Controller controller = new Controller();
+    private Controller controller;
     private Stage stage;
     private Stage owner;
 
@@ -41,9 +41,9 @@ public class KornTypeVindue {
     // Resultat
     private boolean confirmed = false;
 
-    public KornTypeVindue(Stage owner) {
+    public KornTypeVindue(Stage owner, Controller controller) {
         this.owner = owner;
-        controller.init();
+        this.controller = controller;
     }
 
     public void showAndWait() {

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Storage {
-    private static String SAVE_FILE = "SallData.ser";
+    private static final String SAVE_FILE = "SallData.ser";
 
     private static List<Korn> kornList = new ArrayList<>();
     private static List<Gær> gærList = new ArrayList<>();
@@ -20,10 +20,8 @@ public class Storage {
     private static List<Destillat> destillatList = new ArrayList<>();
     private static List<Single> singleList = new ArrayList<>();
 
-    // Storage to Serializable object so it holds element even after system restart
-
     private static class StorageState implements Serializable {
-        private static final long serialVersionUID = 2L; // Bumped pga. nye felter
+        private static final long serialVersionUID = 2L;
         List<Korn> kornList;
         List<Gær> gærList;
         List<Medarbejder> medarbejderList;
@@ -37,8 +35,7 @@ public class Storage {
 
     public static void loadFromDisk() {
         File file = new File(SAVE_FILE);
-
-        if (!file.exists()) return; // First run – nothing to load
+        if (!file.exists()) return;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             StorageState state = (StorageState) ois.readObject();
             kornList = state.kornList != null ? state.kornList : new ArrayList<>();
@@ -48,10 +45,9 @@ public class Storage {
             fadList = state.fadList != null ? state.fadList : new ArrayList<>();
             produktionslinjeList = state.produktionslinjeList != null ? state.produktionslinjeList : new ArrayList<>();
             leverandørList = state.leverandørList != null ? state.leverandørList : new ArrayList<>();
-            destillatList = state.destillatList != null ? state.destillatList : new ArrayList<>(); // TILFØJET
-            singleList = state.singleList != null ? state.singleList : new ArrayList<>(); // TILFØJET
+            destillatList = state.destillatList != null ? state.destillatList : new ArrayList<>();
+            singleList = state.singleList != null ? state.singleList : new ArrayList<>();
         } catch (ClassCastException | ClassNotFoundException e) {
-            // Old/incompatible save file – start fresh
             System.err.println("Inkompatibel save fil, starter forfra: " + e.getMessage());
             file.delete();
         } catch (IOException e) {
@@ -61,7 +57,6 @@ public class Storage {
 
     private static void saveToDisk() {
         StorageState state = new StorageState();
-
         state.kornList = new ArrayList<>(kornList);
         state.gærList = new ArrayList<>(gærList);
         state.medarbejderList = new ArrayList<>(medarbejderList);
@@ -79,11 +74,20 @@ public class Storage {
         }
     }
 
+    /**
+     * Call this after mutating shelf/hylde state (sætPåLager, fjernFraLager etc.)
+     * so that fad positions are persisted. The lager objects are already in lagerList
+     * by reference, so a full saveToDisk() captures their current shelf state.
+     */
+    public static void saveLager() {
+        saveToDisk();
+    }
+
     // ── ADD-metoder ───────────────────────────────────────────────────────────
 
-    public static void addProduktionslinje(Produktionslinje produktionslinje) {
-        if (produktionslinje != null && !produktionslinjeList.contains(produktionslinje)) {
-            produktionslinjeList.add(produktionslinje);
+    public static void addProduktionslinje(Produktionslinje p) {
+        if (p != null && !produktionslinjeList.contains(p)) {
+            produktionslinjeList.add(p);
             saveToDisk();
         }
     }
@@ -109,9 +113,9 @@ public class Storage {
         }
     }
 
-    public static void addMedarbejder(Medarbejder medarbejder) {
-        if (medarbejder != null && !medarbejderList.contains(medarbejder)) {
-            medarbejderList.add(medarbejder);
+    public static void addMedarbejder(Medarbejder m) {
+        if (m != null && !medarbejderList.contains(m)) {
+            medarbejderList.add(m);
             saveToDisk();
         }
     }
@@ -123,31 +127,29 @@ public class Storage {
         }
     }
 
-    public static void addLeverandør(Leverandør leverandør) {
-        if (leverandør != null && !leverandørList.contains(leverandør)) {
-            leverandørList.add(leverandør);
+    public static void addLeverandør(Leverandør l) {
+        if (l != null && !leverandørList.contains(l)) {
+            leverandørList.add(l);
             saveToDisk();
         }
     }
 
-    public static void addDestillat(Destillat destillat) {
-        if (destillat != null && !destillatList.contains(destillat)) {
-            destillatList.add(destillat);
+    public static void addDestillat(Destillat d) {
+        if (d != null && !destillatList.contains(d)) {
+            destillatList.add(d);
             saveToDisk();
         }
     }
 
-    public static void addSingle(Single single) {
-        if (single != null && !singleList.contains(single)) {
-            singleList.add(single);
+    public static void addSingle(Single s) {
+        if (s != null && !singleList.contains(s)) {
+            singleList.add(s);
             saveToDisk();
         }
     }
 
-    public static void removeSingle(Single single) {
-        if (singleList.remove(single)) {
-            saveToDisk();
-        }
+    public static void removeSingle(Single s) {
+        if (singleList.remove(s)) saveToDisk();
     }
 
     // ── GETTERS ───────────────────────────────────────────────────────────────
