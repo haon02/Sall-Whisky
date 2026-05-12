@@ -91,6 +91,11 @@ public class Fad implements Serializable {
         this.erTom = true;
     }
 
+    public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
+        Regulering regulering = new Regulering(this,fadMængdeLiter,alkoholProcentOriginal,vandTilføjeLiter,slutAlkoholProcent);
+        return regulering;
+    }
+
 
 
     @Override

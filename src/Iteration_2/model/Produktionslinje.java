@@ -1,7 +1,5 @@
 package Iteration_2.model;
 
-import Iteration_2.storage.Storage;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;

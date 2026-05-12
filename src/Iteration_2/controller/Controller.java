@@ -12,6 +12,7 @@ public class Controller {
     public Controller() {
     }
 
+    // Controller.java - add this method
     public void init() {
         Storage.loadFromDisk();
     }
@@ -50,6 +51,13 @@ public class Controller {
         return reol.createHylde(pladser);
     }
 
+    public Reol creatReol(Lager lager, Reol reol) {
+        lager.createReol();
+        lager.addReol(reol);
+        return reol;
+    }
+
+
     public Gær createGær(String navn, String produktKode, boolean erVæske, double minTemp, double maksTemp, double alkoholTolerance, String beskrivelse) {
         Gær gær = new Gær(navn, produktKode, erVæske, minTemp, maksTemp, alkoholTolerance, beskrivelse);
         Storage.addGærType(gær);
@@ -70,7 +78,7 @@ public class Controller {
                          boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
         Fad fad = new Fad(størrelseLiter, produktionsDato, beskrivelse, erTom, tidligereBrugt, leverandør, lager);
         Storage.addFad(fad);
-        
+
         // Gem lager-tilstanden så hylde-placeringen persisteres
         Storage.saveLager();
         return fad;
@@ -159,8 +167,33 @@ public class Controller {
         }
     }
 
-    // På første ledige plads i et lager
+    public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
+        Regulering regulering = fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
+        return regulering;
+    }
 
+    public void fyldFlaske(Flaske flaske, Regulering regulering) {
+        flaske.fyldFlaske(regulering);
+    }
+
+    public double beregnVandTilføjelse(double fadMængdeLiter, double alkoholProcentOriginal, double slutAlkoholProcent) {
+        if (slutAlkoholProcent <= 0) {
+            throw new IllegalArgumentException("Slut alkoholprocenten skal være over 0");
+        }
+        if (slutAlkoholProcent > alkoholProcentOriginal) {
+            throw new IllegalArgumentException("Alkohol koncentration kan ikke øges");
+        }
+        if (slutAlkoholProcent < 40) {
+            throw new IllegalArgumentException("Dette er ikke længere whisky");
+        }
+
+        double totalMængdeEfterVand = (fadMængdeLiter * alkoholProcentOriginal) / slutAlkoholProcent;
+        double vandDerSkalTilføjes = totalMængdeEfterVand - fadMængdeLiter;
+
+        return vandDerSkalTilføjes;
+    }
+
+    // på første ledige plads på en reol
     public void sætPåLager(Lager lager, Fad fad) {
         fjernFraLager(fad);
         boolean fundet = false;
