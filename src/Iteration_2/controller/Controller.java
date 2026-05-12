@@ -160,18 +160,22 @@ public class Controller {
     }
 
     // På første ledige plads i et lager
+
     public void sætPåLager(Lager lager, Fad fad) {
         fjernFraLager(fad);
         boolean fundet = false;
+
+        outer:
         for (Reol r : lager.getReoler()) {
             for (Hylde h : r.getHylder()) {
-                if (h.addFad(fad) > -1 && !fundet) {
+                if (!fundet && h.addFad(fad) > -1) {   // <-- !fundet tjekkes FØRST
                     fad.setLager(lager);
                     fundet = true;
-
+                    break outer;                         // <-- stop straks
                 }
             }
         }
+
         if (!fundet) {
             System.out.println("Ingen ledige pladser");
         } else {
