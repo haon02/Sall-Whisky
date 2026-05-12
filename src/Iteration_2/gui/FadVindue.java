@@ -35,6 +35,7 @@ public class FadVindue {
 
     public FadVindue(Stage owner) {
         this.owner = owner;
+        controller.init();
     }
 
     public void showAndWait() {

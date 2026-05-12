@@ -43,6 +43,7 @@ public class KornTypeVindue {
 
     public KornTypeVindue(Stage owner) {
         this.owner = owner;
+        controller.init();
     }
 
     public void showAndWait() {

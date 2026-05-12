@@ -14,14 +14,14 @@ import java.time.LocalDate;
 
 /**
  * UC1 – Tilføj ny produktionslinje
- *
+ * <p>
  * Opretter en ny produktionslinje med:
- *  - Batch-ID (auto-genereret, kan overskrives)
- *  - Korntype (vælg fra liste)
- *  - Gærtype (vælg fra liste)
- *  - Vandmængde i liter
- *  - Dato for opstart
- *  - Kommentar / noter
+ * - Batch-ID (auto-genereret, kan overskrives)
+ * - Korntype (vælg fra liste)
+ * - Gærtype (vælg fra liste)
+ * - Vandmængde i liter
+ * - Dato for opstart
+ * - Kommentar / noter
  */
 public class ProduktionslinjeVindue {
     private Controller controller = new Controller();
@@ -41,6 +41,8 @@ public class ProduktionslinjeVindue {
 
     public ProduktionslinjeVindue(Stage owner) {
         this.owner = owner;
+        controller.init();
+
     }
 
     public void showAndWait() {
@@ -160,7 +162,7 @@ public class ProduktionslinjeVindue {
 
     private String genererBatchId() {
         int år = LocalDate.now().getYear();
-        int nummer = (int)(Math.random() * 900) + 100;
+        int nummer = (int) (Math.random() * 900) + 100;
         return "BATCH-" + år + "-" + nummer;
     }
 
@@ -174,11 +176,31 @@ public class ProduktionslinjeVindue {
         System.out.println("Noter:        " + noterArea.getText());
     }
 
-    public boolean isConfirmed() { return confirmed; }
-    public String getBatchId()    { return batchIdField.getText(); }
-    public String getKornType()   { return kornTypeBox.getValue(); }
-    public String getGaerType()   { return gaerTypeBox.getValue(); }
-    public double getVandmaengde(){ return Double.parseDouble(vandmaengdeField.getText()); }
-    public LocalDate getDato()    { return opstartDato.getValue(); }
-    public String getNoter()      { return noterArea.getText(); }
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public String getBatchId() {
+        return batchIdField.getText();
+    }
+
+    public String getKornType() {
+        return kornTypeBox.getValue();
+    }
+
+    public String getGaerType() {
+        return gaerTypeBox.getValue();
+    }
+
+    public double getVandmaengde() {
+        return Double.parseDouble(vandmaengdeField.getText());
+    }
+
+    public LocalDate getDato() {
+        return opstartDato.getValue();
+    }
+
+    public String getNoter() {
+        return noterArea.getText();
+    }
 }

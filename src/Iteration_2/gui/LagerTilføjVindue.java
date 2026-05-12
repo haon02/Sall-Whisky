@@ -24,6 +24,7 @@ public class LagerTilføjVindue {
 
     public LagerTilføjVindue(Stage owner) {
         this.owner = owner;
+        controller.init();
     }
 
     public void showAndWait() {

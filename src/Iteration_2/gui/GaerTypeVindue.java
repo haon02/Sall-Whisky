@@ -43,6 +43,7 @@ public class GaerTypeVindue {
 
     public GaerTypeVindue(Stage owner) {
         this.owner = owner;
+        controller.init();
     }
 
     public void showAndWait() {

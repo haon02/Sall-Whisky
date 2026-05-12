@@ -39,6 +39,7 @@ public class LagerStatusVindue {
 
     public LagerStatusVindue(Stage owner) {
         this.owner = owner;
+        controller.init();
     }
 
     public void showAndWait() {
@@ -283,6 +284,7 @@ public class LagerStatusVindue {
         infoTitel.setText(fad.getBeskrivelse());
         infoStørrelse.setText(fad.getStørrelseLiter() + " L");
         infoStatus.setText(fad.erTom() ? "Tom" : "Fyldt");
+        infoLeverandør.setText(fad.getLeverandør().getBeskrivelse());
     }
 
     private String navKnapStyle() {

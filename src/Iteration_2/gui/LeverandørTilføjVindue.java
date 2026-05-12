@@ -24,6 +24,7 @@ public class LeverandørTilføjVindue {
 
     public LeverandørTilføjVindue(Stage owner) {
         this.owner = owner;
+        controller.init();
     }
 
     public void showAndWait() {
