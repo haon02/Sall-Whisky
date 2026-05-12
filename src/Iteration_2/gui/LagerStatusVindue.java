@@ -2,8 +2,6 @@ package Iteration_2.gui;
 
 import Iteration_2.controller.Controller;
 import Iteration_2.model.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -16,14 +14,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.util.List;
 
 public class LagerStatusVindue {
 
     private static final int CELLE_SIZE = 36;
-    private static final int CELLE_GAP = 4;
+    private static final int CELLE_GAP  = 4;
 
     private final Controller controller;
     private Stage stage;
@@ -35,7 +32,6 @@ public class LagerStatusVindue {
     private Label infoTitel, infoStørrelse, infoStatus;
     private GridPane grid;
     private ScrollPane scrollPane;
-    private Timeline refreshTimeline;
 
     public LagerStatusVindue(Stage owner, Controller controller) {
         this.owner = owner;
@@ -76,37 +72,21 @@ public class LagerStatusVindue {
         root.setCenter(center);
         root.setBottom(byggBund());
 
+        // FIX: Removed the Timeline that rebuilt the entire GridPane every second.
+        // The grid is now only rebuilt when:
+        //   a) the window opens
+        //   b) the user drags a fad to a new slot
+        //   c) the user navigates to a different lager
+        // This avoids creating and discarding hundreds of JavaFX nodes per second.
         if (!controller.getLagerList().isEmpty()) {
             opdaterGrid();
         }
-
-        refreshTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> opdaterGrid())
-        );
-        refreshTimeline.setCycleCount(Timeline.INDEFINITE);
-        refreshTimeline.play();
-
-        stage.setOnHiding(e -> refreshTimeline.stop());
 
         Scene scene = new Scene(root, 920, 600);
         stage.setScene(scene);
         stage.showAndWait();
     }
 
-    /**
-     * Grid layout:
-     * <p>
-     * col 0        = R-labels (R1, R2 ...)
-     * col 1+       = one column per FAD SLOT across all shelves
-     * <p>
-     * Header row (row 0):
-     * Each shelf gets a separator label "| H1 |" that spans its fad-slot columns,
-     * and each individual fad slot gets a thin slot-number sub-header in row 1.
-     * <p>
-     * Data rows start at row 2.
-     * <p>
-     * This means H-headers and fad circles are perfectly aligned.
-     */
     private void opdaterGrid() {
         Lager aktivLager = getAktivLager();
         if (aktivLager == null) return;
@@ -119,32 +99,13 @@ public class LagerStatusVindue {
 
         List<Reol> reoler = aktivLager.getReoler();
 
-        // Find the maximum number of shelves across all reoler,
-        // and the max number of fad slots per shelf (pladser).
-        // We need the total column count = sum of pladser across all hylder in one reol.
-        // Since every reol has the same structure (created via createLager), we use reol 0.
-        // If for some reason they differ, we take the maximum.
-        int maxSlotsPerReol = 0;
-        int maxHylder = 0;
-        for (Reol r : reoler) {
-            maxHylder = Math.max(maxHylder, r.getHylder().size());
-            int slotsThisReol = 0;
-            for (Hylde h : r.getHylder()) {
-                slotsThisReol += h.getPladser();
-            }
-            maxSlotsPerReol = Math.max(maxSlotsPerReol, slotsThisReol);
-        }
-
-        // ── Header row 0: shelf labels (Hx) ──────────────────────────────────
-        // We iterate the first reol to know how wide each shelf is,
-        // then place a spanning label for each shelf.
-        // col 0 is reserved for R-labels. Shelf columns start at col 1.
-        int gridCol = 1; // current grid column cursor
+        // ── Header row: shelf labels (H1, H2 ...) ─────────────────────────────
+        int gridCol = 1;
         if (!reoler.isEmpty()) {
             Reol referenceReol = reoler.get(0);
             for (int hi = 0; hi < referenceReol.getHylder().size(); hi++) {
-                Hylde hylde = referenceReol.getHylder().get(hi);
-                int pladser = hylde.getPladser();
+                Hylde hylde   = referenceReol.getHylder().get(hi);
+                int   pladser = hylde.getPladser();
 
                 Label hyldeLbl = new Label("H" + (hi + 1));
                 hyldeLbl.setStyle(
@@ -155,10 +116,8 @@ public class LagerStatusVindue {
                 hyldeLbl.setMaxWidth(Double.MAX_VALUE);
                 hyldeLbl.setAlignment(Pos.CENTER);
 
-                // Span across as many grid columns as this shelf has fad slots
                 GridPane.setColumnSpan(hyldeLbl, pladser);
                 grid.add(hyldeLbl, gridCol, 0);
-
                 gridCol += pladser;
             }
         }
@@ -167,20 +126,15 @@ public class LagerStatusVindue {
         for (int ri = 0; ri < reoler.size(); ri++) {
             Reol reol = reoler.get(ri);
 
-            // R-label in column 0
             Label reolLbl = new Label("R" + (ri + 1));
             reolLbl.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #1A1A2E;");
             reolLbl.setMinWidth(28);
             reolLbl.setAlignment(Pos.CENTER_RIGHT);
             grid.add(reolLbl, 0, ri + 1);
 
-            // Fad slots: each slot is its own grid column
             int col = 1;
-            List<Hylde> hylder = reol.getHylder();
-            for (int hi = 0; hi < hylder.size(); hi++) {
-                Hylde hylde = hylder.get(hi);
+            for (Hylde hylde : reol.getHylder()) {
                 Fad[] fade = hylde.getFade();
-
                 for (int fi = 0; fi < fade.length; fi++) {
                     StackPane celle = byggCelle(fade[fi], reol, hylde, fi);
                     grid.add(celle, col, ri + 1);
@@ -238,20 +192,29 @@ public class LagerStatusVindue {
 
     private void setupDragAndDrop(StackPane pane, Reol reol, Hylde hylde, int pladsIndex) {
         pane.setOnDragOver(e -> {
-            if (dragFad != null) {
+            // Only accept the drop if the slot is empty and we are actually dragging a fad.
+            boolean slotErLedig = hylde.getFade()[pladsIndex] == null;
+            boolean erIkkeSigSelv = hylde.getFade()[pladsIndex] != dragFad;
+            if (dragFad != null && slotErLedig && erIkkeSigSelv) {
                 e.acceptTransferModes(TransferMode.MOVE);
             }
             e.consume();
         });
 
         pane.setOnDragDropped(e -> {
-            if (dragFad != null) {
+            // Double-check on drop — the DragOver guard should prevent this,
+            // but we never blindly trust UI state.
+            boolean slotErLedig = hylde.getFade()[pladsIndex] == null;
+            if (dragFad != null && slotErLedig) {
                 Lager aktivLager = getAktivLager();
                 controller.fjernFraLager(dragFad);
                 controller.sætPåLager(aktivLager, reol, hylde, dragFad, pladsIndex + 1);
                 dragFad = null;
                 opdaterGrid();
                 e.setDropCompleted(true);
+            } else {
+                // Reject the drop cleanly so JavaFX resets the drag animation.
+                e.setDropCompleted(false);
             }
             e.consume();
         });
@@ -289,14 +252,8 @@ public class LagerStatusVindue {
         Button næste = new Button("›");
         næste.setStyle(navKnapStyle());
 
-        forrige.setOnAction(e -> {
-            skiftLager(-1);
-            opdaterLagerLabel(lagerNavn);
-        });
-        næste.setOnAction(e -> {
-            skiftLager(1);
-            opdaterLagerLabel(lagerNavn);
-        });
+        forrige.setOnAction(e -> { skiftLager(-1); opdaterLagerLabel(lagerNavn); });
+        næste.setOnAction(e ->   { skiftLager(1);  opdaterLagerLabel(lagerNavn); });
 
         top.getChildren().addAll(titel, spacer, forrige, lagerNavn, næste);
         return top;
@@ -322,15 +279,15 @@ public class LagerStatusVindue {
         Label overskrift = new Label("Fad Information");
         overskrift.setStyle("-fx-font-weight: bold;");
 
-        infoTitel = new Label("–");
+        infoTitel    = new Label("–");
         infoStørrelse = new Label("–");
-        infoStatus = new Label("–");
+        infoStatus   = new Label("–");
 
         panel.getChildren().addAll(
                 overskrift,
                 new Separator(),
-                new HBox(5, new Label("Navn:"), infoTitel),
-                new HBox(5, new Label("Liter:"), infoStørrelse),
+                new HBox(5, new Label("Navn:"),   infoTitel),
+                new HBox(5, new Label("Liter:"),  infoStørrelse),
                 new HBox(5, new Label("Status:"), infoStatus)
         );
         return panel;

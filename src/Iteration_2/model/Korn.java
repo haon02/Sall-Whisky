@@ -1,4 +1,4 @@
-package Iteration_3.model;
+package Iteration_2.model;
 
 import java.io.Serializable;
 

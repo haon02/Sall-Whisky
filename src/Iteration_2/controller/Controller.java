@@ -12,7 +12,6 @@ public class Controller {
     public Controller() {
     }
 
-    // Controller.java - add this method
     public void init() {
         Storage.loadFromDisk();
     }
@@ -51,12 +50,11 @@ public class Controller {
         return reol.createHylde(pladser);
     }
 
-    public Reol creatReol(Lager lager, Reol reol) {
-        lager.createReol();
-        lager.addReol(reol);
-        return reol;
+    // FIX: The old creatReol (typo) was broken — it created a throwaway Reol
+    // then added a different one. Now it simply creates and returns a real Reol on the lager.
+    public Reol createReol(Lager lager) {
+        return lager.createReol();
     }
-
 
     public Gær createGær(String navn, String produktKode, boolean erVæske, double minTemp, double maksTemp, double alkoholTolerance, String beskrivelse) {
         Gær gær = new Gær(navn, produktKode, erVæske, minTemp, maksTemp, alkoholTolerance, beskrivelse);
@@ -70,17 +68,13 @@ public class Controller {
         return medarbejder;
     }
 
-    /**
-     * Opretter et fad og placerer det automatisk på første ledige hylde i lageret.
-     * Hvis lageret er null eller fuldt, gemmes fadet blot i Storage uden hylde-placering.
-     */
+    // FIX: Removed the extra Storage.saveLager() call that was here before.
+    // addFad() already saves to disk. The caller (FadVindue) is responsible
+    // for placing the fad on a shelf via sætPåLager(), which saves again once.
     public Fad createFad(double størrelseLiter, LocalDate produktionsDato, String beskrivelse,
                          boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
         Fad fad = new Fad(størrelseLiter, produktionsDato, beskrivelse, erTom, tidligereBrugt, leverandør, lager);
         Storage.addFad(fad);
-
-        // Gem lager-tilstanden så hylde-placeringen persisteres
-        Storage.saveLager();
         return fad;
     }
 
@@ -149,6 +143,24 @@ public class Controller {
                 h.removeFad(fad);
             }
         }
+        // Clear the lager reference so the fad is no longer associated with a shelf
+        fad.setLager(null);
+    }
+
+    // FIX: vælgFad no longer mutates the fad's lager reference.
+    // That side-effect belonged in fjernFraLager, not in a method named "vælg".
+    // Callers that want to take a fad off the shelf should call fjernFraLager() explicitly.
+    public Fad vælgFad(Lager lager) {
+        for (Reol reol : lager.getReoler()) {
+            for (Hylde hylde : reol.getHylder()) {
+                for (Fad fad : hylde.getFade()) {
+                    if (fad != null && fad.erTom()) {
+                        return fad;
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException("Ingen tomme fade på lager");
     }
 
     // På en specifik hyldes plads
@@ -167,9 +179,48 @@ public class Controller {
         }
     }
 
+    // På første ledige plads i lageret.
+    // FIX: Now throws IllegalStateException when no free slot exists,
+    // instead of silently printing and returning. Callers can catch and show the user an error.
+    public void sætPåLager(Lager lager, Fad fad) {
+        fjernFraLager(fad);
+
+        for (Reol r : lager.getReoler()) {
+            for (Hylde h : r.getHylder()) {
+                if (h.addFad(fad) > -1) {
+                    fad.setLager(lager);
+                    Storage.saveLager();
+                    return;
+                }
+            }
+        }
+
+        throw new IllegalStateException("Ingen ledige pladser på lager: " + lager.getAdresse());
+    }
+
+    // FIX: tilføjDestillat is now atomic.
+    // We validate everything BEFORE touching any state, so a failed fyldFad
+    // cannot leave the destillat partially reduced.
+    public double tilføjDestillat(Fad fad, Destillat destillat, DestillatType destillatType, double mængde) {
+        if (mængde < 0)
+            throw new IllegalArgumentException("Mængde må ikke være negativ");
+        if (mængde > fad.getStørrelseLiter())
+            throw new IllegalArgumentException("Mængden overstiger fadets kapacitet");
+
+        // fyldFad validates that the fad is empty — call it first so we
+        // don't reduce the destillat if the fad turns out to be full.
+        fad.fyldFad(destillatType, mængde);
+        destillat.reducer(mængde);
+
+        return destillat.getResterendeMængde();
+    }
+
+    public void fyldFad(Fad fad, DestillatType destillatType, double mængde) {
+        fad.fyldFad(destillatType, mængde);
+    }
+
     public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
-        Regulering regulering = fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
-        return regulering;
+        return fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
     }
 
     public void fyldFlaske(Flaske flaske, Regulering regulering) {
@@ -177,101 +228,24 @@ public class Controller {
     }
 
     public double beregnVandTilføjelse(double fadMængdeLiter, double alkoholProcentOriginal, double slutAlkoholProcent) {
-        if (slutAlkoholProcent <= 0) {
+        if (slutAlkoholProcent <= 0)
             throw new IllegalArgumentException("Slut alkoholprocenten skal være over 0");
-        }
-        if (slutAlkoholProcent > alkoholProcentOriginal) {
+        if (slutAlkoholProcent > alkoholProcentOriginal)
             throw new IllegalArgumentException("Alkohol koncentration kan ikke øges");
-        }
-        if (slutAlkoholProcent < 40) {
+        if (slutAlkoholProcent < 40)
             throw new IllegalArgumentException("Dette er ikke længere whisky");
-        }
 
         double totalMængdeEfterVand = (fadMængdeLiter * alkoholProcentOriginal) / slutAlkoholProcent;
-        double vandDerSkalTilføjes = totalMængdeEfterVand - fadMængdeLiter;
-
-        return vandDerSkalTilføjes;
+        return totalMængdeEfterVand - fadMængdeLiter;
     }
 
-    // på første ledige plads på en reol
-    public void sætPåLager(Lager lager, Fad fad) {
-        fjernFraLager(fad);
-        boolean fundet = false;
+    // ── Getters ───────────────────────────────────────────────────────────────
 
-        outer:
-        for (Reol r : lager.getReoler()) {
-            for (Hylde h : r.getHylder()) {
-                if (!fundet && h.addFad(fad) > -1) {   // <-- !fundet tjekkes FØRST
-                    fad.setLager(lager);
-                    fundet = true;
-                    break outer;                         // <-- stop straks
-                }
-            }
-        }
-
-        if (!fundet) {
-            System.out.println("Ingen ledige pladser");
-        } else {
-            Storage.saveLager();
-        }
-    }
-
-    public double tilføjDestillat(Fad fad, Destillat destillat, DestillatType destillatType, double mængde) {
-        if (mængde < 0)
-            throw new IllegalArgumentException("Mængde må ikke være negativ");
-        if (mængde > fad.getStørrelseLiter())
-            throw new IllegalArgumentException("Mængden overstiger fadets kapacitet");
-        destillat.reducer(mængde);
-        double restmængde = destillat.getResterendeMængde();
-        fad.fyldFad(destillatType, mængde);
-        return restmængde;
-    }
-
-    public Fad vælgFad(Lager lager) {
-        for (Reol reol : lager.getReoler()) {
-            for (Hylde hylde : reol.getHylder()) {
-                for (Fad fad : hylde.getFade()) {
-                    if (fad != null && fad.erTom()) {
-                        fad.setLager(null);
-                        return fad;
-                    }
-                }
-            }
-        }
-        throw new IllegalStateException("Ingen tomme fade på lager");
-    }
-
-    public void fyldFad(Fad fad, DestillatType destillatType, double mængde) {
-        fad.fyldFad(destillatType, mængde);
-    }
-
-// ── Getters ───────────────────────────────────────────────────────────────
-
-    public List<Medarbejder> getMedarbejderList() {
-        return Storage.getMedarbejderList();
-    }
-
-    public List<Gær> getGærList() {
-        return Storage.getGærList();
-    }
-
-    public List<Korn> getKornList() {
-        return Storage.getKornList();
-    }
-
-    public List<Produktionslinje> getProduktionlinjeList() {
-        return Storage.getProduktionslinjeList();
-    }
-
-    public List<Fad> getFadList() {
-        return Storage.getFadlist();
-    }
-
-    public List<Lager> getLagerList() {
-        return Storage.getLagerList();
-    }
-
-    public List<Leverandør> getLeverandørList() {
-        return Storage.getLeverandørList();
-    }
+    public List<Medarbejder> getMedarbejderList() { return Storage.getMedarbejderList(); }
+    public List<Gær> getGærList()                 { return Storage.getGærList(); }
+    public List<Korn> getKornList()               { return Storage.getKornList(); }
+    public List<Produktionslinje> getProduktionlinjeList() { return Storage.getProduktionslinjeList(); }
+    public List<Fad> getFadList()                 { return Storage.getFadlist(); }
+    public List<Lager> getLagerList()             { return Storage.getLagerList(); }
+    public List<Leverandør> getLeverandørList()   { return Storage.getLeverandørList(); }
 }

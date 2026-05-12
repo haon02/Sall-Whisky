@@ -135,7 +135,8 @@ public class FadVindue {
     private void storeData() {
         Lager valgtLager = getLager();
 
-        // 1. Opret fadet
+        // FIX: createFad no longer calls saveLager() internally, so there is
+        // exactly one save: the one that happens inside sætPåLager() below.
         var fad = controller.createFad(
                 getFadstørrelse(),
                 getProduktionsDato(),
@@ -146,14 +147,17 @@ public class FadVindue {
                 valgtLager
         );
 
-        // 2. Placer fadet på første ledige plads i det valgte lager
-        //    uden dette er fadet usynligt i lagergridden
         if (valgtLager != null) {
+            // FIX: sætPåLager now throws when the lager is full.
+            // We catch it and show the user a real error message instead of a silent println.
             try {
                 controller.sætPåLager(valgtLager, fad);
-            } catch (Exception ex) {
-                // Ingen ledige pladser – fadet er stadig gemt, men ikke på en hylde
-                System.err.println("Ingen ledig hylde til fadet: " + ex.getMessage());
+            } catch (IllegalStateException ex) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Lager fuldt");
+                alert.setHeaderText("Fadet kunne ikke placeres på lageret.");
+                alert.setContentText(ex.getMessage() + "\nFadet er gemt, men har ingen hylde-plads.");
+                alert.showAndWait();
             }
         }
     }
@@ -191,7 +195,6 @@ public class FadVindue {
             return false;
         }
 
-        // Check at det valgte lager faktisk har en ledig plads
         Lager valgt = lagerComboBox.getValue();
         if (valgt != null && valgt.getReoler().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -201,16 +204,38 @@ public class FadVindue {
             return false;
         }
 
+        // FIX: Also warn the user upfront if the lager has no free slots at all,
+        // rather than letting them fill the form and discovering it silently after save.
+        if (valgt != null && !harLedigPlads(valgt)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Lager fuldt");
+            alert.setHeaderText("Det valgte lager har ingen ledige pladser.");
+            alert.setContentText("Vælg et andet lager eller opret flere pladser.");
+            alert.showAndWait();
+            return false;
+        }
+
         return true;
     }
 
+    // Simple helper — walks the shelf structure and returns true if any slot is free.
+    private boolean harLedigPlads(Lager lager) {
+        for (var reol : lager.getReoler()) {
+            for (var hylde : reol.getHylder()) {
+                for (var fad : hylde.getFade()) {
+                    if (fad == null) return true;
+                }
+            }
+        }
+        return false;
+    }
 
-    public boolean isConfirmed()         { return confirmed; }
-    public double getFadstørrelse()      { return Double.parseDouble(størrelseField.getText()); }
-    public LocalDate getProduktionsDato(){ return produktionsDato.getValue(); }
-    public String getBeskrivelse()       { return beskrivelseTextfield.getText(); }
-    public boolean isTom()              { return erTomRadioButton.isSelected(); }
-    public boolean isBrugt()            { return tideligereBrugt.isSelected(); }
-    public Leverandør getLeverandør()    { return leverandørComboBox.getValue(); }
-    public Lager getLager()             { return lagerComboBox.getValue(); }
+    public boolean isConfirmed()          { return confirmed; }
+    public double getFadstørrelse()       { return Double.parseDouble(størrelseField.getText()); }
+    public LocalDate getProduktionsDato() { return produktionsDato.getValue(); }
+    public String getBeskrivelse()        { return beskrivelseTextfield.getText(); }
+    public boolean isTom()               { return erTomRadioButton.isSelected(); }
+    public boolean isBrugt()             { return tideligereBrugt.isSelected(); }
+    public Leverandør getLeverandør()     { return leverandørComboBox.getValue(); }
+    public Lager getLager()              { return lagerComboBox.getValue(); }
 }
