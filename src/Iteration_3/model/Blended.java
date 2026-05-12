@@ -1,8 +1,11 @@
 package Iteration_3.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Blended implements Mix {
+public class Blended implements Mix, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private ArrayList<Mix> destillater;
     private String navn;
 

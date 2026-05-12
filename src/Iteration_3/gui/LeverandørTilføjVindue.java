@@ -11,7 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class LeverandørTilføjVindue {
-    private Controller controller = new Controller();
+    private Controller controller;
     private Stage stage;
     private Stage owner;
 
@@ -22,8 +22,9 @@ public class LeverandørTilføjVindue {
 
     private boolean confirmed = false;
 
-    public LeverandørTilføjVindue(Stage owner) {
+    public LeverandørTilføjVindue(Stage owner, Controller controller) {
         this.owner = owner;
+        this.controller = controller;
     }
 
     public void showAndWait() {

@@ -1,8 +1,11 @@
 package Iteration_3.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SingleCask implements DestillatType{
+public class SingleCask implements DestillatType, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Destillat destillat;
     private double mængdeLiter;
 

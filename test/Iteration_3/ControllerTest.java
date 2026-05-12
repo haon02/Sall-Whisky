@@ -65,8 +65,8 @@ class ControllerTest {
         Hylde hylde = reol.createHylde(pladser);
         Fad fad2 = new Fad(0, LocalDate.now(), "", true, false, null, null);
         // act
-        controller.sætPåLager(lager, reol, fad);
-        controller.sætPåLager(lager, reol, fad2);
+        controller.sætPåLager(lager, fad);
+        controller.sætPåLager(lager, fad2);
         Fad expected = hylde.getFade()[0];
         Fad expected2 = hylde.getFade()[1];
 

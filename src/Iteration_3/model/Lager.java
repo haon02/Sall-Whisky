@@ -25,7 +25,7 @@ public class Lager implements Serializable {
         int antal = 0;
         for (Reol r : reoler) {
             for (Hylde h : r.getHylder()) {
-                antal = +h.getPladser() - h.getFade().length;
+                antal += h.getPladser() - h.getFade().length;
             }
         }
         return antal;

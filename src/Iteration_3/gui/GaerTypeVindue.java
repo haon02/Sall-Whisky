@@ -41,8 +41,9 @@ public class GaerTypeVindue {
     // Resultat
     private boolean confirmed = false;
 
-    public GaerTypeVindue(Stage owner) {
+    public GaerTypeVindue(Stage owner, Controller controller) {
         this.owner = owner;
+        this.controller = controller;
     }
 
     public void showAndWait() {

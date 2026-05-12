@@ -1,12 +1,15 @@
 package Iteration_3.model;
 
-public class Hylde {
+import java.io.Serializable;
+
+public class Hylde implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int pladser;
     private Fad[] fade;
 
-    Hylde(int pladser) {
-        fade = new Fad[pladser];
+    public Hylde(int pladser) {
         this.pladser = pladser;
+        fade = new Fad[pladser];
     }
 
     public int getPladser() { return pladser; }

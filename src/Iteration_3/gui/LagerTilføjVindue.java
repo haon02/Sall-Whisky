@@ -11,66 +11,61 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class LagerTilføjVindue {
-    private Controller controller = new Controller();
+    private final Controller controller;
     private Stage stage;
-    private Stage owner;
-
+    private final Stage owner;
 
     private TextField adresseField;
-    private TextField pladserField;
-    private TextField maksKapacitetField;
+    private TextField antalReolerField;
+    private TextField hylderPrReolField;
+    private TextField pladserPrHyldeField;
 
     private boolean confirmed = false;
 
-    public LagerTilføjVindue(Stage owner) {
+    public LagerTilføjVindue(Stage owner, Controller controller) {
         this.owner = owner;
+        this.controller = controller;
     }
 
     public void showAndWait() {
         stage = new Stage();
-        stage.setTitle("Tilføj nyt lager");
+        stage.setTitle("Konfigurer nyt lager");
         stage.initOwner(owner);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
 
+        // Bemærk: Jeg antager SectionVBox er din custom hjælper-klasse
         SectionVBox root = new SectionVBox("Nyt lager");
 
-        // Adresse
+        // 1. Adresse
         adresseField = new TextField();
         adresseField.setPromptText("f.eks. Industrivej 10, Sall");
         root.addLabeledNode("Lageradresse", adresseField);
 
         root.addSeparator();
 
-        // Antal pladser
-        pladserField = new TextField();
-        pladserField.setPromptText("f.eks. 50");
-        // Sikrer at kun tal kan indtastes
-        pladserField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*")) pladserField.setText(oldVal);
-        });
-        root.addLabeledNode("Antal pladser", pladserField);
+        // 2. Antal reoler
+        antalReolerField = opretNumeriskField("f.eks. 5");
+        root.addLabeledNode("Antal reoler", antalReolerField);
 
-        root.addSeparator();
+        // 3. Hylder pr. reol
+        hylderPrReolField = opretNumeriskField("f.eks. 3");
+        root.addLabeledNode("Hylder pr. reol", hylderPrReolField);
 
-        // Maks kapacitet
-        maksKapacitetField = new TextField();
-        maksKapacitetField.setPromptText("f.eks. 100");
-        maksKapacitetField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*")) maksKapacitetField.setText(oldVal);
-        });
-        root.addLabeledNode("Maksimal kapacitet", maksKapacitetField);
+        // 4. Pladser pr. hylde (kapacitet pr. hylde)
+        pladserPrHyldeField = opretNumeriskField("f.eks. 2");
+        root.addLabeledNode("Pladser pr. hylde", pladserPrHyldeField);
 
         root.addSeparator();
 
         // Knapper
         HBox knapRaekke = new HBox(8);
-        knapRaekke.setPadding(new Insets(4, 0, 0, 0));
+        knapRaekke.setPadding(new Insets(10, 0, 0, 0));
 
-        Button gemKnap = new Button("Gem Lager");
+        Button gemKnap = new Button("Opret Lagerstruktur");
         gemKnap.setDefaultButton(true);
         gemKnap.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold;");
-        gemKnap.setPrefWidth(180);
+        gemKnap.setPrefWidth(200);
         gemKnap.setOnAction(e -> {
             if (validerInput()) {
                 confirmed = true;
@@ -86,33 +81,47 @@ public class LagerTilføjVindue {
         knapRaekke.getChildren().addAll(gemKnap, annullerKnap);
         root.addNode(knapRaekke);
 
-        Scene scene = new Scene(root, 340, 350);
+        Scene scene = new Scene(root, 360, 420);
         stage.setScene(scene);
         stage.showAndWait();
     }
 
+    /**
+     * Hjælpemetode til at oprette tekstfelter der kun accepterer tal
+     */
+    private TextField opretNumeriskField(String prompt) {
+        TextField tf = new TextField();
+        tf.setPromptText(prompt);
+        tf.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("\\d*")) {
+                tf.setText(oldVal);
+            }
+        });
+        return tf;
+    }
+
     private void storeData() {
-        // Kalder controllerens metode til at oprette lager[cite: 25]
-        controller.createLager(getAdresse());
+        // Her kalder vi den nye metode i din controller, som vi diskuterede tidligere
+        controller.createLager(
+                getAdresse(),
+                getAntalReoler(),
+                getHylderPrReol(),
+                getPladserPrHylde()
+        );
     }
 
     private boolean validerInput() {
         StringBuilder fejl = new StringBuilder();
 
-        if (adresseField.getText().isBlank()) {
-            fejl.append("• Adresse skal udfyldes\n");
-        }
-        if (pladserField.getText().isBlank()) {
-            fejl.append("• Antal pladser skal udfyldes\n");
-        }
-        if (maksKapacitetField.getText().isBlank()) {
-            fejl.append("• Maksimal kapacitet skal udfyldes\n");
-        }
+        if (adresseField.getText().isBlank()) fejl.append("• Adresse skal udfyldes\n");
+        if (antalReolerField.getText().isBlank()) fejl.append("• Antal reoler skal udfyldes\n");
+        if (hylderPrReolField.getText().isBlank()) fejl.append("• Hylder pr. reol skal udfyldes\n");
+        if (pladserPrHyldeField.getText().isBlank()) fejl.append("• Pladser pr. hylde skal udfyldes\n");
 
         if (!fejl.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Manglende oplysninger");
-            alert.setHeaderText("Udfyld venligst følgende felter:");
+            alert.setHeaderText("Udfyld venligst lagerstrukturen:");
             alert.setContentText(fejl.toString());
             alert.showAndWait();
             return false;
@@ -120,9 +129,10 @@ public class LagerTilføjVindue {
         return true;
     }
 
-    // Hjælpemetoder til at konvertere tekst til de korrekte typer[cite: 27]
+    // Getters til konvertering
     public String getAdresse() { return adresseField.getText(); }
-    public int getPladser() { return Integer.parseInt(pladserField.getText()); }
-    public int getMaksKapacitet() { return Integer.parseInt(maksKapacitetField.getText()); }
+    public int getAntalReoler() { return Integer.parseInt(antalReolerField.getText()); }
+    public int getHylderPrReol() { return Integer.parseInt(hylderPrReolField.getText()); }
+    public int getPladserPrHylde() { return Integer.parseInt(pladserPrHyldeField.getText()); }
     public boolean isConfirmed() { return confirmed; }
 }

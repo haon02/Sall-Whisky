@@ -13,11 +13,10 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 
 public class FadVindue {
-    private Controller controller = new Controller();
+    private final Controller controller;
     private Stage stage;
-    private Stage owner;
+    private final Stage owner;
 
-    // Felter
     private TextField størrelseField;
     private DatePicker produktionsDato;
     private TextField beskrivelseTextfield;
@@ -30,11 +29,11 @@ public class FadVindue {
     private ComboBox<Leverandør> leverandørComboBox;
     private ComboBox<Lager> lagerComboBox;
 
-    // Resultat
     private boolean confirmed = false;
 
-    public FadVindue(Stage owner) {
+    public FadVindue(Stage owner, Controller controller) {
         this.owner = owner;
+        this.controller = controller;
     }
 
     public void showAndWait() {
@@ -46,68 +45,49 @@ public class FadVindue {
 
         SectionVBox root = new SectionVBox("Nyt fad");
 
-        // Størrelse
         størrelseField = new TextField();
         størrelseField.setPromptText("f. eks. Liter (300)");
         root.addLabeledNode("FadStørrelse", størrelseField);
-
         root.addSeparator();
 
-        //Produktionsdato
         produktionsDato = new DatePicker();
         root.addLabeledNode("Produktions dato", produktionsDato);
-
         root.addSeparator();
 
-        //Beskrivelse
         beskrivelseTextfield = new TextField();
         beskrivelseTextfield.setPromptText("Hvad har fadet lavet af, historie osv");
         root.addLabeledNode("Beskrivelse", beskrivelseTextfield);
-
         root.addSeparator();
 
-        //ErTom
         fadFyldGroup = new ToggleGroup();
         erTomRadioButton = new RadioButton("Tomt fad");
         erFuldRadioButton = new RadioButton("Fyldt fad");
         erTomRadioButton.setToggleGroup(fadFyldGroup);
         erFuldRadioButton.setToggleGroup(fadFyldGroup);
         erTomRadioButton.setSelected(true);
-
-        HBox radioRaekkeOpfyld = new HBox(16, erTomRadioButton, erFuldRadioButton);
-        root.addLabeledNode("Fad Opfyldningstilstand", radioRaekkeOpfyld);
-
+        root.addLabeledNode("Fad Opfyldningstilstand", new HBox(16, erTomRadioButton, erFuldRadioButton));
         root.addSeparator();
 
-        // Tideligere brugt
         fadBrugtGroup = new ToggleGroup();
         tideligereBrugt = new RadioButton("Tideligere brugt");
         tideligereIkkeBrugt = new RadioButton("Ubrugt");
         tideligereBrugt.setToggleGroup(fadBrugtGroup);
         tideligereIkkeBrugt.setToggleGroup(fadBrugtGroup);
         tideligereIkkeBrugt.setSelected(true);
-        // implementer en yderligere historik for brug
-
-        HBox radioRaekkeBrug = new HBox(16, tideligereBrugt, tideligereIkkeBrugt);
-        root.addLabeledNode("Fad Brugt?", radioRaekkeBrug);
-
+        root.addLabeledNode("Fad Brugt?", new HBox(16, tideligereBrugt, tideligereIkkeBrugt));
         root.addSeparator();
 
-        // leverandør dropdown
         leverandørComboBox = new ComboBox<>();
         leverandørComboBox.getItems().addAll(controller.getLeverandørList());
         leverandørComboBox.setPromptText("Vælg leverandør...");
         leverandørComboBox.setPrefWidth(280);
         root.addLabeledNode("Leverandør", leverandørComboBox);
-
         root.addSeparator();
 
-        // Lager
         lagerComboBox = new ComboBox<>();
         lagerComboBox.getItems().addAll(controller.getLagerList());
-        lagerComboBox.setPromptText("Vælg lagerType...");
+        lagerComboBox.setPromptText("Vælg lager...");
         lagerComboBox.setPrefWidth(280);
-        // Show the address as the display text in the dropdown
         lagerComboBox.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(Lager item, boolean empty) {
@@ -123,10 +103,8 @@ public class FadVindue {
             }
         });
         root.addLabeledNode("Lager", lagerComboBox);
-
         root.addSeparator();
 
-        // Knapper
         HBox knapRaekke = new HBox(8);
         knapRaekke.setPadding(new Insets(4, 0, 0, 0));
 
@@ -138,7 +116,6 @@ public class FadVindue {
             if (validerInput()) {
                 confirmed = true;
                 storeData();
-                printResultat(); // Erstat med controller-kald i UC-implementation
                 stage.close();
             }
         });
@@ -150,14 +127,35 @@ public class FadVindue {
         knapRaekke.getChildren().addAll(gemKnap, annullerKnap);
         root.addNode(knapRaekke);
 
-        Scene scene = new Scene(root, 340, 500);
+        Scene scene = new Scene(root, 340, 600);
         stage.setScene(scene);
         stage.showAndWait();
-
     }
 
     private void storeData() {
-        controller.createFad(getFadstørrelse(), getProduktionsDato(), getBeskrivelse(), isTom(), isBrugt(), getLeverandør(), getLager());
+        Lager valgtLager = getLager();
+
+        // 1. Opret fadet
+        var fad = controller.createFad(
+                getFadstørrelse(),
+                getProduktionsDato(),
+                getBeskrivelse(),
+                isTom(),
+                isBrugt(),
+                getLeverandør(),
+                valgtLager
+        );
+
+        // 2. Placer fadet på første ledige plads i det valgte lager
+        //    uden dette er fadet usynligt i lagergridden
+        if (valgtLager != null) {
+            try {
+                controller.sætPåLager(valgtLager, fad);
+            } catch (Exception ex) {
+                // Ingen ledige pladser – fadet er stadig gemt, men ikke på en hylde
+                System.err.println("Ingen ledig hylde til fadet: " + ex.getMessage());
+            }
+        }
     }
 
     private boolean validerInput() {
@@ -165,15 +163,12 @@ public class FadVindue {
 
         if (størrelseField.getText().isBlank())
             fejl.append("• Fad størrelse må ikke være tomt\n");
-
         if (produktionsDato.getValue() == null)
-            fejl.append("• Oprettelse af fad dato skal være udfyldt");
-
+            fejl.append("• Oprettelse af fad dato skal være udfyldt\n");
         if (leverandørComboBox.getValue() == null)
-            fejl.append("• Vælg en leverandør");
-
+            fejl.append("• Vælg en leverandør\n");
         if (lagerComboBox.getValue() == null)
-            fejl.append("• Vælg et lager");
+            fejl.append("• Vælg et lager\n");
 
         if (!fejl.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -183,45 +178,39 @@ public class FadVindue {
             alert.showAndWait();
             return false;
         }
+
+        try {
+            double v = Double.parseDouble(størrelseField.getText());
+            if (v <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Fejl i fadstørrelse");
+            alert.setHeaderText("Fadstørrelsen skal være et positivt tal (f.eks. 300).");
+            alert.setContentText("Du skrev: " + størrelseField.getText());
+            alert.showAndWait();
+            return false;
+        }
+
+        // Check at det valgte lager faktisk har en ledig plads
+        Lager valgt = lagerComboBox.getValue();
+        if (valgt != null && valgt.getReoler().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Ingen reoler");
+            alert.setHeaderText("Det valgte lager har ingen reoler.");
+            alert.showAndWait();
+            return false;
+        }
+
         return true;
     }
 
-    private void printResultat() {
 
-    }
-
-    // Getters til brug fra Controller
-    public boolean isConfirmed() {
-        return confirmed;
-    }
-
-    public int getFadstørrelse() {
-        return Integer.parseInt(størrelseField.getText());
-    }
-
-    public LocalDate getProduktionsDato() {
-        return produktionsDato.getValue();
-    }
-
-    public String getBeskrivelse() {
-        return beskrivelseTextfield.getText();
-    }
-
-    public boolean isTom() {
-        return erTomRadioButton.isSelected();
-    }
-
-    public boolean isBrugt() {
-        return tideligereBrugt.isSelected();
-    }
-
-    public Leverandør getLeverandør() {
-        return leverandørComboBox.getValue();
-    }
-
-    public Lager getLager() {
-        return lagerComboBox.getValue();
-    }
-
+    public boolean isConfirmed()         { return confirmed; }
+    public double getFadstørrelse()      { return Double.parseDouble(størrelseField.getText()); }
+    public LocalDate getProduktionsDato(){ return produktionsDato.getValue(); }
+    public String getBeskrivelse()       { return beskrivelseTextfield.getText(); }
+    public boolean isTom()              { return erTomRadioButton.isSelected(); }
+    public boolean isBrugt()            { return tideligereBrugt.isSelected(); }
+    public Leverandør getLeverandør()    { return leverandørComboBox.getValue(); }
+    public Lager getLager()             { return lagerComboBox.getValue(); }
 }
-
