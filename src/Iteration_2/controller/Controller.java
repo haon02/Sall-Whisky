@@ -181,6 +181,17 @@ public class Controller {
         return totalMængdeEfterVand - fadMængdeLiter;
     }
 
+    public List<Fad> getTommeFadList(Lager lager){
+        List<Fad> tommeFadeList = new ArrayList<>();
+
+        for (Fad fad : getFadList()) {
+            if (fad.getLager() == lager && fad.erTom()){
+                tommeFadeList.add(fad);
+            }
+        }
+
+        return tommeFadeList;
+    }
     // ── Getters ───────────────────────────────────────────────────────────────
 
     public List<Medarbejder> getMedarbejderList() { return Storage.getMedarbejderList(); }
@@ -190,4 +201,5 @@ public class Controller {
     public List<Fad> getFadList()                 { return Storage.getFadlist(); }
     public List<Lager> getLagerList()             { return Storage.getLagerList(); }
     public List<Leverandør> getLeverandørList()   { return Storage.getLeverandørList(); }
+    public List<Destillat> getDestillatList()     { return Storage.getDestillatList(); }
 }

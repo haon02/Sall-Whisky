@@ -49,4 +49,9 @@ public class Destillat implements Serializable {
 
         this.mængdeTappet += mængde;
     }
+
+    @Override
+    public String toString() {
+        return getProduktionslinje().toString() + " - " + getSlutAlkoholProcent() + "%" + " - " + getResterendeMængde() + "L";
+    }
 }

@@ -93,10 +93,10 @@ public class Fad implements Serializable {
 
     @Override
     public String toString() {
-        if (erTom() == true) {
-            return "Fad " + beskrivelse + " tomt fad";
+        if (erTom) {
+            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt" : "Nyt") + ")";
         } else {
-            return "Fad " + beskrivelse + " fuldt fad";
+            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt" : "Nyt") + mængdeDestillatLiter + "L)";
         }
     }
 }
