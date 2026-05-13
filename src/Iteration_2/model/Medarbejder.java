@@ -34,4 +34,9 @@ public class Medarbejder implements Serializable {
     public String getMobil() {
         return mobil;
     }
+
+    @Override
+    public String toString() {
+        return "#" + medarbejderID + "  " + navn + "  · " + mobil;
+    }
 }

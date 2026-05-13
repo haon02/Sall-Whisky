@@ -22,13 +22,12 @@ public class Controller {
         return korn;
     }
 
-    public Produktionslinje createProduktionslinje(Korn korn, double kornMængde, Gær gær, double gærMængde, double vandMængdeLiter, int mæskeTidMinutter, Medarbejder medarbejder, int antalDestilleringer) {
+    public Produktionslinje createProduktionslinje(Korn korn, double kornMængde, Gær gær, double gærMængde, double vandMængdeLiter, int mæskeTidMinutter, List<Medarbejder> medarbejdere, int antalDestilleringer) {
         Map<Korn, Double> kornMap = new HashMap<>();
         kornMap.put(korn, kornMængde);
         Map<Gær, Double> gærMap = new HashMap<>();
         gærMap.put(gær, gærMængde);
-        HashSet<Medarbejder> medarbejderHashSet = new HashSet<>();
-        medarbejderHashSet.add(medarbejder);
+        HashSet<Medarbejder> medarbejderHashSet = new HashSet<>(medarbejdere);
         Produktionslinje produktionslinje = new Produktionslinje(kornMap, gærMap, vandMængdeLiter, mæskeTidMinutter, medarbejderHashSet, antalDestilleringer);
         Storage.addProduktionslinje(produktionslinje);
         return produktionslinje;
