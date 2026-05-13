@@ -1,7 +1,6 @@
 package Iteration_3.storage;
 
 import Iteration_3.model.*;
-import Iteration_3.model.*;
 
 import java.io.*;
 import java.util.ArrayList;

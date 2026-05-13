@@ -87,4 +87,9 @@ public class Produktionslinje implements Serializable {
     public int getIdProduktionslinje() {
         return idProduktionslinje;
     }
+
+    @Override
+    public String toString() {
+        return getIdProduktionslinje() + " - " + (erAfsluttet() ? "Afsluttet" : "Aktiv");
+    }
 }
