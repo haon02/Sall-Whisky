@@ -6,6 +6,7 @@ public class Regulering {
     double alkoholProcentOriginal;
     double vandTilføjeLiter;
     double slutAlkholProcent;
+    double totalMængde;
 
     Regulering(Fad fad, double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
         this.fad = fad;
@@ -13,6 +14,7 @@ public class Regulering {
         this.alkoholProcentOriginal = alkoholProcentOriginal;
         this.vandTilføjeLiter = vandTilføjeLiter;
         this.slutAlkholProcent = slutAlkoholProcent;
+        this.totalMængde = fadMængdeLiter + vandTilføjeLiter;
     }
 
 
@@ -34,5 +36,16 @@ public class Regulering {
 
     public double getSlutAlkholProcent() {
         return slutAlkholProcent;
+    }
+
+    public double getTotalMængde() {
+        return totalMængde;
+    }
+
+    public void afTapning(double mængde) {
+        if (mængde > totalMængde) {
+            throw new IllegalArgumentException("Der er ikke så meget væske tilbage");
+        }
+        this.totalMængde -= mængde;
     }
 }

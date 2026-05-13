@@ -1,7 +1,7 @@
-package Iteration_2;
+package Iteration_2Test;
 
-import Iteration_2.controller.Controller;
-import Iteration_2.model.*;
+import Iteration_3.controller.Controller;
+import Iteration_3.model.*;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;

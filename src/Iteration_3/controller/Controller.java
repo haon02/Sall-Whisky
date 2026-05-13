@@ -1,14 +1,10 @@
 package Iteration_3.controller;
 
 import Iteration_3.model.*;
-import Iteration_3.model.*;
 import Iteration_3.storage.Storage;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Controller {
@@ -94,51 +90,6 @@ public class Controller {
         return destillat;
     }
 
-//    public SingleCask createSingleCask(double mængdeLiter, Destillat destillat, Fad fad) {
-//        if (fad == null) throw new IllegalArgumentException("Vælg et konkret fad");
-//        SingleCask singleCask = new SingleCask(mængdeLiter, destillat);
-//        fad.fyldFad(destillat, mængdeLiter);
-//        destillat.reducer(mængdeLiter);
-//        return singleCask;
-//    }
-
-//    public Blended createBlended(ArrayList<Mix> destillater, String navn, Fad fad) {
-//        if (fad == null) throw new IllegalArgumentException("Vælg et konkret fad");
-//        Blended blended = new Blended(navn);
-//        double mængde = 0;
-//        for (Mix m : destillater) {
-//            if (m instanceof Single single) {
-//                blended.addDestillat(m);
-//                mængde += single.getMængdeLiter();
-//                Storage.removeSingle(single);
-//            }
-//        }
-//        fad.fyldFad(destillat, mængde);
-//        return blended;
-//    }
-
-//    public SingleMalt createSingleMalt(ArrayList<Mix> destillater, String navn, Fad fad, Destillat destillat) {
-//        if (fad == null) throw new IllegalArgumentException("Vælg et konkret fad");
-//        SingleMalt singleMalt = new SingleMalt(navn);
-//        double mængde = 0;
-//        for (Mix m : destillater) {
-//            if (m instanceof Single single) {
-//                singleMalt.add(single);
-//                mængde += single.getMængdeLiter();
-//                Storage.removeSingle(single);
-//            }
-//        }
-//        fad.fyldFad(destillat, mængde);
-//        return singleMalt;
-//    }
-//
-//    public Single createSingle(Destillat destillat, double mængdeLiter, String destilleri) {
-//        Single single = new Single(destillat, mængdeLiter, destilleri);
-//        destillat.reducer(mængdeLiter);
-//        Storage.addSingle(single);
-//        return single;
-//    }
-
     public void fjernFraLager(Fad fad) {
         if (fad.getLager() == null) return;
         for (Reol r : fad.getLager().getReoler()) {
@@ -218,14 +169,6 @@ public class Controller {
         return destillat.getResterendeMængde();
     }
 
-    public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
-        return fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
-    }
-
-    public void fyldFlaske(Flaske flaske, Regulering regulering) {
-        flaske.fyldFlaske(regulering);
-    }
-
     public double beregnVandTilføjelse(double fadMængdeLiter, double alkoholProcentOriginal, double slutAlkoholProcent) {
         if (slutAlkoholProcent <= 0)
             throw new IllegalArgumentException("Slut alkoholprocenten skal være over 0");
@@ -238,6 +181,40 @@ public class Controller {
         return totalMængdeEfterVand - fadMængdeLiter;
     }
 
+    public List<Fad> getTommeFadList(Lager lager){
+        List<Fad> tommeFadeList = new ArrayList<>();
+
+        for (Fad fad : getFadList()) {
+            if (fad.getLager() == lager && fad.erTom()){
+                tommeFadeList.add(fad);
+            }
+        }
+
+        return tommeFadeList;
+    }
+
+    public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
+        return fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
+    }
+
+    public void fyldFlaske(Flaske flaske, Regulering regulering) {
+        flaske.fyldFlaske(regulering);
+    }
+
+    public boolean beregnVandTilføjelse(double fadMængdeLiter, double alkoholProcentOriginal, double slutAlkoholProcent, double vandMængdeLiter) {
+        if (slutAlkoholProcent <= 0)
+            throw new IllegalArgumentException("Slut alkoholprocenten skal være over 0");
+        if (slutAlkoholProcent > alkoholProcentOriginal)
+            throw new IllegalArgumentException("Alkohol koncentration kan ikke øges");
+        if (slutAlkoholProcent < 40)
+            throw new IllegalArgumentException("Dette er ikke længere whisky");
+
+        if (beregnVandTilføjelse(fadMængdeLiter,alkoholProcentOriginal,slutAlkoholProcent) == vandMængdeLiter) {
+            return true;
+        }
+        return false;
+
+    }
     // ── Getters ───────────────────────────────────────────────────────────────
 
     public List<Medarbejder> getMedarbejderList() { return Storage.getMedarbejderList(); }
@@ -247,4 +224,5 @@ public class Controller {
     public List<Fad> getFadList()                 { return Storage.getFadlist(); }
     public List<Lager> getLagerList()             { return Storage.getLagerList(); }
     public List<Leverandør> getLeverandørList()   { return Storage.getLeverandørList(); }
+    public List<Destillat> getDestillatList()     { return Storage.getDestillatList(); }
 }
