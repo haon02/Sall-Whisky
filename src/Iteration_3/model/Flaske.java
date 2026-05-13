@@ -26,6 +26,7 @@ public class Flaske {
             throw new IllegalArgumentException("Flasken er allerede fyldt");
         }
         this.regulering = regulering;
+        regulering.afTapning(størrelseLiter);
         erTom = false;
     }
 
@@ -33,7 +34,7 @@ public class Flaske {
         erTom = true;
     }
 
-    public boolean isErTom() {
+    public boolean erTom() {
         return erTom;
     }
 
