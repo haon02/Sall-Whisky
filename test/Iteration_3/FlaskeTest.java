@@ -10,7 +10,7 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ReguleringTest {
+public class FlaskeTest {
     private static final double RENT_DESTILLAT = 300.0;
     private static final double VAND_TILFØJET = 200.0;
     private static final double TOTAL_BEHOLDNING = RENT_DESTILLAT + VAND_TILFØJET; // 500.0
@@ -25,6 +25,8 @@ public class ReguleringTest {
     private Leverandør leverandør;
     private Produktionslinje produktionslinje;
     private double FAD_MÆNGDE = 100;
+    private double VAND_MÆNGDE = 75;
+    private Regulering regulering;
 
     @BeforeEach
     void setUp() {
@@ -51,38 +53,37 @@ public class ReguleringTest {
                 1000.0, 90, new HashSet<>(), 2
         );
         destillat = produktionslinje.createDestillat(RENT_DESTILLAT, VAND_TILFØJET, 63.5);
-        fad.fyldFad(destillat,FAD_MÆNGDE);
+        fad.fyldFad(destillat, FAD_MÆNGDE);
+        regulering = fad.createRegulering(FAD_MÆNGDE, 70, VAND_MÆNGDE, 40);
     }
 
     @Test
-    void kanIkkeTageMereEndFadMængde() {
+    void flaskeAlleredeFyldt() {
+        Flaske flaske = new Flaske("2020 collection", 0.75, false, regulering);
         assertThrows(IllegalArgumentException.class,
-                () -> fad.createRegulering(FAD_STØRRELSE + 1,40,40,40));
+                () -> flaske.fyldFlaske(regulering));
     }
 
     @Test
-    void korrektBeregningAlkoholProcent() {
-        double expected = 75;
-        double actual = controller.beregnVandTilføjelse(100,70,40);
+    void flaskeIkkeFyldt() {
+        Flaske flaske = new Flaske("2020 collection", 0.75, true, regulering);
+        flaske.fyldFlaske(regulering);
+
+        double expected = FAD_MÆNGDE + VAND_MÆNGDE - 0.75;
+        double actual = regulering.getTotalMængde();
 
         assertEquals(expected,actual);
+        assertFalse(flaske.erTom());
     }
 
     @Test
-    void slutAlkoholHøjereEndStartAlkohol() {
-        assertThrows(IllegalArgumentException.class,
-                () -> fad.createRegulering(1,40,0,41));
-    }
+    void flereFlaskerEndMuligt() {
+        Flaske flaske = new Flaske("2020 collection", regulering.getTotalMængde(), true, regulering);
+        Flaske flaske2 = new Flaske("2020 collection", 1, true, regulering);
 
-    @Test
-    void fadMængdeNul() {
-        assertThrows(IllegalArgumentException.class,
-                () -> fad.createRegulering(0,40,0,40));
-    }
+        flaske.fyldFlaske(regulering);
 
-    @Test
-    void vandTilføetNegativ() {
         assertThrows(IllegalArgumentException.class,
-                () -> fad.createRegulering(1,40,-1,40));
+                () -> flaske2.fyldFlaske(regulering));
     }
 }

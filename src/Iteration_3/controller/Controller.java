@@ -238,6 +238,21 @@ public class Controller {
         return totalMængdeEfterVand - fadMængdeLiter;
     }
 
+    public boolean beregnVandTilføjelse(double fadMængdeLiter, double alkoholProcentOriginal, double slutAlkoholProcent, double vandMængdeLiter) {
+        if (slutAlkoholProcent <= 0)
+            throw new IllegalArgumentException("Slut alkoholprocenten skal være over 0");
+        if (slutAlkoholProcent > alkoholProcentOriginal)
+            throw new IllegalArgumentException("Alkohol koncentration kan ikke øges");
+        if (slutAlkoholProcent < 40)
+            throw new IllegalArgumentException("Dette er ikke længere whisky");
+
+        if (beregnVandTilføjelse(fadMængdeLiter,alkoholProcentOriginal,slutAlkoholProcent) == vandMængdeLiter) {
+            return true;
+        }
+        return false;
+
+    }
+
     // ── Getters ───────────────────────────────────────────────────────────────
 
     public List<Medarbejder> getMedarbejderList() { return Storage.getMedarbejderList(); }

@@ -95,6 +95,15 @@ public class Fad implements Serializable {
         if (fadMængdeLiter > mængdeDestillatLiter) {
             throw new IllegalArgumentException("Fadet har ikke så meget destillat tilbage");
         }
+        if (alkoholProcentOriginal < slutAlkoholProcent) {
+            throw new IllegalArgumentException("Alkoholprocenten kan ikke øges");
+        }
+        if (fadMængdeLiter <= 0) {
+            throw new IllegalArgumentException("Fadmængde skal være større end 0");
+        }
+        if (vandTilføjeLiter < 0) {
+            throw new IllegalArgumentException("Vand tilføjelse kan ikke være negativ");
+        }
         Regulering regulering = new Regulering(this,fadMængdeLiter,alkoholProcentOriginal,vandTilføjeLiter,slutAlkoholProcent);
         return regulering;
     }
