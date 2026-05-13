@@ -65,9 +65,9 @@ public class MedarbejderVindue {
         opretLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #8E8E8A; -fx-letter-spacing: 1;");
         root.addNode(opretLabel);
 
-        navnField    = tekstFelt("f.eks. Lars Nielsen");
+        navnField    = tekstFelt("f.eks. Noah Den dejlige");
         adresseField = tekstFelt("f.eks. Markvej 4, Sall");
-        mobilField   = tekstFelt("f.eks. 42 13 37 00");
+        mobilField   = tekstFelt("f.eks. 67 67 42 00");
 
         root.addLabeledNode("Navn",    navnField);
         root.addLabeledNode("Adresse", adresseField);

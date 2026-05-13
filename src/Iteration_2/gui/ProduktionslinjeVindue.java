@@ -9,8 +9,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-        import javafx.scene.layout.*;
-        import javafx.scene.paint.Color;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -20,15 +20,15 @@ import java.util.List;
 
 /**
  * UC1 – Opret ny produktionslinje.
- *
+ * <p>
  * Forbedringer ift. original:
- *  - Inline feltvalidering (rød kant + fejltekst under feltet ved blur)
- *  - Checkboxes i stedet for ListView med Ctrl-klik
- *  - Felter grupperet to og to for at reducere scrolling
- *  - Enhedssuffix vist direkte i feltet
- *  - Spinner til heltal (mæsketid, destilleringer)
- *  - Succesbesked inden vinduet lukkes
- *  - Vinduet er resizable
+ * - Inline feltvalidering (rød kant + fejltekst under feltet ved blur)
+ * - Checkboxes i stedet for ListView med Ctrl-klik
+ * - Felter grupperet to og to for at reducere scrolling
+ * - Enhedssuffix vist direkte i feltet
+ * - Spinner til heltal (mæsketid, destilleringer)
+ * - Succesbesked inden vinduet lukkes
+ * - Vinduet er resizable
  */
 public class ProduktionslinjeVindue {
 
@@ -37,33 +37,33 @@ public class ProduktionslinjeVindue {
     private final Stage owner;
 
     // Korn
-    private ComboBox<Korn>    kornBox;
-    private TextField         kornMængdeField;
-    private Label             kornBoxError;
-    private Label             kornMængdeError;
+    private ComboBox<Korn> kornBox;
+    private TextField kornMængdeField;
+    private Label kornBoxError;
+    private Label kornMængdeError;
 
     // Gær
-    private ComboBox<Gær>     gærBox;
-    private TextField         gærMængdeField;
-    private Label             gærBoxError;
-    private Label             gærMængdeError;
+    private ComboBox<Gær> gærBox;
+    private TextField gærMængdeField;
+    private Label gærBoxError;
+    private Label gærMængdeError;
 
     // Vand & mæske
-    private TextField         vandMængdeField;
-    private Spinner<Integer>  mæskeTidSpinner;
-    private Label             vandMængdeError;
+    private TextField vandMængdeField;
+    private Spinner<Integer> mæskeTidSpinner;
+    private Label vandMængdeError;
 
     // Destilleringer
-    private Spinner<Integer>  destilleringerSpinner;
+    private Spinner<Integer> destilleringerSpinner;
 
     // Medarbejdere
     private final List<CheckBox> medarbejderBoxes = new ArrayList<>();
-    private Label                medarbejderError;
+    private Label medarbejderError;
 
     private Produktionslinje oprettetLinje = null;
 
     public ProduktionslinjeVindue(Stage owner, Controller controller) {
-        this.owner      = owner;
+        this.owner = owner;
         this.controller = controller;
     }
 
@@ -114,7 +114,9 @@ public class ProduktionslinjeVindue {
     //  Sektionsbyggere
     // ─────────────────────────────────────────────────────────────────────────
 
-    /** "KORN"-sektion: dropdown + mængdefelt side om side */
+    /**
+     * "KORN"-sektion: dropdown + mængdefelt side om side
+     */
     private HBox kornRæd() {
         kornBox = new ComboBox<>();
         kornBox.getItems().addAll(controller.getKornList());
@@ -132,11 +134,13 @@ public class ProduktionslinjeVindue {
         });
 
         VBox venstre = feltGruppe("Korntype", kornBox, kornBoxError);
-        VBox højre   = feltGruppe("Kornmængde", suffixFelt(kornMængdeField, "kg"), kornMængdeError);
+        VBox højre = feltGruppe("Kornmængde", suffixFelt(kornMængdeField, "kg"), kornMængdeError);
         return twoCol(venstre, højre);
     }
 
-    /** "GÆR"-sektion */
+    /**
+     * "GÆR"-sektion
+     */
     private HBox gærRæd() {
         gærBox = new ComboBox<>();
         gærBox.getItems().addAll(controller.getGærList());
@@ -154,11 +158,13 @@ public class ProduktionslinjeVindue {
         });
 
         VBox venstre = feltGruppe("Gærtype", gærBox, gærBoxError);
-        VBox højre   = feltGruppe("Gærmængde", suffixFelt(gærMængdeField, "kg"), gærMængdeError);
+        VBox højre = feltGruppe("Gærmængde", suffixFelt(gærMængdeField, "kg"), gærMængdeError);
         return twoCol(venstre, højre);
     }
 
-    /** "VAND & MÆSKNING"-sektion */
+    /**
+     * "VAND & MÆSKNING"-sektion
+     */
     private HBox vandMæskeRæd() {
         vandMængdeField = decimalFelt("4000 – 6000");
         vandMængdeError = errorLabel();
@@ -171,23 +177,27 @@ public class ProduktionslinjeVindue {
         mæskeTidSpinner.setMaxWidth(Double.MAX_VALUE);
 
         VBox venstre = feltGruppe("Vandmængde", suffixFelt(vandMængdeField, "L"), vandMængdeError);
-        VBox højre   = feltGruppe("Mæsketid", suffixFelt(mæskeTidSpinner, "min"), errorLabel());
+        VBox højre = feltGruppe("Mæsketid", suffixFelt(mæskeTidSpinner, "min"), errorLabel());
         return twoCol(venstre, højre);
     }
 
-    /** "DESTILLERING"-sektion */
+    /**
+     * "DESTILLERING"-sektion
+     */
     private HBox destillRæd() {
         destilleringerSpinner = new Spinner<>(1, 10, 2);
         destilleringerSpinner.setEditable(true);
         destilleringerSpinner.setMaxWidth(Double.MAX_VALUE);
 
         VBox venstre = feltGruppe("Antal destilleringer", destilleringerSpinner, errorLabel());
-        VBox højre   = new VBox(); // tom placeholder
+        VBox højre = new VBox(); // tom placeholder
         HBox.setHgrow(højre, Priority.ALWAYS);
         return twoCol(venstre, højre);
     }
 
-    /** "MEDARBEJDERE"-sektion med checkboxes */
+    /**
+     * "MEDARBEJDERE"-sektion med checkboxes
+     */
     private VBox medarbejderPanel() {
         medarbejderError = errorLabel();
 
@@ -210,27 +220,29 @@ public class ProduktionslinjeVindue {
         return panel;
     }
 
-    /** Knapper nederst */
+    /**
+     * Knapper nederst
+     */
     private HBox knapPanel() {
         Button gem = new Button("Opret produktionslinje");
         gem.setDefaultButton(true);
         gem.setStyle("""
-            -fx-background-color: #2e7d32;
-            -fx-text-fill: white;
-            -fx-font-weight: bold;
-            -fx-font-size: 14px;
-            -fx-padding: 9 18 9 18;
-            -fx-background-radius: 6;
-        """);
+                    -fx-background-color: #2e7d32;
+                    -fx-text-fill: white;
+                    -fx-font-weight: bold;
+                    -fx-font-size: 14px;
+                    -fx-padding: 9 18 9 18;
+                    -fx-background-radius: 6;
+                """);
         gem.setOnAction(e -> forsøgOpret());
 
         Button annuller = new Button("Annuller");
         annuller.setCancelButton(true);
         annuller.setStyle("""
-            -fx-font-size: 14px;
-            -fx-padding: 9 18 9 18;
-            -fx-background-radius: 6;
-        """);
+                    -fx-font-size: 14px;
+                    -fx-padding: 9 18 9 18;
+                    -fx-background-radius: 6;
+                """);
         annuller.setOnAction(e -> stage.close());
 
         HBox knapper = new HBox(10, gem, annuller);
@@ -272,7 +284,7 @@ public class ProduktionslinjeVindue {
 
     private List<Medarbejder> valgtemedarbejdere() {
         List<Medarbejder> valgte = new ArrayList<>();
-        List<Medarbejder> alle   = controller.getMedarbejderList();
+        List<Medarbejder> alle = controller.getMedarbejderList();
         for (int i = 0; i < medarbejderBoxes.size(); i++) {
             if (medarbejderBoxes.get(i).isSelected()) valgte.add(alle.get(i));
         }
@@ -352,7 +364,7 @@ public class ProduktionslinjeVindue {
         popup.initModality(Modality.APPLICATION_MODAL);
         popup.initStyle(javafx.stage.StageStyle.UNDECORATED);
 
-        Label ikon  = new Label("✓");
+        Label ikon = new Label("✓");
         ikon.setStyle("-fx-font-size: 28px; -fx-text-fill: #2e7d32;");
         Label tekst = new Label(besked);
         tekst.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
@@ -361,19 +373,22 @@ public class ProduktionslinjeVindue {
         box.setAlignment(Pos.CENTER);
         box.setPadding(new Insets(28, 40, 28, 40));
         box.setStyle("""
-            -fx-background-color: white;
-            -fx-border-color: #2e7d32;
-            -fx-border-width: 2;
-            -fx-border-radius: 8;
-            -fx-background-radius: 8;
-        """);
+                    -fx-background-color: white;
+                    -fx-border-color: #2e7d32;
+                    -fx-border-width: 2;
+                    -fx-border-radius: 8;
+                    -fx-background-radius: 8;
+                """);
 
         popup.setScene(new Scene(box));
         popup.show();
 
         // Luk automatisk efter 900 ms
         new Thread(() -> {
-            try { Thread.sleep(900); } catch (InterruptedException ignored) {}
+            try {
+                Thread.sleep(900);
+            } catch (InterruptedException ignored) {
+            }
             javafx.application.Platform.runLater(() -> {
                 popup.close();
                 efterBesked.run();
@@ -385,10 +400,12 @@ public class ProduktionslinjeVindue {
     //  Layout-hjælpere
     // ─────────────────────────────────────────────────────────────────────────
 
-    /** To-kolonne-rækker med lige stor bredde */
+    /**
+     * To-kolonne-rækker med lige stor bredde
+     */
     private HBox twoCol(Region venstre, Region højre) {
         HBox.setHgrow(venstre, Priority.ALWAYS);
-        HBox.setHgrow(højre,   Priority.ALWAYS);
+        HBox.setHgrow(højre, Priority.ALWAYS);
         venstre.setMaxWidth(Double.MAX_VALUE);
         højre.setMaxWidth(Double.MAX_VALUE);
         HBox row = new HBox(14, venstre, højre);
@@ -396,7 +413,9 @@ public class ProduktionslinjeVindue {
         return row;
     }
 
-    /** Label + kontrol + fejltekst stablet lodret */
+    /**
+     * Label + kontrol + fejltekst stablet lodret
+     */
     private VBox feltGruppe(String labelTekst, Region kontrol, Label fejl) {
         Label lbl = new Label(labelTekst);
         lbl.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #444;");
@@ -406,7 +425,9 @@ public class ProduktionslinjeVindue {
         return box;
     }
 
-    /** Wrapper der viser en enhedssuffix til højre for et TextField */
+    /**
+     * Wrapper der viser en enhedssuffix til højre for et TextField
+     */
     private HBox suffixFelt(Control felt, String suffix) {
         Label suf = new Label(suffix);
         suf.setStyle("-fx-font-size: 12px; -fx-text-fill: #888; -fx-padding: 0 0 0 4;");
@@ -417,17 +438,19 @@ public class ProduktionslinjeVindue {
         return box;
     }
 
-    /** Sektionsoverskrift */
+    /**
+     * Sektionsoverskrift
+     */
     private Label sectionLabel(String tekst) {
         Label l = new Label(tekst.toUpperCase());
         l.setStyle("""
-            -fx-font-size: 11px;
-            -fx-font-weight: bold;
-            -fx-text-fill: #888;
-            -fx-padding: 4 0 2 0;
-            -fx-border-color: transparent transparent #ddd transparent;
-            -fx-border-width: 0 0 1 0;
-        """);
+                    -fx-font-size: 11px;
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #888;
+                    -fx-padding: 4 0 2 0;
+                    -fx-border-color: transparent transparent #ddd transparent;
+                    -fx-border-width: 0 0 1 0;
+                """);
         l.setMaxWidth(Double.MAX_VALUE);
         return l;
     }
