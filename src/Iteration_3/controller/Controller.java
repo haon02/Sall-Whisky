@@ -1,10 +1,14 @@
-package Iteration_2.controller;
+package Iteration_3.controller;
 
-import Iteration_2.model.*;
-import Iteration_2.storage.Storage;
+import Iteration_3.model.*;
+import Iteration_3.model.*;
+import Iteration_3.storage.Storage;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 
 public class Controller {
@@ -90,6 +94,51 @@ public class Controller {
         return destillat;
     }
 
+//    public SingleCask createSingleCask(double mængdeLiter, Destillat destillat, Fad fad) {
+//        if (fad == null) throw new IllegalArgumentException("Vælg et konkret fad");
+//        SingleCask singleCask = new SingleCask(mængdeLiter, destillat);
+//        fad.fyldFad(destillat, mængdeLiter);
+//        destillat.reducer(mængdeLiter);
+//        return singleCask;
+//    }
+
+//    public Blended createBlended(ArrayList<Mix> destillater, String navn, Fad fad) {
+//        if (fad == null) throw new IllegalArgumentException("Vælg et konkret fad");
+//        Blended blended = new Blended(navn);
+//        double mængde = 0;
+//        for (Mix m : destillater) {
+//            if (m instanceof Single single) {
+//                blended.addDestillat(m);
+//                mængde += single.getMængdeLiter();
+//                Storage.removeSingle(single);
+//            }
+//        }
+//        fad.fyldFad(destillat, mængde);
+//        return blended;
+//    }
+
+//    public SingleMalt createSingleMalt(ArrayList<Mix> destillater, String navn, Fad fad, Destillat destillat) {
+//        if (fad == null) throw new IllegalArgumentException("Vælg et konkret fad");
+//        SingleMalt singleMalt = new SingleMalt(navn);
+//        double mængde = 0;
+//        for (Mix m : destillater) {
+//            if (m instanceof Single single) {
+//                singleMalt.add(single);
+//                mængde += single.getMængdeLiter();
+//                Storage.removeSingle(single);
+//            }
+//        }
+//        fad.fyldFad(destillat, mængde);
+//        return singleMalt;
+//    }
+//
+//    public Single createSingle(Destillat destillat, double mængdeLiter, String destilleri) {
+//        Single single = new Single(destillat, mængdeLiter, destilleri);
+//        destillat.reducer(mængdeLiter);
+//        Storage.addSingle(single);
+//        return single;
+//    }
+
     public void fjernFraLager(Fad fad) {
         if (fad.getLager() == null) return;
         for (Reol r : fad.getLager().getReoler()) {
@@ -167,6 +216,14 @@ public class Controller {
         destillat.reducer(mængde);
 
         return destillat.getResterendeMængde();
+    }
+
+    public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
+        return fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
+    }
+
+    public void fyldFlaske(Flaske flaske, Regulering regulering) {
+        flaske.fyldFlaske(regulering);
     }
 
     public double beregnVandTilføjelse(double fadMængdeLiter, double alkoholProcentOriginal, double slutAlkoholProcent) {

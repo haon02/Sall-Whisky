@@ -1,4 +1,4 @@
-package Iteration_2.model;
+package Iteration_3.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -90,6 +90,16 @@ public class Fad implements Serializable {
         this.destillat = null;
         this.erTom = true;
     }
+
+    public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
+        if (fadMængdeLiter > mængdeDestillatLiter) {
+            throw new IllegalArgumentException("Fadet har ikke så meget destillat tilbage");
+        }
+        Regulering regulering = new Regulering(this,fadMængdeLiter,alkoholProcentOriginal,vandTilføjeLiter,slutAlkoholProcent);
+        return regulering;
+    }
+
+
 
     @Override
     public String toString() {

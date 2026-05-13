@@ -1,4 +1,4 @@
-package Iteration_2.model;
+package Iteration_3.model;
 
 public class Regulering {
     Fad fad;

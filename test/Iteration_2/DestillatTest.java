@@ -31,7 +31,7 @@ class DestillatTest {
     }
 
     @Test
-    void Test_alcholProcent(){
+    void Test_alcoholProcent(){
 
     }
 }
