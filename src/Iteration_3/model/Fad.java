@@ -90,7 +90,6 @@ public class Fad implements Serializable {
         this.destillat = null;
         this.erTom = true;
     }
-
     public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
         if (fadMængdeLiter > mængdeDestillatLiter) {
             throw new IllegalArgumentException("Fadet har ikke så meget destillat tilbage");
@@ -108,14 +107,12 @@ public class Fad implements Serializable {
         return regulering;
     }
 
-
-
     @Override
     public String toString() {
-        if (erTom() == true) {
-            return "Fad " + beskrivelse + " tomt fad";
+        if (erTom) {
+            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt" : "Nyt") + ")";
         } else {
-            return "Fad " + beskrivelse + " fuldt fad";
+            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt" : "Nyt") + mængdeDestillatLiter + "L)";
         }
     }
 }

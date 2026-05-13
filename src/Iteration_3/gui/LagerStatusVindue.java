@@ -1,21 +1,13 @@
 package Iteration_3.gui;
 
 import Iteration_3.controller.Controller;
-import Iteration_3.model.Fad;
-import Iteration_3.model.Hylde;
-import Iteration_3.model.Lager;
-import Iteration_3.model.Reol;
+import Iteration_3.model.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;

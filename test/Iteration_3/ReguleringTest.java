@@ -46,7 +46,7 @@ public class ReguleringTest {
         );
         hylde.addFad(fad);
 
-        produktionslinje = new Iteration_3.model.Produktionslinje(
+        produktionslinje = new Produktionslinje(
                 new HashMap<>(), new HashMap<>(),
                 1000.0, 90, new HashSet<>(), 2
         );
