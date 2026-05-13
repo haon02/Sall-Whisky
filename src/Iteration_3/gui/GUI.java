@@ -85,7 +85,7 @@ public class GUI extends Application {
                 buildMinimalCard("PRODUKTION", "Afslut linje → destillat", e -> {
                     new DestillatVindue(primaryStage, controller).showAndWait();
                 }),
-                buildMinimalCard("Påfyldning af fad", "Held destillat på fad", e -> {
+                buildMinimalCard("PÅFYLDNING AF FAD", "Held destillat på fad", e -> {
                     new PåfyldningsVindue(primaryStage, controller).showAndWait();
                 })
         );
