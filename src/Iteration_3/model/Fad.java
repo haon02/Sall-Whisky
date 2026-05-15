@@ -2,6 +2,7 @@ package Iteration_3.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Fad implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -16,6 +17,7 @@ public class Fad implements Serializable {
     private Lager lager;
     private Destillat destillat;
     private double mængdeDestillatLiter;
+    private final ArrayList<Indholdshistorik> indholdshistoriker = new ArrayList<>();
 
     public Fad(double størrelseLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
         this.størrelseLiter = størrelseLiter;
@@ -31,6 +33,9 @@ public class Fad implements Serializable {
         mængdeDestillatLiter = 0;
     }
 
+    public ArrayList<Indholdshistorik> getIndholdshistorik(){
+        return new ArrayList<>(indholdshistoriker);
+    }
     public double getMængdeDestillatLiter() {
         return mængdeDestillatLiter;
     }
@@ -105,6 +110,12 @@ public class Fad implements Serializable {
         }
         Regulering regulering = new Regulering(this,fadMængdeLiter,alkoholProcentOriginal,vandTilføjeLiter,slutAlkoholProcent);
         return regulering;
+    }
+
+    public Indholdshistorik createIndholdshistorik(Destillat destillat, LocalDate påfyldningsDato, double mængde){
+        Indholdshistorik indholdshistorik = new Indholdshistorik(destillat,påfyldningsDato,mængde);
+        indholdshistoriker.add(indholdshistorik);
+        return indholdshistorik;
     }
 
     @Override
