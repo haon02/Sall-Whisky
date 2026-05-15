@@ -21,7 +21,7 @@ import javafx.stage.Stage;
  *  - Beskrivelse / smagsnoter
  */
 public class GaerTypeVindue {
-    private Controller controller = new Controller();
+    private Controller controller;
     private Stage stage;
     private Stage owner;
 

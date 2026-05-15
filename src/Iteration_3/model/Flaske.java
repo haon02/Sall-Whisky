@@ -6,6 +6,13 @@ public class Flaske {
     boolean erTom;
     Regulering regulering;
 
+    public Flaske(String navn, double størrelseLiter) {
+        this.navn = navn;
+        this.størrelseLiter = størrelseLiter;
+        this.erTom = true;
+        this.regulering = null;
+    }
+
     public Flaske(String navn, double størrelseLiter, boolean erTom, Regulering regulering) {
         this.navn = navn;
         this.størrelseLiter = størrelseLiter;

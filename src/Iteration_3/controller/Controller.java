@@ -90,6 +90,18 @@ public class Controller {
         return destillat;
     }
 
+    public Flaske createFlaske(String navn, double størrelseLiter){
+        Flaske flaske = new Flaske(navn, størrelseLiter);
+        Storage.addFlaske(flaske);
+        return flaske;
+    }
+
+    public Flaske createFlaske(String navn, double størrelseLiter, boolean erTom, Regulering regulering) {
+        Flaske flaske = new Flaske(navn, størrelseLiter, erTom, regulering);
+        Storage.addFlaske(flaske);
+        return flaske;
+    }
+
     public void fjernFraLager(Fad fad) {
         if (fad.getLager() == null) return;
         for (Reol r : fad.getLager().getReoler()) {
@@ -181,16 +193,27 @@ public class Controller {
         return totalMængdeEfterVand - fadMængdeLiter;
     }
 
-    public List<Fad> getTommeFadList(Lager lager){
+    public List<Fad> getTommeFadList(Lager lager) {
         List<Fad> tommeFadeList = new ArrayList<>();
 
         for (Fad fad : getFadList()) {
-            if (fad.getLager() == lager && fad.erTom()){
+            if (fad.getLager() == lager && fad.erTom()) {
                 tommeFadeList.add(fad);
             }
         }
 
         return tommeFadeList;
+    }
+
+    public List<Fad> getFyldteFadList(Lager lager) {
+        List<Fad> fyldteFadeList = new ArrayList<>();
+
+        for (Fad fad : getFadList()) {
+            if (fad.getLager() == lager && !fad.erTom()) {
+                fyldteFadeList.add(fad);
+            }
+        }
+        return fyldteFadeList;
     }
 
     public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
@@ -209,7 +232,7 @@ public class Controller {
         if (slutAlkoholProcent < 40)
             throw new IllegalArgumentException("Dette er ikke længere whisky");
 
-        if (beregnVandTilføjelse(fadMængdeLiter,alkoholProcentOriginal,slutAlkoholProcent) == vandMængdeLiter) {
+        if (beregnVandTilføjelse(fadMængdeLiter, alkoholProcentOriginal, slutAlkoholProcent) == vandMængdeLiter) {
             return true;
         }
         return false;
@@ -217,12 +240,43 @@ public class Controller {
     }
     // ── Getters ───────────────────────────────────────────────────────────────
 
-    public List<Medarbejder> getMedarbejderList() { return Storage.getMedarbejderList(); }
-    public List<Gær> getGærList()                 { return Storage.getGærList(); }
-    public List<Korn> getKornList()               { return Storage.getKornList(); }
-    public List<Produktionslinje> getProduktionlinjeList() { return Storage.getProduktionslinjeList(); }
-    public List<Fad> getFadList()                 { return Storage.getFadlist(); }
-    public List<Lager> getLagerList()             { return Storage.getLagerList(); }
-    public List<Leverandør> getLeverandørList()   { return Storage.getLeverandørList(); }
-    public List<Destillat> getDestillatList()     { return Storage.getDestillatList(); }
+    public List<Medarbejder> getMedarbejderList() {
+        return Storage.getMedarbejderList();
+    }
+
+    public List<Gær> getGærList() {
+        return Storage.getGærList();
+    }
+
+    public List<Korn> getKornList() {
+        return Storage.getKornList();
+    }
+
+    public List<Produktionslinje> getProduktionlinjeList() {
+        return Storage.getProduktionslinjeList();
+    }
+
+    public List<Fad> getFadList() {
+        return Storage.getFadlist();
+    }
+
+    public List<Lager> getLagerList() {
+        return Storage.getLagerList();
+    }
+
+    public List<Leverandør> getLeverandørList() {
+        return Storage.getLeverandørList();
+    }
+
+    public List<Destillat> getDestillatList() {
+        return Storage.getDestillatList();
+    }
+
+    public List<Flaske> getFlaskeList() {
+        return Storage.getFlaskeList();
+    }
+
+    public List<Regulering> getReguleringList() {
+        return Storage.getReguleringList();
+    }
 }

@@ -79,7 +79,7 @@ public class GUI extends Application {
         // 0. Header Lager oversigt
         HBox lagerHeader = new HBox(10);
         lagerHeader.getChildren().addAll(
-                buildMinimalCard("LAGEROVERSIGT", "Se status på fade og lager", e -> {
+                buildFullCard("LAGEROVERSIGT", "Se status på fade og lager", e -> {
                     new LagerStatusVindue(primaryStage, controller).showAndWait();
                 })
         );
@@ -108,7 +108,7 @@ public class GUI extends Application {
         grid.setHgap(15);
         grid.setVgap(15);
 
-        String[] labels = {"Produktionslinje", "Destillat", "Korntype", "Gærtype", "Fad", "Lager", "Leverandør", "Medarbejder"};
+        String[] labels = {"Produktionslinje", "Destillat", "Korntype", "Gærtype", "Fad", "Lager", "Leverandør", "Medarbejder", "Flaske"};
         Runnable[] actions = {
                 () -> new ProduktionslinjeVindue(primaryStage, controller).showAndWait(),
                 () -> new DestillatVindue(primaryStage, controller).showAndWait(),
@@ -117,7 +117,8 @@ public class GUI extends Application {
                 () -> new FadVindue(primaryStage, controller).showAndWait(),
                 () -> new LagerTilføjVindue(primaryStage, controller).showAndWait(),
                 () -> new LeverandørTilføjVindue(primaryStage, controller).showAndWait(),
-                () -> new MedarbejderVindue(primaryStage, controller).showAndWait()
+                () -> new MedarbejderVindue(primaryStage, controller).showAndWait(),
+                () -> new FlaskeVindue(primaryStage, controller).showAndWait()
         };
 
         for (int i = 0; i < labels.length; i++) {
@@ -129,7 +130,7 @@ public class GUI extends Application {
 
         resourceSection.getChildren().addAll(resHeader, new Separator(), grid);
 
-        content.getChildren().addAll(navRow, resourceSection);
+        content.getChildren().addAll(lagerHeader, navRow, resourceSection);
         return content;
     }
 
@@ -146,6 +147,32 @@ public class GUI extends Application {
         VBox card = new VBox(10, t, s);
         card.setPadding(new Insets(25));
         card.setPrefWidth(260);
+        card.setStyle(
+                "-fx-background-color: white;" +
+                        "-fx-border-color: " + C_BORDER + ";" +
+                        "-fx-border-width: 1;" +
+                        "-fx-cursor: hand;"
+        );
+
+        card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #FCFCFA; -fx-border-color: " + C_ACCENT + "; -fx-border-width: 1;"));
+        card.setOnMouseExited(e -> card.setStyle("-fx-background-color: white; -fx-border-color: " + C_BORDER + "; -fx-border-width: 1;"));
+        if (press != null) card.setOnMouseClicked(e -> press.handle(null));
+
+        return card;
+    }
+    private VBox buildFullCard(String title, String sub, javafx.event.EventHandler<javafx.event.ActionEvent> press) {
+        Label t = new Label(title);
+        t.setFont(Font.font("Helvetica", FontWeight.BOLD, 12));
+        t.setTextFill(Color.web(C_TEXT));
+        t.setStyle("-fx-letter-spacing: 1;");
+
+        Label s = new Label(sub);
+        s.setFont(Font.font("Helvetica", 10));
+        s.setTextFill(Color.web(C_MUTED));
+
+        VBox card = new VBox(10, t, s);
+        card.setPadding(new Insets(25));
+        card.setPrefWidth(260 * 3 + 20 * 2); // reglen af 3
         card.setStyle(
                 "-fx-background-color: white;" +
                         "-fx-border-color: " + C_BORDER + ";" +
