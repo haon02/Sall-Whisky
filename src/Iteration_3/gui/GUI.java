@@ -15,11 +15,11 @@ import javafx.stage.Stage;
 public class GUI extends Application {
 
     // ── Scandinavian Minimalist Palette ─────────────────────────────────────────
-    private static final String C_BG      = "#F9F9F7"; // Soft Paper White
-    private static final String C_TEXT    = "#2D2D2D"; // Charcoal
-    private static final String C_MUTED   = "#8E8E8A"; // Warm Gray
-    private static final String C_BORDER  = "#E0E0DB"; // Thin light border
-    private static final String C_ACCENT  = "#4A4A4A"; // Darker Gray for buttons
+    private static final String C_BG = "#F9F9F7"; // Soft Paper White
+    private static final String C_TEXT = "#2D2D2D"; // Charcoal
+    private static final String C_MUTED = "#8E8E8A"; // Warm Gray
+    private static final String C_BORDER = "#E0E0DB"; // Thin light border
+    private static final String C_ACCENT = "#4A4A4A"; // Darker Gray for buttons
 
     private Stage primaryStage;
     private Controller controller = new Controller();
@@ -76,17 +76,24 @@ public class GUI extends Application {
         VBox content = new VBox(40);
         content.setPadding(new Insets(40));
 
+        // 0. Header Lager oversigt
+        HBox lagerHeader = new HBox(10);
+        lagerHeader.getChildren().addAll(
+                buildMinimalCard("LAGEROVERSIGT", "Se status på fade og lager", e -> {
+                    new LagerStatusVindue(primaryStage, controller).showAndWait();
+                })
+        );
         // 1. Primary Navigation
         HBox navRow = new HBox(20);
         navRow.getChildren().addAll(
-                buildMinimalCard("LAGEROVERSIGT", "Se status på fade og lager", e -> {
-                    new LagerStatusVindue(primaryStage, controller).showAndWait();
-                }),
                 buildMinimalCard("PRODUKTION", "Afslut linje → destillat", e -> {
                     new DestillatVindue(primaryStage, controller).showAndWait();
                 }),
-                buildMinimalCard("Påfyldning af fad", "Held destillat på fad", e -> {
-                    new PåfyldningsVindue(primaryStage, controller).showAndWait();
+                buildMinimalCard("PÅFYLDNING AF FAD", "Held destillat på fad", e -> {
+                    new PåfyldningsFadVindue(primaryStage, controller).showAndWait();
+                }),
+                buildMinimalCard("PÅFYLDNING AF FLASKE", "Held fad på flasker", e -> {
+                    new PåfyldFlaskeVindue(primaryStage, controller).showAndWait();
                 })
         );
 

@@ -57,7 +57,7 @@ public class ReguleringTest {
     @Test
     void kanIkkeTageMereEndFadMængde() {
         assertThrows(IllegalArgumentException.class,
-                () -> fad.createRegulering(FAD_STØRRELSE + 1,40,40,40));
+                () -> fad.createRegulering(FAD_MÆNGDE + 1,40,40,40));
     }
 
     @Test
