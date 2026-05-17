@@ -166,7 +166,6 @@ public class PåfyldFlaskeVindue {
 
         lagerCombo.setOnAction(e -> {
             Lager valgt = lagerCombo.getValue();
-            // får fat i alle fyldte fad
             if (valgt != null)
                 fadListView.getItems().setAll(controller.getFyldteFadList(valgt));
         });
@@ -217,6 +216,7 @@ public class PåfyldFlaskeVindue {
         root.setPadding(new Insets(20));
         root.setStyle("-fx-background-color: white;");
 
+        // Flasketype og størrelse
         ComboBox<String> flaskeTypeCombo = new ComboBox<>();
         flaskeTypeCombo.getItems().addAll(
                 "Whisky flaske 500 ml",
@@ -230,16 +230,34 @@ public class PåfyldFlaskeVindue {
         TextField antalField = new TextField();
         antalField.setPromptText("Antal flasker f.eks. \"40\"");
 
+        // Info-labels
         Label outputValue = new Label("—");
         outputValue.setStyle("-fx-font-weight: bold;");
 
+        Label tilgængeligLabel = new Label(
+                String.format("Tilgængeligt fra regulering: %.2f L", aktuelRegulering.getTotalMængde()));
+        tilgængeligLabel.setStyle("-fx-text-fill: #555; -fx-font-size: 11px;");
+
+        Label advarselLabel = new Label("");
+        advarselLabel.setStyle("-fx-text-fill: #c0392b; -fx-font-size: 11px;");
+
+        // Opdater output live
         Runnable opdaterOutput = () -> {
+            advarselLabel.setText("");
             try {
                 int antal = Integer.parseInt(antalField.getText().trim());
                 double størrelse = udtrækStørrelse(flaskeTypeCombo.getValue());
-                if (antal > 0 && størrelse > 0)
+                if (antal > 0 && størrelse > 0) {
+                    double samlet = antal * størrelse;
                     outputValue.setText(String.format(
-                            "%.2f L  (%d × %.0f ml)", antal * størrelse, antal, størrelse * 1000));
+                            "%.2f L  (%d × %.0f ml)", samlet, antal, størrelse * 1000));
+
+                    if (samlet > aktuelRegulering.getTotalMængde()) {
+                        advarselLabel.setText(String.format(
+                                "⚠ Ikke nok væske! Mangler %.2f L",
+                                samlet - aktuelRegulering.getTotalMængde()));
+                    }
+                }
             } catch (NumberFormatException ignored) {
                 outputValue.setText("—");
             }
@@ -254,22 +272,77 @@ public class PåfyldFlaskeVindue {
                 "-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold;");
 
         anvendBtn.setOnAction(e -> {
-            // TODO: controller-kald
+            String typeStr = flaskeTypeCombo.getValue();
+            if (typeStr == null) {
+                visAlert("Vælg en flasketype.");
+                return;
+            }
+            int antal;
+            try {
+                antal = Integer.parseInt(antalField.getText().trim());
+                if (antal <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException ex) {
+                visAlert("Angiv et gyldigt antal flasker.");
+                return;
+            }
+
+            double størrelseLiter = udtrækStørrelse(typeStr);
+            double samletBehov = antal * størrelseLiter;
+
+            if (samletBehov > aktuelRegulering.getTotalMængde()) {
+                visAlert(String.format(
+                        "Ikke nok væske i reguleringen.\nTilgængeligt: %.2f L, nødvendigt: %.2f L",
+                        aktuelRegulering.getTotalMængde(), samletBehov));
+                return;
+            }
+
+            // Opret og fyld flasker — hvert kald til fyldFlaske() trækker
+            // størrelseLiter fra aktuelRegulering.totalMængde via afTapning()
+            int oprettet = 0;
+            try {
+                for (int i = 0; i < antal; i++) {
+                    String navn = typeStr + " #" + (controller.getFlaskeList().size() + 1);
+                    Flaske flaske = controller.createFlaske(navn, størrelseLiter);
+                    controller.fyldFlaske(flaske, aktuelRegulering);
+                    oprettet++;
+                }
+            } catch (IllegalArgumentException ex) {
+                visAlert("Fejl under påfyldning: " + ex.getMessage()
+                        + "\n" + oprettet + " flasker blev oprettet.");
+                popup.close();
+                return;
+            }
+
+            // Giv brugeren feedback og luk begge vinduer
+            Alert ok = new Alert(Alert.AlertType.INFORMATION);
+            ok.setTitle("Påfyldning gennemført");
+            ok.setHeaderText(null);
+            ok.setContentText(String.format(
+                    "%d flasker à %.0f ml oprettet og fyldt.\n" +
+                            "Resterende i regulering: %.2f L",
+                    oprettet, størrelseLiter * 1000,
+                    aktuelRegulering.getTotalMængde()));
+            ok.showAndWait();
+
             popup.close();
+            stage.close();
         });
+
         annullerBtn.setOnAction(e -> popup.close());
 
         HBox btnRow = new HBox(8, annullerBtn, anvendBtn);
         btnRow.setAlignment(Pos.CENTER_RIGHT);
 
         root.getChildren().addAll(
+                tilgængeligLabel,
                 new Label("Flasketype"), flaskeTypeCombo,
                 new Label("Antal flasker"), antalField,
                 new Label("Samlet mængde"), outputValue,
+                advarselLabel,
                 btnRow
         );
 
-        popup.setScene(new Scene(root, 360, 340));
+        popup.setScene(new Scene(root, 360, 360));
         popup.showAndWait();
     }
 

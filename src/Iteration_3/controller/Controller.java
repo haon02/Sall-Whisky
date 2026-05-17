@@ -90,7 +90,7 @@ public class Controller {
         return destillat;
     }
 
-    public Flaske createFlaske(String navn, double størrelseLiter){
+    public Flaske createFlaske(String navn, double størrelseLiter) {
         Flaske flaske = new Flaske(navn, størrelseLiter);
         Storage.addFlaske(flaske);
         return flaske;
@@ -217,7 +217,9 @@ public class Controller {
     }
 
     public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
-        return fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
+        Regulering regulering = fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
+        Storage.addRegulering(regulering);
+        return regulering;
     }
 
     public void fyldFlaske(Flaske flaske, Regulering regulering) {

@@ -35,7 +35,7 @@ public class GUI extends Application {
         root.setTop(buildHeader());
         root.setCenter(buildMainContent());
 
-        Scene scene = new Scene(root, 920, 640);
+        Scene scene = new Scene(root, 920, 870);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sall Whisky Distilleri A/S");
         primaryStage.show();
@@ -84,9 +84,9 @@ public class GUI extends Application {
                 })
         );
         // 1. Primary Navigation
-        HBox navRow = new HBox(20);
-        navRow.getChildren().addAll(
-                buildMinimalCard("PRODUKTION", "Afslut linje → destillat", e -> {
+        HBox navRow1 = new HBox(20);
+        navRow1.getChildren().addAll(
+                buildMinimalCard("PRODUKTION", "Afslut linje -> Destillat", e -> {
                     new DestillatVindue(primaryStage, controller).showAndWait();
                 }),
                 buildMinimalCard("PÅFYLDNING AF FAD", "Held destillat på fad", e -> {
@@ -94,6 +94,19 @@ public class GUI extends Application {
                 }),
                 buildMinimalCard("PÅFYLDNING AF FLASKE", "Held fad på flasker", e -> {
                     new PåfyldFlaskeVindue(primaryStage, controller).showAndWait();
+                })
+        );
+
+        HBox navRow2 = new HBox(20);
+        navRow2.getChildren().addAll(buildMinimalCard("PRODUKTIONSLINJE", "Opret ny whiskey produktionlinje", e -> {
+                    new ProduktionslinjeVindue(primaryStage, controller).showAndWait();
+                }),
+                buildMinimalCard("DESTILLAT", "Produktionslinje -> Destillat", e -> {
+                    new DestillatVindue(primaryStage, controller).showAndWait();
+                }),
+                buildMinimalCard("FLASKELAGER", "Se beholdningen af flasker", e -> {
+                    new FlaskeLagerVindue(primaryStage, controller).showAndWait();
+
                 })
         );
 
@@ -108,17 +121,15 @@ public class GUI extends Application {
         grid.setHgap(15);
         grid.setVgap(15);
 
-        String[] labels = {"Produktionslinje", "Destillat", "Korntype", "Gærtype", "Fad", "Lager", "Leverandør", "Medarbejder", "Flaske"};
+        String[] labels = {"Korntype", "Gærtype", "Fad", "Nyt lager", "Leverandør", "Medarbejder", "Flaske"};
         Runnable[] actions = {
-                () -> new ProduktionslinjeVindue(primaryStage, controller).showAndWait(),
-                () -> new DestillatVindue(primaryStage, controller).showAndWait(),
                 () -> new KornTypeVindue(primaryStage, controller).showAndWait(),
                 () -> new GaerTypeVindue(primaryStage, controller).showAndWait(),
                 () -> new FadVindue(primaryStage, controller).showAndWait(),
                 () -> new LagerTilføjVindue(primaryStage, controller).showAndWait(),
                 () -> new LeverandørTilføjVindue(primaryStage, controller).showAndWait(),
                 () -> new MedarbejderVindue(primaryStage, controller).showAndWait(),
-                () -> new FlaskeVindue(primaryStage, controller).showAndWait()
+                () -> new FlaskeVindue(primaryStage, controller).showAndWait(),
         };
 
         for (int i = 0; i < labels.length; i++) {
@@ -130,7 +141,7 @@ public class GUI extends Application {
 
         resourceSection.getChildren().addAll(resHeader, new Separator(), grid);
 
-        content.getChildren().addAll(lagerHeader, navRow, resourceSection);
+        content.getChildren().addAll(lagerHeader, navRow1, navRow2, resourceSection);
         return content;
     }
 
@@ -160,6 +171,7 @@ public class GUI extends Application {
 
         return card;
     }
+
     private VBox buildFullCard(String title, String sub, javafx.event.EventHandler<javafx.event.ActionEvent> press) {
         Label t = new Label(title);
         t.setFont(Font.font("Helvetica", FontWeight.BOLD, 12));

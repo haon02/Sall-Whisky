@@ -1,6 +1,10 @@
 package Iteration_3.model;
 
-public class Regulering {
+import java.io.Serializable;
+
+public class Regulering implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     Fad fad;
     double fadMængdeLiter;
     double alkoholProcentOriginal;

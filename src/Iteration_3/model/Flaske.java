@@ -1,10 +1,13 @@
 package Iteration_3.model;
 
-public class Flaske {
-    String navn;
+import java.io.Serializable;
+
+public class Flaske implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String navn;
     double størrelseLiter;
     boolean erTom;
-    Regulering regulering;
+    private Regulering regulering;
 
     public Flaske(String navn, double størrelseLiter) {
         this.navn = navn;
