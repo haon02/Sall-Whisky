@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
-public class PåfyldningsVindue {
+public class PåfyldningsFadVindue {
     private final Controller controller;
     private Stage stage;
     private final Stage owner;
@@ -25,7 +25,7 @@ public class PåfyldningsVindue {
     private ComboBox<Destillat> destillatBox;
     private TextField mængdeField;
 
-    public PåfyldningsVindue(Stage owner, Controller controller) {
+    public PåfyldningsFadVindue(Stage owner, Controller controller) {
         this.owner = owner;
         this.controller = controller;
     }
@@ -109,7 +109,7 @@ public class PåfyldningsVindue {
             }
         });
 
-        HBox knapper = new HBox(8, annuller, påfyld);
+        HBox knapper = new HBox(8, påfyld, annuller);
         knapper.setAlignment(Pos.CENTER_RIGHT);
         knapper.setPadding(new Insets(8, 0, 0, 0));
 

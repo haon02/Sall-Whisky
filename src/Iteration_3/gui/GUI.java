@@ -15,11 +15,11 @@ import javafx.stage.Stage;
 public class GUI extends Application {
 
     // ── Scandinavian Minimalist Palette ─────────────────────────────────────────
-    private static final String C_BG      = "#F9F9F7"; // Soft Paper White
-    private static final String C_TEXT    = "#2D2D2D"; // Charcoal
-    private static final String C_MUTED   = "#8E8E8A"; // Warm Gray
-    private static final String C_BORDER  = "#E0E0DB"; // Thin light border
-    private static final String C_ACCENT  = "#4A4A4A"; // Darker Gray for buttons
+    private static final String C_BG = "#F9F9F7"; // Soft Paper White
+    private static final String C_TEXT = "#2D2D2D"; // Charcoal
+    private static final String C_MUTED = "#8E8E8A"; // Warm Gray
+    private static final String C_BORDER = "#E0E0DB"; // Thin light border
+    private static final String C_ACCENT = "#4A4A4A"; // Darker Gray for buttons
 
     private Stage primaryStage;
     private Controller controller = new Controller();
@@ -35,7 +35,7 @@ public class GUI extends Application {
         root.setTop(buildHeader());
         root.setCenter(buildMainContent());
 
-        Scene scene = new Scene(root, 920, 640);
+        Scene scene = new Scene(root, 920, 870);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sall Whisky Distilleri A/S");
         primaryStage.show();
@@ -76,17 +76,38 @@ public class GUI extends Application {
         VBox content = new VBox(40);
         content.setPadding(new Insets(40));
 
-        // 1. Primary Navigation
-        HBox navRow = new HBox(20);
-        navRow.getChildren().addAll(
-                buildMinimalCard("LAGEROVERSIGT", "Se status på fade og lager", e -> {
+        // 0. Header Lager oversigt
+        HBox lagerHeader = new HBox(10);
+        lagerHeader.getChildren().addAll(
+                buildFullCard("LAGEROVERSIGT", "Se status på fade og lager", e -> {
                     new LagerStatusVindue(primaryStage, controller).showAndWait();
-                }),
-                buildMinimalCard("PRODUKTION", "Afslut linje → destillat", e -> {
-                    new DestillatVindue(primaryStage, controller).showAndWait();
+                })
+        );
+        // 1. Primary Navigation
+        HBox navRow1 = new HBox(20);
+        navRow1.getChildren().addAll(
+                buildMinimalCard("OPRET FAD", "Tilføj et nyt fad", e -> {
+                    new FadVindue(primaryStage, controller).showAndWait();
                 }),
                 buildMinimalCard("PÅFYLDNING AF FAD", "Held destillat på fad", e -> {
-                    new PåfyldningsVindue(primaryStage, controller).showAndWait();
+                    new PåfyldningsFadVindue(primaryStage, controller).showAndWait();
+                }),
+                buildMinimalCard("PÅFYLDNING AF FLASKE", "Held fad på flasker", e -> {
+                    new PåfyldFlaskeVindue(primaryStage, controller).showAndWait();
+                })
+        );
+
+        HBox navRow2 = new HBox(20);
+        navRow2.getChildren().addAll(
+                buildMinimalCard("PRODUKTIONSLINJE", "Opret ny whiskey produktionlinje", e -> {
+                    new ProduktionslinjeVindue(primaryStage, controller).showAndWait();
+                }),
+                buildMinimalCard("DESTILLAT", "Produktionslinje -> Destillat", e -> {
+                    new DestillatVindue(primaryStage, controller).showAndWait();
+                }),
+                buildMinimalCard("FLASKELAGER", "Se beholdningen af flasker", e -> {
+                    new FlaskeLagerVindue(primaryStage, controller).showAndWait();
+
                 })
         );
 
@@ -101,16 +122,14 @@ public class GUI extends Application {
         grid.setHgap(15);
         grid.setVgap(15);
 
-        String[] labels = {"Produktionslinje", "Destillat", "Korntype", "Gærtype", "Fad", "Lager", "Leverandør", "Medarbejder"};
+        String[] labels = {"Korntype", "Gærtype", "Nyt lager", "Leverandør", "Medarbejder", "Flaske"};
         Runnable[] actions = {
-                () -> new ProduktionslinjeVindue(primaryStage, controller).showAndWait(),
-                () -> new DestillatVindue(primaryStage, controller).showAndWait(),
                 () -> new KornTypeVindue(primaryStage, controller).showAndWait(),
                 () -> new GaerTypeVindue(primaryStage, controller).showAndWait(),
-                () -> new FadVindue(primaryStage, controller).showAndWait(),
                 () -> new LagerTilføjVindue(primaryStage, controller).showAndWait(),
                 () -> new LeverandørTilføjVindue(primaryStage, controller).showAndWait(),
-                () -> new MedarbejderVindue(primaryStage, controller).showAndWait()
+                () -> new MedarbejderVindue(primaryStage, controller).showAndWait(),
+                () -> new FlaskeVindue(primaryStage, controller).showAndWait(),
         };
 
         for (int i = 0; i < labels.length; i++) {
@@ -122,7 +141,7 @@ public class GUI extends Application {
 
         resourceSection.getChildren().addAll(resHeader, new Separator(), grid);
 
-        content.getChildren().addAll(navRow, resourceSection);
+        content.getChildren().addAll(lagerHeader, navRow1, navRow2, resourceSection);
         return content;
     }
 
@@ -139,6 +158,33 @@ public class GUI extends Application {
         VBox card = new VBox(10, t, s);
         card.setPadding(new Insets(25));
         card.setPrefWidth(260);
+        card.setStyle(
+                "-fx-background-color: white;" +
+                        "-fx-border-color: " + C_BORDER + ";" +
+                        "-fx-border-width: 1;" +
+                        "-fx-cursor: hand;"
+        );
+
+        card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #FCFCFA; -fx-border-color: " + C_ACCENT + "; -fx-border-width: 1;"));
+        card.setOnMouseExited(e -> card.setStyle("-fx-background-color: white; -fx-border-color: " + C_BORDER + "; -fx-border-width: 1;"));
+        if (press != null) card.setOnMouseClicked(e -> press.handle(null));
+
+        return card;
+    }
+
+    private VBox buildFullCard(String title, String sub, javafx.event.EventHandler<javafx.event.ActionEvent> press) {
+        Label t = new Label(title);
+        t.setFont(Font.font("Helvetica", FontWeight.BOLD, 12));
+        t.setTextFill(Color.web(C_TEXT));
+        t.setStyle("-fx-letter-spacing: 1;");
+
+        Label s = new Label(sub);
+        s.setFont(Font.font("Helvetica", 10));
+        s.setTextFill(Color.web(C_MUTED));
+
+        VBox card = new VBox(10, t, s);
+        card.setPadding(new Insets(25));
+        card.setPrefWidth(260 * 3 + 20 * 2); // reglen af 3
         card.setStyle(
                 "-fx-background-color: white;" +
                         "-fx-border-color: " + C_BORDER + ";" +

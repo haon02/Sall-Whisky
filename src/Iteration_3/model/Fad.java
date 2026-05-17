@@ -2,6 +2,7 @@ package Iteration_3.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Fad implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -16,6 +17,7 @@ public class Fad implements Serializable {
     private Lager lager;
     private Destillat destillat;
     private double mængdeDestillatLiter;
+    private final ArrayList<Indholdshistorik> indholdshistoriker = new ArrayList<>();
 
     public Fad(double størrelseLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
         this.størrelseLiter = størrelseLiter;
@@ -31,6 +33,9 @@ public class Fad implements Serializable {
         mængdeDestillatLiter = 0;
     }
 
+    public ArrayList<Indholdshistorik> getIndholdshistorik(){
+        return new ArrayList<>(indholdshistoriker);
+    }
     public double getMængdeDestillatLiter() {
         return mængdeDestillatLiter;
     }
@@ -86,9 +91,26 @@ public class Fad implements Serializable {
         this.erTom = false;
     }
 
+    public void aftapFraFad(double mængde) {
+        if (mængde < 0)
+            throw new IllegalArgumentException("Mængde kan ikke være negativ");
+        if (mængde > mængdeDestillatLiter)
+            throw new IllegalArgumentException(
+                    "Fadet indeholder kun " + mængdeDestillatLiter + " L, men der forsøges at tappe " + mængde + " L");
+
+        mængdeDestillatLiter -= mængde;
+
+        if (mængdeDestillatLiter <= 0.001) { // floating-point tolerance
+            mængdeDestillatLiter = 0;
+            erTom = true;
+            destillat = null;
+        }
+    }
+
     public void tømFad() {
         this.destillat = null;
         this.erTom = true;
+        this.mængdeDestillatLiter = 0;
     }
     public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
         if (fadMængdeLiter > mængdeDestillatLiter) {
@@ -107,12 +129,18 @@ public class Fad implements Serializable {
         return regulering;
     }
 
+    public Indholdshistorik createIndholdshistorik(Destillat destillat, LocalDate påfyldningsDato, double mængde){
+        Indholdshistorik indholdshistorik = new Indholdshistorik(destillat,påfyldningsDato,mængde);
+        indholdshistoriker.add(indholdshistorik);
+        return indholdshistorik;
+    }
+
     @Override
     public String toString() {
         if (erTom) {
-            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt" : "Nyt") + ")";
+            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt " : "Nyt ") + ")";
         } else {
-            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt" : "Nyt") + mængdeDestillatLiter + "L)";
+            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt " : "Nyt ") + "resterne Destillat" + mængdeDestillatLiter + "L)";
         }
     }
 }

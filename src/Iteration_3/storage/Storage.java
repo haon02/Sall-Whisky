@@ -10,27 +10,31 @@ import java.util.List;
 public class Storage {
     private static final String SAVE_FILE = "SallData.ser";
 
-    private static List<Korn>             kornList             = new ArrayList<>();
-    private static List<Gær>              gærList              = new ArrayList<>();
-    private static List<Medarbejder>      medarbejderList      = new ArrayList<>();
-    private static List<Lager>            lagerList            = new ArrayList<>();
-    private static List<Fad>              fadList              = new ArrayList<>();
+    private static List<Korn> kornList = new ArrayList<>();
+    private static List<Gær> gærList = new ArrayList<>();
+    private static List<Medarbejder> medarbejderList = new ArrayList<>();
+    private static List<Lager> lagerList = new ArrayList<>();
+    private static List<Fad> fadList = new ArrayList<>();
     private static List<Produktionslinje> produktionslinjeList = new ArrayList<>();
-    private static List<Leverandør>       leverandørList       = new ArrayList<>();
-    private static List<Destillat>        destillatList        = new ArrayList<>();
-    private static List<Single>           singleList           = new ArrayList<>();
+    private static List<Leverandør> leverandørList = new ArrayList<>();
+    private static List<Destillat> destillatList = new ArrayList<>();
+    private static List<Single> singleList = new ArrayList<>();
+    private static List<Flaske> flaskeList = new ArrayList<>();
+    private static List<Regulering> reguleringList = new ArrayList<>();
 
     private static class StorageState implements Serializable {
         private static final long serialVersionUID = 2L;
-        List<Korn>             kornList;
-        List<Gær>              gærList;
-        List<Medarbejder>      medarbejderList;
-        List<Lager>            lagerList;
-        List<Fad>              fadList;
+        List<Korn> kornList;
+        List<Gær> gærList;
+        List<Medarbejder> medarbejderList;
+        List<Lager> lagerList;
+        List<Fad> fadList;
         List<Produktionslinje> produktionslinjeList;
-        List<Leverandør>       leverandørList;
-        List<Destillat>        destillatList;
-        List<Single>           singleList;
+        List<Leverandør> leverandørList;
+        List<Destillat> destillatList;
+        List<Single> singleList;
+        List<Flaske> flaskeList;
+        List<Regulering> reguleringList;
     }
 
     public static void loadFromDisk() {
@@ -38,15 +42,17 @@ public class Storage {
         if (!file.exists()) return;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             StorageState state = (StorageState) ois.readObject();
-            kornList             = state.kornList             != null ? state.kornList             : new ArrayList<>();
-            gærList              = state.gærList              != null ? state.gærList              : new ArrayList<>();
-            medarbejderList      = state.medarbejderList      != null ? state.medarbejderList      : new ArrayList<>();
-            lagerList            = state.lagerList            != null ? state.lagerList            : new ArrayList<>();
-            fadList              = state.fadList              != null ? state.fadList              : new ArrayList<>();
+            kornList = state.kornList != null ? state.kornList : new ArrayList<>();
+            gærList = state.gærList != null ? state.gærList : new ArrayList<>();
+            medarbejderList = state.medarbejderList != null ? state.medarbejderList : new ArrayList<>();
+            lagerList = state.lagerList != null ? state.lagerList : new ArrayList<>();
+            fadList = state.fadList != null ? state.fadList : new ArrayList<>();
             produktionslinjeList = state.produktionslinjeList != null ? state.produktionslinjeList : new ArrayList<>();
-            leverandørList       = state.leverandørList       != null ? state.leverandørList       : new ArrayList<>();
-            destillatList        = state.destillatList        != null ? state.destillatList        : new ArrayList<>();
-            singleList           = state.singleList           != null ? state.singleList           : new ArrayList<>();
+            leverandørList = state.leverandørList != null ? state.leverandørList : new ArrayList<>();
+            destillatList = state.destillatList != null ? state.destillatList : new ArrayList<>();
+            singleList = state.singleList != null ? state.singleList : new ArrayList<>();
+            flaskeList = state.flaskeList != null ? state.flaskeList : new ArrayList<>();
+            reguleringList = state.reguleringList != null ? state.reguleringList : new ArrayList<>();
         } catch (ClassCastException | ClassNotFoundException e) {
             System.err.println("Inkompatibel save fil, starter forfra: " + e.getMessage());
             file.delete();
@@ -57,15 +63,17 @@ public class Storage {
 
     private static void saveToDisk() {
         StorageState state = new StorageState();
-        state.kornList             = new ArrayList<>(kornList);
-        state.gærList              = new ArrayList<>(gærList);
-        state.medarbejderList      = new ArrayList<>(medarbejderList);
-        state.lagerList            = new ArrayList<>(lagerList);
-        state.fadList              = new ArrayList<>(fadList);
+        state.kornList = new ArrayList<>(kornList);
+        state.gærList = new ArrayList<>(gærList);
+        state.medarbejderList = new ArrayList<>(medarbejderList);
+        state.lagerList = new ArrayList<>(lagerList);
+        state.fadList = new ArrayList<>(fadList);
         state.produktionslinjeList = new ArrayList<>(produktionslinjeList);
-        state.leverandørList       = new ArrayList<>(leverandørList);
-        state.destillatList        = new ArrayList<>(destillatList);
-        state.singleList           = new ArrayList<>(singleList);
+        state.leverandørList = new ArrayList<>(leverandørList);
+        state.destillatList = new ArrayList<>(destillatList);
+        state.singleList = new ArrayList<>(singleList);
+        state.flaskeList = new ArrayList<>(flaskeList);
+        state.reguleringList = new ArrayList<>(reguleringList);
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
             oos.writeObject(state);
@@ -144,21 +152,64 @@ public class Storage {
         }
     }
 
-    public static void removeSingle(Single s) {
-        if (singleList.remove(s)) saveToDisk();
+    public static void addFlaske(Flaske f) {
+        if (f != null && !flaskeList.contains(f)) {
+            flaskeList.add(f);
+            saveToDisk();
+        }
+    }
+    public static void addRegulering(Regulering r) {
+        if (r != null && !reguleringList.contains(r)) {
+            reguleringList.add(r);
+            saveToDisk();
+        }
     }
 
     // ── GETTERS ───────────────────────────────────────────────────────────────
 
-    public static List<Lager>            getLagerList()            { return Collections.unmodifiableList(lagerList); }
-    public static List<Korn>             getKornList()             { return Collections.unmodifiableList(kornList); }
-    public static List<Gær>              getGærList()              { return Collections.unmodifiableList(gærList); }
-    public static List<Medarbejder>      getMedarbejderList()      { return Collections.unmodifiableList(medarbejderList); }
-    public static List<Fad>              getFadlist()              { return Collections.unmodifiableList(fadList); }
-    public static List<Produktionslinje> getProduktionslinjeList() { return Collections.unmodifiableList(produktionslinjeList); }
-    public static List<Leverandør>       getLeverandørList()       { return Collections.unmodifiableList(leverandørList); }
-    public static List<Destillat>        getDestillatList()        { return Collections.unmodifiableList(destillatList); }
-    public static List<Single>           getSingleList()           { return Collections.unmodifiableList(singleList); }
+    public static List<Lager> getLagerList() {
+        return Collections.unmodifiableList(lagerList);
+    }
+
+    public static List<Korn> getKornList() {
+        return Collections.unmodifiableList(kornList);
+    }
+
+    public static List<Gær> getGærList() {
+        return Collections.unmodifiableList(gærList);
+    }
+
+    public static List<Medarbejder> getMedarbejderList() {
+        return Collections.unmodifiableList(medarbejderList);
+    }
+
+    public static List<Fad> getFadlist() {
+        return Collections.unmodifiableList(fadList);
+    }
+
+    public static List<Produktionslinje> getProduktionslinjeList() {
+        return Collections.unmodifiableList(produktionslinjeList);
+    }
+
+    public static List<Leverandør> getLeverandørList() {
+        return Collections.unmodifiableList(leverandørList);
+    }
+
+    public static List<Destillat> getDestillatList() {
+        return Collections.unmodifiableList(destillatList);
+    }
+
+    public static List<Single> getSingleList() {
+        return Collections.unmodifiableList(singleList);
+    }
+
+    public static List<Flaske> getFlaskeList() {
+        return Collections.unmodifiableList(flaskeList);
+    }
+
+    public static List<Regulering> getReguleringList() {
+        return Collections.unmodifiableList(reguleringList);
+    }
 
     // FIX: clearAll now clears ALL 9 lists (produktionslinjeList and leverandørList
     // were silently missing before) and persists the empty state to disk.
@@ -172,6 +223,8 @@ public class Storage {
         leverandørList.clear();
         destillatList.clear();
         singleList.clear();
+        flaskeList.clear();
+        reguleringList.clear();
         saveToDisk();
     }
 }

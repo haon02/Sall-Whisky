@@ -1,6 +1,7 @@
 package Iteration_3.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Destillat implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -18,6 +19,7 @@ public class Destillat implements Serializable {
         this.produktionslinje = produktionslinje;
         mængdeTappet = 0;
     }
+
 
     public double getRentDestillatLiter() {
         return rentDestillatLiter;
