@@ -91,9 +91,26 @@ public class Fad implements Serializable {
         this.erTom = false;
     }
 
+    public void aftapFraFad(double mængde) {
+        if (mængde < 0)
+            throw new IllegalArgumentException("Mængde kan ikke være negativ");
+        if (mængde > mængdeDestillatLiter)
+            throw new IllegalArgumentException(
+                    "Fadet indeholder kun " + mængdeDestillatLiter + " L, men der forsøges at tappe " + mængde + " L");
+
+        mængdeDestillatLiter -= mængde;
+
+        if (mængdeDestillatLiter <= 0.001) { // floating-point tolerance
+            mængdeDestillatLiter = 0;
+            erTom = true;
+            destillat = null;
+        }
+    }
+
     public void tømFad() {
         this.destillat = null;
         this.erTom = true;
+        this.mængdeDestillatLiter = 0;
     }
     public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
         if (fadMængdeLiter > mængdeDestillatLiter) {
@@ -121,9 +138,9 @@ public class Fad implements Serializable {
     @Override
     public String toString() {
         if (erTom) {
-            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt" : "Nyt") + ")";
+            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt " : "Nyt ") + ")";
         } else {
-            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt" : "Nyt") + mængdeDestillatLiter + "L)";
+            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt " : "Nyt ") + "resterne Destillat" + mængdeDestillatLiter + "L)";
         }
     }
 }

@@ -86,8 +86,8 @@ public class GUI extends Application {
         // 1. Primary Navigation
         HBox navRow1 = new HBox(20);
         navRow1.getChildren().addAll(
-                buildMinimalCard("PRODUKTION", "Afslut linje -> Destillat", e -> {
-                    new DestillatVindue(primaryStage, controller).showAndWait();
+                buildMinimalCard("OPRET FAD", "Tilføj et nyt fad", e -> {
+                    new FadVindue(primaryStage, controller).showAndWait();
                 }),
                 buildMinimalCard("PÅFYLDNING AF FAD", "Held destillat på fad", e -> {
                     new PåfyldningsFadVindue(primaryStage, controller).showAndWait();
@@ -98,7 +98,8 @@ public class GUI extends Application {
         );
 
         HBox navRow2 = new HBox(20);
-        navRow2.getChildren().addAll(buildMinimalCard("PRODUKTIONSLINJE", "Opret ny whiskey produktionlinje", e -> {
+        navRow2.getChildren().addAll(
+                buildMinimalCard("PRODUKTIONSLINJE", "Opret ny whiskey produktionlinje", e -> {
                     new ProduktionslinjeVindue(primaryStage, controller).showAndWait();
                 }),
                 buildMinimalCard("DESTILLAT", "Produktionslinje -> Destillat", e -> {
@@ -121,11 +122,10 @@ public class GUI extends Application {
         grid.setHgap(15);
         grid.setVgap(15);
 
-        String[] labels = {"Korntype", "Gærtype", "Fad", "Nyt lager", "Leverandør", "Medarbejder", "Flaske"};
+        String[] labels = {"Korntype", "Gærtype", "Nyt lager", "Leverandør", "Medarbejder", "Flaske"};
         Runnable[] actions = {
                 () -> new KornTypeVindue(primaryStage, controller).showAndWait(),
                 () -> new GaerTypeVindue(primaryStage, controller).showAndWait(),
-                () -> new FadVindue(primaryStage, controller).showAndWait(),
                 () -> new LagerTilføjVindue(primaryStage, controller).showAndWait(),
                 () -> new LeverandørTilføjVindue(primaryStage, controller).showAndWait(),
                 () -> new MedarbejderVindue(primaryStage, controller).showAndWait(),
