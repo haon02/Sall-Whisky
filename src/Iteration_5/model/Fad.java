@@ -20,7 +20,7 @@ public class Fad implements Serializable {
     private Lager lager;
     private Destillat destillat;
     private double mængdeDestillatLiter;
-    private final ArrayList<Indholdshistorik> indholshistorikker;
+    private final ArrayList<Indholdshistorik> indholdshistorikker;
     private double devilsCut = 0.025;
     private double angelsShare = 0.025;
 
@@ -34,13 +34,13 @@ public class Fad implements Serializable {
         this.fadNummer = fadNummerCounter;
         this.lager = lager;
         this.destillat = null;
-        this.indholshistorikker = new ArrayList<>();
+        this.indholdshistorikker = new ArrayList<>();
         fadNummerCounter++;
         mængdeDestillatLiter = 0;
     }
 
     public ArrayList<Indholdshistorik> getIndholdshistorik() {
-        return new ArrayList<>(indholshistorikker);
+        return new ArrayList<>(indholdshistorikker);
     }
 
     public double getMængdeDestillatLiter() {
@@ -114,7 +114,7 @@ public class Fad implements Serializable {
             return 0;
         }
 
-        int antalÅr = (int) ChronoUnit.YEARS.between(indholshistorikker.getLast().getPåfyldningsDato(), LocalDate.now());
+        int antalÅr = (int) ChronoUnit.YEARS.between(indholdshistorikker.getLast().getPåfyldningsDato(), LocalDate.now());
         if (antalÅr < 0) {
             throw new IllegalArgumentException("Kan ikke regne tilbage i tiden");
         }
@@ -139,7 +139,7 @@ public class Fad implements Serializable {
             return 0;
         }
 
-        int antalÅr = (int) ChronoUnit.YEARS.between(indholshistorikker.getLast().getPåfyldningsDato(), dato);
+        int antalÅr = (int) ChronoUnit.YEARS.between(indholdshistorikker.getLast().getPåfyldningsDato(), dato);
         if (antalÅr < 0) {
             throw new IllegalArgumentException("Kan ikke regne tilbage i tiden");
         }
@@ -223,34 +223,33 @@ public class Fad implements Serializable {
         Indholdshistorik indholdshistorik = new Indholdshistorik(destillat, påfyldningsDato, mængde);
 
         boolean indsat = false;
-        for (int i = 0; i < indholshistorikker.size(); i++) {
-            if (!indsat && påfyldningsDato.isBefore(indholshistorikker.get(i).getPåfyldningsDato())) {
-                indholshistorikker.add(i, indholdshistorik);
+        for (int i = 0; i < indholdshistorikker.size(); i++) {
+            if (!indsat && påfyldningsDato.isBefore(indholdshistorikker.get(i).getPåfyldningsDato())) {
+                indholdshistorikker.add(i, indholdshistorik);
                 Storage.addIndholdHistorik(indholdshistorik);
                 indsat = true;
             }
         }
         if (!indsat) {
             Storage.addIndholdHistorik(indholdshistorik);
-            indholshistorikker.add(indholdshistorik);
+            indholdshistorikker.add(indholdshistorik);
         }
 
         return indholdshistorik;
     }
 
     public long getDagePåLager() {
-        if (erTom || indholshistorikker.isEmpty()) return 0;
-        LocalDate påfyldningsDato = indholshistorikker.getLast().getPåfyldningsDato();
-
-
-        for (int i = indholshistorikker.size() - 1; i >= 1; i--) {
-            if (!indholshistorikker.get(i).getDestillat().equals(indholshistorikker.get(i-1))) {
-                return ChronoUnit.DAYS.between(indholshistorikker.get(i).getPåfyldningsDato(), LocalDate.now());
-            }
+        // SIKKERHEDSTJEK: Hvis listen overhovedet ikke eksisterer (null), returneres 0 med det samme
+        if (indholdshistorikker == null || erTom || indholdshistorikker.isEmpty()) {
+            return 0;
         }
 
+        LocalDate påfyldningsDato = indholdshistorikker.get(0).getPåfyldningsDato();
+        if (påfyldningsDato == null) {
+            return 0;
+        }
 
-        return ChronoUnit.DAYS.between(påfyldningsDato, LocalDate.now());
+        return java.time.temporal.ChronoUnit.DAYS.between(påfyldningsDato, LocalDate.now());
     }
 
     @Override
