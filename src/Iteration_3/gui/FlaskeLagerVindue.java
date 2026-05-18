@@ -194,7 +194,13 @@ public class FlaskeLagerVindue {
         Regulering reg = flaske.getRegulering();
 
         String alkTekst    = reg != null ? String.format("%.1f %%", reg.getSlutAlkholProcent()) : "—";
-        String vandTekst   = reg != null ? String.format("%.2f L",  reg.getVandTilføjeLiter())  : "—";
+        int counter = 0;
+        for (Flaske flask : controller.getFlaskeList()) {
+            if (flask.getRegulering().equals(reg)){
+                counter++;
+            }
+        }
+        String vandTekst   = reg != null ? String.format("%.2f L",  reg.getVandTilføjeLiter() / counter)  : "—";
         String fadTekst    = reg != null && reg.getFad() != null
                 ? "Fad #" + reg.getFad().getFadNummer() : "—";
 

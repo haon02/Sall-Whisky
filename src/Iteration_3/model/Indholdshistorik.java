@@ -7,7 +7,7 @@ public class Indholdshistorik {
     private LocalDate påfyldningsDato;
     private double mængde;
 
-    public Indholdshistorik(Destillat destillat, LocalDate påfyldningsDato, double mængde){
+     Indholdshistorik(Destillat destillat, LocalDate påfyldningsDato, double mængde){
         this.destillat = destillat;
         this.påfyldningsDato = påfyldningsDato;
         this.mængde = mængde;

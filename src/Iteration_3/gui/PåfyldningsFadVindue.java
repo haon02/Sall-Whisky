@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class PåfyldningsFadVindue {
@@ -22,6 +23,7 @@ public class PåfyldningsFadVindue {
 
     private ComboBox<Lager> lagerBox;
     private ComboBox<Fad> fadBox;
+    private DatePicker datePicker;
     private ComboBox<Destillat> destillatBox;
     private TextField mængdeField;
 
@@ -69,6 +71,13 @@ public class PåfyldningsFadVindue {
         fadBox.setPromptText("Vælg først et lager...");
         fadBox.setDisable(true); // deaktiveret indtil lager er valgt
 
+        // ── DatePicker ─────────────────────────────────────────────────────────        
+        Label datoLabel = new Label("Dato");
+        fadLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+
+        datePicker = new DatePicker();
+        datePicker.setValue(LocalDate.now());
+
         // ── Destillat ─────────────────────────────────────────────────────────
         Label destillatLabel = new Label("Destillat");
         destillatLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
@@ -100,11 +109,11 @@ public class PåfyldningsFadVindue {
         påfyld.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold;");
         påfyld.setOnAction(e -> {
             if (valider()) {
-                Fad valgtFad             = fadBox.getValue();
+                Fad valgtFad = fadBox.getValue();
                 Destillat valgtDestillat = destillatBox.getValue();
-                double mængde            = Double.parseDouble(mængdeField.getText().trim());
+                double mængde = Double.parseDouble(mængdeField.getText().trim());
 
-                controller.påfyldFad(valgtFad, valgtDestillat, mængde);
+                controller.påfyldFad(valgtFad, valgtDestillat,  datePicker.getValue(), mængde);
                 stage.close();
             }
         });
@@ -118,6 +127,7 @@ public class PåfyldningsFadVindue {
                 titel, topSep,
                 lagerLabel, lagerBox,
                 fadLabel, fadBox,
+                datoLabel, datePicker,
                 destillatLabel, destillatBox,
                 mængdeLabel, mængdeField,
                 bottomSep, knapper
@@ -165,6 +175,8 @@ public class PåfyldningsFadVindue {
             fejl.append("• Vælg et fad\n");
         if (destillatBox.getValue() == null)
             fejl.append("• Vælg et destillat\n");
+        if (datePicker.getValue() == null)
+            fejl.append("• Vælg en dato\n");
         if (mængdeField.getText().isBlank())
             fejl.append("• Indtast mængde\n");
         else {
