@@ -46,16 +46,6 @@ public class Lager implements Serializable {
         return antal;
 
     }
-
-    public void addReol(Reol reol) {
-        if (reol == null) {
-            throw new IllegalArgumentException("Ingen reoler på lageret");
-        }
-        if (!reoler.contains(reol)) {
-            reoler.add(reol);
-        }
-    }
-
     public void removeReol(Reol reol) {
         reoler.remove(reol);
 

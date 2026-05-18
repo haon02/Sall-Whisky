@@ -9,7 +9,7 @@ public class Reol implements Serializable {
     private ArrayList<Hylde> hylder;
 
 
-    public Reol(){
+    public Reol() {
         this.hylder = new ArrayList<>();
     }
 
@@ -18,21 +18,11 @@ public class Reol implements Serializable {
     }
 
 
-    public Hylde createHylde(int pladser){
+    public Hylde createHylde(int pladser) {
         Hylde hylde = new Hylde(pladser);
         hylder.add(hylde);
         return hylde;
     }
-
-    public void addHylde(Hylde hylde) {
-        if (hylde == null) {
-            throw new IllegalArgumentException("Ingen hylder i reolen");
-        }
-            if (!hylder.contains(hylde)) {
-                hylder.add(hylde);
-            }
-        }
-
 
     public void removeHylde(Hylde hylde) {
         hylder.remove(hylde);

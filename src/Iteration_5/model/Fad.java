@@ -252,13 +252,20 @@ public class Fad implements Serializable {
 
         return ChronoUnit.DAYS.between(påfyldningsDato, LocalDate.now());
     }
+    // SÅDAN SKAL DEN SE UD (I bunden af Fad.java):
+    public LocalDate senesteAftapning(){
+        if (indholshistorikker.isEmpty()) {
+            return produktionsDato;
+        }
+        return indholshistorikker.getLast().getPåfyldningsDato();
+    }
 
     @Override
     public String toString() {
         if (erTom) {
-            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt " : "Nyt ") + ")";
+            return beskrivelse + "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt " : "Nyt ") + ")";
         } else {
-            return "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt " : "Nyt ") + "resterne Destillat" + mængdeDestillatLiter + "L)";
+            return beskrivelse + "Fad #" + fadNummer + " (" + størrelseLiter + "L, " + (erTom ? "Tom" : "Fyldt") + ", " + (tidligereBrugt ? "Tidligere brugt " : "Nyt ") + "resterne Destillat" + mængdeDestillatLiter + "L)";
         }
     }
 }

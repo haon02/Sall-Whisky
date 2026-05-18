@@ -5,12 +5,12 @@ import java.io.Serializable;
 public class Regulering implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    Fad fad;
-    double fadMængdeLiter;
-    double alkoholProcentOriginal;
-    double vandTilføjeLiter;
-    double slutAlkholProcent;
-    double totalMængde;
+    private Fad fad;
+    private double fadMængdeLiter;
+    private double alkoholProcentOriginal;
+    private double vandTilføjeLiter;
+    private double slutAlkholProcent;
+    private double totalMængde;
 
     Regulering(Fad fad, double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
         this.fad = fad;
