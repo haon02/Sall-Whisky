@@ -188,8 +188,9 @@ public class FlaskeLagerVindue {
         row.setAlignment(Pos.CENTER_LEFT);
         row.setStyle("-fx-background-color: white; -fx-border-color: transparent transparent #F0F0EE transparent; -fx-border-width: 0 0 1 0;");
 
-        row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #F9F9F7; -fx-border-color: transparent transparent #F0F0EE transparent; -fx-border-width: 0 0 1 0;"));
+        row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #F0F4FF; -fx-border-color: transparent transparent #F0F0EE transparent; -fx-border-width: 0 0 1 0; -fx-cursor: hand;"));
         row.setOnMouseExited(e ->  row.setStyle("-fx-background-color: white; -fx-border-color: transparent transparent #F0F0EE transparent; -fx-border-width: 0 0 1 0;"));
+        row.setOnMouseClicked(e -> new FlaskeHistorikVindue(stage, flaske).showAndWait());
 
         Regulering reg = flaske.getRegulering();
 

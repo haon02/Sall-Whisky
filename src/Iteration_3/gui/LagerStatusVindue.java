@@ -20,7 +20,7 @@ import java.util.List;
 public class LagerStatusVindue {
 
     private static final int CELLE_SIZE = 36;
-    private static final int CELLE_GAP  = 4;
+    private static final int CELLE_GAP = 4;
 
     private final Controller controller;
     private Stage stage;
@@ -29,9 +29,10 @@ public class LagerStatusVindue {
     private Fad dragFad;
     private int aktivIndex = 0;
 
-    private Label infoTitel, infoStørrelse, infoStatus, infoDagePåLager, infoRestDestillat;
+    private Label infoTitel, infoStørrelse, infoStatus, infoDagePåLager, infoRestDestillat, restLabel;
     private GridPane grid;
     private ScrollPane scrollPane;
+
 
     public LagerStatusVindue(Stage owner, Controller controller) {
         this.owner = owner;
@@ -104,8 +105,8 @@ public class LagerStatusVindue {
         if (!reoler.isEmpty()) {
             Reol referenceReol = reoler.get(0);
             for (int hi = 0; hi < referenceReol.getHylder().size(); hi++) {
-                Hylde hylde   = referenceReol.getHylder().get(hi);
-                int   pladser = hylde.getPladser();
+                Hylde hylde = referenceReol.getHylder().get(hi);
+                int pladser = hylde.getPladser();
 
                 Label hyldeLbl = new Label("H" + (hi + 1));
                 hyldeLbl.setStyle(
@@ -252,8 +253,14 @@ public class LagerStatusVindue {
         Button næste = new Button("›");
         næste.setStyle(navKnapStyle());
 
-        forrige.setOnAction(e -> { skiftLager(-1); opdaterLagerLabel(lagerNavn); });
-        næste.setOnAction(e ->   { skiftLager(1);  opdaterLagerLabel(lagerNavn); });
+        forrige.setOnAction(e -> {
+            skiftLager(-1);
+            opdaterLagerLabel(lagerNavn);
+        });
+        næste.setOnAction(e -> {
+            skiftLager(1);
+            opdaterLagerLabel(lagerNavn);
+        });
 
         top.getChildren().addAll(titel, spacer, forrige, lagerNavn, næste);
         return top;
@@ -279,19 +286,22 @@ public class LagerStatusVindue {
         Label overskrift = new Label("Fad Information");
         overskrift.setStyle("-fx-font-weight: bold;");
 
-        infoTitel    = new Label("–");
+        infoTitel = new Label("–");
         infoStørrelse = new Label("–");
-        infoStatus   = new Label("–");
+        infoStatus = new Label("–");
         infoDagePåLager = new Label("–");
+        infoRestDestillat = new Label("-");
+        restLabel = new Label("-");
+
 
         panel.getChildren().addAll(
                 overskrift,
                 new Separator(),
-                new HBox(5, new Label("Navn:"),   infoTitel),
-                new HBox(5, new Label("Liter:"),  infoStørrelse),
-                new HBox(5, new Label("Status:"), infoStatus)
-                new HBox(5, new Label("Dage på lager:"),)
-        );
+                new HBox(5, new Label("Navn:"), infoTitel),
+                new HBox(5, new Label("Liter:"), infoStørrelse),
+                new HBox(5, new Label("Status:"), infoStatus),
+                new HBox(5, new Label("Dage på lager:"), infoDagePåLager),
+                new HBox(5, restLabel, infoRestDestillat));
         return panel;
     }
 
@@ -300,6 +310,14 @@ public class LagerStatusVindue {
         infoTitel.setText(fad.getBeskrivelse());
         infoStørrelse.setText(fad.getStørrelseLiter() + " L");
         infoStatus.setText(fad.erTom() ? "Tom" : "Fyldt");
+
+        // update days + dynamic label
+        long dage = fad.getDagePåLager();
+        infoDagePåLager.setText(dage + " dage");
+        restLabel.setText(dage > 365 * 3 ? "Resterende whisky:" : "Resterende Destillat:");
+        infoRestDestillat.setText(fad.getMængdeDestillatLiter() + "L ");
+
+
     }
 
     private String navKnapStyle() {

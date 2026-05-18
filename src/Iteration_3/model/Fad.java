@@ -1,7 +1,10 @@
 package Iteration_3.model;
 
+import Iteration_3.storage.Storage;
+
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -141,16 +144,24 @@ public class Fad implements Serializable {
 
         boolean indsat = false;
         for (int i = 0; i < indholshistorikker.size(); i++) {
-            if (!indsat && påfyldningsDato.isBefore(indholshistorikker.get(i).getPåfyldningsDato()) ) {
+            if (!indsat && påfyldningsDato.isBefore(indholshistorikker.get(i).getPåfyldningsDato())) {
                 indholshistorikker.add(i, indholdshistorik);
+                Storage.addIndholdHistorik(indholdshistorik);
                 indsat = true;
             }
         }
         if (!indsat) {
+            Storage.addIndholdHistorik(indholdshistorik);
             indholshistorikker.add(indholdshistorik);
         }
 
         return indholdshistorik;
+    }
+
+    public long getDagePåLager() {
+        if (erTom || indholshistorikker.isEmpty()) return 0;
+        LocalDate påfyldningsDato = indholshistorikker.get(0).getPåfyldningsDato();
+        return ChronoUnit.DAYS.between(påfyldningsDato, LocalDate.now());
     }
 
     @Override

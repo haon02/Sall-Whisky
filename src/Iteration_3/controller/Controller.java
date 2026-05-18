@@ -150,7 +150,11 @@ public class Controller {
         Storage.addFlaske(flaske);
         return flaske;
     }
-
+    public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
+        Regulering regulering = fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
+        Storage.addRegulering(regulering);
+        return regulering;
+    }
     // ── Lager-operationer ─────────────────────────────────────────────────────
 
     public void fjernFraLager(Fad fad) {
@@ -252,11 +256,6 @@ public class Controller {
         return liste;
     }
 
-    public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent, Fad fad) {
-        Regulering regulering = fad.createRegulering(fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
-        Storage.addRegulering(regulering);
-        return regulering;
-    }
 
     /**
      * Fylder en flaske fra regulering og trækker mængden fra fadet og gemmer.

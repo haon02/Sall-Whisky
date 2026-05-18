@@ -21,6 +21,7 @@ public class Storage {
     private static List<Single> singleList = new ArrayList<>();
     private static List<Flaske> flaskeList = new ArrayList<>();
     private static List<Regulering> reguleringList = new ArrayList<>();
+    private static List<Indholdshistorik> indholdshistorikList = new ArrayList<>();
 
     private static class StorageState implements Serializable {
         private static final long serialVersionUID = 2L;
@@ -35,6 +36,7 @@ public class Storage {
         List<Single> singleList;
         List<Flaske> flaskeList;
         List<Regulering> reguleringList;
+        List<Indholdshistorik> indholdshistorikList;
     }
 
     public static void loadFromDisk() {
@@ -53,6 +55,7 @@ public class Storage {
             singleList = state.singleList != null ? state.singleList : new ArrayList<>();
             flaskeList = state.flaskeList != null ? state.flaskeList : new ArrayList<>();
             reguleringList = state.reguleringList != null ? state.reguleringList : new ArrayList<>();
+            indholdshistorikList = state.indholdshistorikList != null ? state.indholdshistorikList : new ArrayList<>();
         } catch (ClassCastException | ClassNotFoundException e) {
             System.err.println("Inkompatibel save fil, starter forfra: " + e.getMessage());
             file.delete();
@@ -74,6 +77,7 @@ public class Storage {
         state.singleList = new ArrayList<>(singleList);
         state.flaskeList = new ArrayList<>(flaskeList);
         state.reguleringList = new ArrayList<>(reguleringList);
+        state.indholdshistorikList = new ArrayList<>(indholdshistorikList);
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
             oos.writeObject(state);
@@ -161,6 +165,12 @@ public class Storage {
     public static void addRegulering(Regulering r) {
         if (r != null && !reguleringList.contains(r)) {
             reguleringList.add(r);
+            saveToDisk();
+        }
+    }
+    public static void addIndholdHistorik(Indholdshistorik i){
+        if (i != null && !indholdshistorikList.contains(i)){
+            indholdshistorikList.add(i);
             saveToDisk();
         }
     }
