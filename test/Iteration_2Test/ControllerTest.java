@@ -1,10 +1,10 @@
 package Iteration_2Test;
 
-import Iteration_3.controller.Controller;
-import Iteration_3.model.Fad;
-import Iteration_3.model.Hylde;
-import Iteration_3.model.Lager;
-import Iteration_3.model.Reol;
+import Iteration_5.controller.Controller;
+import Iteration_5.model.Fad;
+import Iteration_5.model.Hylde;
+import Iteration_5.model.Lager;
+import Iteration_5.model.Reol;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

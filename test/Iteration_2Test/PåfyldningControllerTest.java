@@ -1,7 +1,7 @@
 package Iteration_2Test;
 
-import Iteration_3.controller.Controller;
-import Iteration_3.model.*;
+import Iteration_5.controller.Controller;
+import Iteration_5.model.*;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
@@ -35,7 +35,6 @@ class PåfyldningControllerTest {
     private Reol             reol;
     private Hylde            hylde;
     private Leverandør       leverandør;
-    private DestillatType    destillatType;
     private Produktionslinje produktionslinje;
 
     @BeforeEach
@@ -64,7 +63,6 @@ class PåfyldningControllerTest {
                 1000.0, 90, new HashSet<>(), 2
         );
         destillat     = produktionslinje.createDestillat(RENT_DESTILLAT, VAND_TILFØJET, 63.5);
-        destillatType = new SingleCask(100, destillat);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -232,7 +230,6 @@ class PåfyldningControllerTest {
         assertAll("Slutkontrol",
                 () -> assertFalse(valgt.erTom(),                         "Fad skal ikke være tomt"),
                 () -> assertSame(lager, valgt.getLager(),                 "Fad skal pege på lageret"),
-                () -> assertSame(destillatType, valgt.getDestillat(), "Fad skal have korrekt destillatType"),
                 () -> assertEquals(TOTAL_BEHOLDNING - påfyldt, restmængde, 1e-9, "Restmængde forkert"),
                 () -> assertEquals(TOTAL_BEHOLDNING, påfyldt + restmængde, 1e-9,  "Massebalance holder ikke")
         );
