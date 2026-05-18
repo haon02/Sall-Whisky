@@ -35,7 +35,14 @@ public class GUI extends Application {
         root.setTop(buildHeader());
         root.setCenter(buildMainContent());
 
-        Scene scene = new Scene(root, 920, 870);
+        ScrollPane scrollPane = new ScrollPane(buildMainContent());
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setStyle("-fx-background-color: " + C_BG + "; -fx-background: " + C_BG + ";");
+        root.setCenter(scrollPane);
+
+        Scene scene = new Scene(root, 750, 600);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sall Whisky Distilleri A/S");
         primaryStage.show();

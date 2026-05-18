@@ -26,5 +26,6 @@
     </orderEntry>
     <orderEntry type="library" name="Mockito" level="application" />
     <orderEntry type="library" name="lib1" level="project" />
+    <orderEntry type="library" exported="" name="openjfx.javafx.controls" level="application" />
   </component>
 </module>
