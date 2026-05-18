@@ -29,7 +29,7 @@ public class LagerStatusVindue {
     private Fad dragFad;
     private int aktivIndex = 0;
 
-    private Label infoTitel, infoStørrelse, infoStatus;
+    private Label infoTitel, infoStørrelse, infoStatus, infoDagePåLager, infoRestDestillat;
     private GridPane grid;
     private ScrollPane scrollPane;
 
@@ -282,6 +282,7 @@ public class LagerStatusVindue {
         infoTitel    = new Label("–");
         infoStørrelse = new Label("–");
         infoStatus   = new Label("–");
+        infoDagePåLager = new Label("–");
 
         panel.getChildren().addAll(
                 overskrift,
@@ -289,6 +290,7 @@ public class LagerStatusVindue {
                 new HBox(5, new Label("Navn:"),   infoTitel),
                 new HBox(5, new Label("Liter:"),  infoStørrelse),
                 new HBox(5, new Label("Status:"), infoStatus)
+                new HBox(5, new Label("Dage på lager:"),)
         );
         return panel;
     }
