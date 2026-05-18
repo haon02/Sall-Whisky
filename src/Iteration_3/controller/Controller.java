@@ -200,17 +200,17 @@ public class Controller {
     }
 
     // ── Forretningslogik ──────────────────────────────────────────────────────
-
-    public double påfyldFad(Fad fad, Destillat destillat, double mængde) {
+    public double påfyldFad(Fad fad, Destillat destillat, LocalDate dato, double mængde) {
         if (mængde < 0)
             throw new IllegalArgumentException("Mængde må ikke være negativ");
         if (mængde > fad.getStørrelseLiter())
             throw new IllegalArgumentException("Mængden overstiger fadets kapacitet");
-        fad.fyldFad(destillat, mængde);
+        fad.fyldFad(destillat, dato ,mængde);
         destillat.reducer(mængde);
         Storage.saveLager();
         return destillat.getResterendeMængde();
     }
+
 
     public double beregnVandTilføjelse(double fadMængdeLiter, double alkoholProcentOriginal, double slutAlkoholProcent) {
         if (slutAlkoholProcent <= 0)
@@ -232,6 +232,10 @@ public class Controller {
         return beregnVandTilføjelse(fadMængdeLiter, alkoholProcentOriginal, slutAlkoholProcent) == vandMængdeLiter;
     }
 
+    public Fad tømFad(Fad fad){
+        fad.tømFad();
+        return fad;
+    }
     public List<Fad> getTommeFadList(Lager lager) {
         List<Fad> liste = new ArrayList<>();
         for (Fad fad : getFadList()) {

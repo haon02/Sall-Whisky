@@ -51,7 +51,7 @@ public class ReguleringTest {
                 1000.0, 90, new HashSet<>(), 2
         );
         destillat = produktionslinje.createDestillat(RENT_DESTILLAT, VAND_TILFØJET, 63.5);
-        fad.fyldFad(destillat,FAD_MÆNGDE);
+        fad.fyldFad(destillat,LocalDate.now(),FAD_MÆNGDE);
     }
 
     @Test

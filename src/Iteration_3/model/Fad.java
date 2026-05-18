@@ -3,6 +3,7 @@ package Iteration_3.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Fad implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -17,7 +18,7 @@ public class Fad implements Serializable {
     private Lager lager;
     private Destillat destillat;
     private double mængdeDestillatLiter;
-    private final ArrayList<Indholdshistorik> indholdshistoriker = new ArrayList<>();
+    private final ArrayList<Indholdshistorik> indholshistorikker;
 
     public Fad(double størrelseLiter, LocalDate produktionsDato, String beskrivelse, boolean erTom, boolean tidligereBrugt, Leverandør leverandør, Lager lager) {
         this.størrelseLiter = størrelseLiter;
@@ -29,13 +30,15 @@ public class Fad implements Serializable {
         this.fadNummer = fadNummerCounter;
         this.lager = lager;
         this.destillat = null;
+        this.indholshistorikker = new ArrayList<>();
         fadNummerCounter++;
         mængdeDestillatLiter = 0;
     }
 
-    public ArrayList<Indholdshistorik> getIndholdshistorik(){
-        return new ArrayList<>(indholdshistoriker);
+    public ArrayList<Indholdshistorik> getIndholdshistorik() {
+        return new ArrayList<>(indholshistorikker);
     }
+
     public double getMængdeDestillatLiter() {
         return mængdeDestillatLiter;
     }
@@ -79,7 +82,8 @@ public class Fad implements Serializable {
     public Destillat getDestillat() {
         return destillat;
     }
-    public void fyldFad(Destillat destillat, double mængde) {
+
+    public Indholdshistorik fyldFad(Destillat destillat, LocalDate påfyldningsDato, double mængde) {
         if (!erTom) {
             throw new IllegalArgumentException("Fadet skal være tomt");
         }
@@ -89,6 +93,8 @@ public class Fad implements Serializable {
         this.destillat = destillat;
         this.mængdeDestillatLiter = mængde;
         this.erTom = false;
+
+        return createIndholdshistorik(destillat, påfyldningsDato, mængde);
     }
 
     public void aftapFraFad(double mængde) {
@@ -112,6 +118,7 @@ public class Fad implements Serializable {
         this.erTom = true;
         this.mængdeDestillatLiter = 0;
     }
+
     public Regulering createRegulering(double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
         if (fadMængdeLiter > mængdeDestillatLiter) {
             throw new IllegalArgumentException("Fadet har ikke så meget destillat tilbage");
@@ -125,13 +132,24 @@ public class Fad implements Serializable {
         if (vandTilføjeLiter < 0) {
             throw new IllegalArgumentException("Vand tilføjelse kan ikke være negativ");
         }
-        Regulering regulering = new Regulering(this,fadMængdeLiter,alkoholProcentOriginal,vandTilføjeLiter,slutAlkoholProcent);
+        Regulering regulering = new Regulering(this, fadMængdeLiter, alkoholProcentOriginal, vandTilføjeLiter, slutAlkoholProcent);
         return regulering;
     }
 
-    public Indholdshistorik createIndholdshistorik(Destillat destillat, LocalDate påfyldningsDato, double mængde){
-        Indholdshistorik indholdshistorik = new Indholdshistorik(destillat,påfyldningsDato,mængde);
-        indholdshistoriker.add(indholdshistorik);
+    private Indholdshistorik createIndholdshistorik(Destillat destillat, LocalDate påfyldningsDato, double mængde) {
+        Indholdshistorik indholdshistorik = new Indholdshistorik(destillat, påfyldningsDato, mængde);
+
+        boolean indsat = false;
+        for (int i = 0; i < indholshistorikker.size(); i++) {
+            if (!indsat && påfyldningsDato.isBefore(indholshistorikker.get(i).getPåfyldningsDato()) ) {
+                indholshistorikker.add(i, indholdshistorik);
+                indsat = true;
+            }
+        }
+        if (!indsat) {
+            indholshistorikker.add(indholdshistorik);
+        }
+
         return indholdshistorik;
     }
 

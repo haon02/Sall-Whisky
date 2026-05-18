@@ -53,7 +53,7 @@ public class FlaskeTest {
                 1000.0, 90, new HashSet<>(), 2
         );
         destillat = produktionslinje.createDestillat(RENT_DESTILLAT, VAND_TILFØJET, 63.5);
-        fad.fyldFad(destillat, FAD_MÆNGDE);
+        fad.fyldFad(destillat,LocalDate.now(), FAD_MÆNGDE);
         regulering = fad.createRegulering(FAD_MÆNGDE, 70, VAND_MÆNGDE, 40);
     }
 

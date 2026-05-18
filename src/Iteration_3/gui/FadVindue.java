@@ -52,6 +52,7 @@ public class FadVindue {
 
         produktionsDato = new DatePicker();
         root.addLabeledNode("Produktions dato", produktionsDato);
+        produktionsDato.setValue(LocalDate.now());
         root.addSeparator();
 
         beskrivelseTextfield = new TextField();

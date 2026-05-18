@@ -106,7 +106,7 @@ class PåfyldningControllerTest {
     @DisplayName("Trin 1 – alt: kun fyldte fade → IllegalStateException fra vælgFad")
     void vælgFad_kun_fyldte_fade_giver_exception() {
         // Fill the fad so it is no longer empty
-        controller.påfyldFad(fad, destillat,150.0);
+        controller.påfyldFad(fad, destillat, null,150.0);
 
         // Now vælgFad should find no empty fad in the lager
         assertThrows(IllegalStateException.class,
@@ -120,14 +120,14 @@ class PåfyldningControllerTest {
     @Test
     @DisplayName("Trin 2: tilføjDestillat reducerer destillat korrekt")
     void påfyldning_reducerer_destillat_korrekt() {
-        double restmængde = controller.påfyldFad(fad, destillat, 150.0);
+        double restmængde = controller.påfyldFad(fad, destillat, null, 150.0);
         assertEquals(TOTAL_BEHOLDNING - 150.0, restmængde, 1e-9);
     }
 
     @Test
     @DisplayName("Trin 2: fad er ikke tomt efter påfyldning")
     void påfyldning_fad_markeres_som_fyldt() {
-        controller.påfyldFad(fad, destillat, 150.0);
+        controller.påfyldFad(fad, destillat, null, 150.0);
         assertFalse(fad.erTom());
     }
 
@@ -135,7 +135,7 @@ class PåfyldningControllerTest {
     @DisplayName("Trin 2: massebalance – påfyldt + restmængde = original beholdning")
     void påfyldning_massebalance_er_bevaret() {
         double påfyldt    = 150.0;
-        double restmængde = controller.påfyldFad(fad, destillat, påfyldt);
+        double restmængde = controller.påfyldFad(fad, destillat, null, påfyldt);
         assertEquals(TOTAL_BEHOLDNING, påfyldt + restmængde, 1e-9);
     }
 
@@ -143,14 +143,14 @@ class PåfyldningControllerTest {
     @DisplayName("Trin 2 – edge: præcis fadets størrelse er lovlig")
     void påfyldning_præcis_max_er_gyldig() {
         assertDoesNotThrow(
-                () -> controller.påfyldFad(fad, destillat, FAD_STØRRELSE));
+                () -> controller.påfyldFad(fad, destillat, null, FAD_STØRRELSE));
     }
 
     @Test
     @DisplayName("Trin 2 – alt: mængde over fadets størrelse → IllegalArgumentException")
     void påfyldning_over_kapacitet_giver_exception() {
         assertThrows(IllegalArgumentException.class,
-                () -> controller.påfyldFad(fad, destillat, FAD_STØRRELSE + 0.001));
+                () -> controller.påfyldFad(fad, destillat, null, FAD_STØRRELSE + 0.001));
     }
 
     @Test
@@ -159,7 +159,7 @@ class PåfyldningControllerTest {
         double beholdningFør = destillat.getResterendeMængde();
 
         assertThrows(IllegalArgumentException.class,
-                () -> controller.påfyldFad(fad, destillat, FAD_STØRRELSE + 1));
+                () -> controller.påfyldFad(fad, destillat, null, FAD_STØRRELSE + 1));
 
         // FIX: we now also verify the destillat was NOT reduced — this was the
         // silent data-corruption bug in the original code.
@@ -171,10 +171,10 @@ class PåfyldningControllerTest {
     @Test
     @DisplayName("Trin 2 – alt: allerede fyldt fad kaster IllegalArgumentException")
     void påfyldning_af_fyldt_fad_kaster_exception() {
-        fad.fyldFad(destillat, 1); // mark the fad as full
+        fad.fyldFad(destillat, null,1); // mark the fad as full
 
         assertThrows(IllegalArgumentException.class,
-                () -> controller.påfyldFad(fad, destillat, 100.0));
+                () -> controller.påfyldFad(fad, destillat, null, 100.0));
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -185,7 +185,7 @@ class PåfyldningControllerTest {
     @DisplayName("Trin 3: fad peger på det korrekte lager efter returnering")
     void sætPåLager_lager_reference_sat() {
         controller.fjernFraLager(fad);
-        controller.påfyldFad(fad, destillat, 100.0);
+        controller.påfyldFad(fad, destillat, null, 100.0);
         controller.sætPåLager(lager, fad);
 
         assertSame(lager, fad.getLager());
@@ -199,7 +199,7 @@ class PåfyldningControllerTest {
         fuldtLager.createReol().createHylde(0);
 
         controller.fjernFraLager(fad);
-        controller.påfyldFad(fad, destillat, 100.0);
+        controller.påfyldFad(fad, destillat, null, 100.0);
 
         // FIX: sætPåLager now throws instead of silently printing to stdout.
         // The test therefore uses the correct specific exception type.
@@ -224,7 +224,7 @@ class PåfyldningControllerTest {
         assertNull(valgt.getLager(), "Fad skal ikke have lager-reference mens det påfyldes");
 
         // Trin 2 – påfyld atomisk
-        double restmængde = controller.påfyldFad(valgt, destillat, påfyldt);
+        double restmængde = controller.påfyldFad(valgt, destillat, null, påfyldt);
 
         // Trin 3 – sæt tilbage
         controller.sætPåLager(lager, valgt);
