@@ -34,9 +34,6 @@ class ControllerTest {
         // act
         controller.sætPåLager(lager, reol, hylde, fad, 3);
 
-//        Fad expected = hylde.getFade()[2]; Ved ikke om vi vil have dette check med også?
-//        assertEquals(expected,fad);
-
         controller.fjernFraLager(fad);
         Fad expected = null;
         Fad actual = hylde.getFade()[2];

@@ -167,16 +167,6 @@ public class Controller {
         fad.setLager(null);
     }
 
-    public Fad vælgFad(Lager lager) {
-        for (Reol reol : lager.getReoler()) {
-            for (Hylde hylde : reol.getHylder()) {
-                for (Fad fad : hylde.getFade()) {
-                    if (fad != null && fad.erTom()) return fad;
-                }
-            }
-        }
-        throw new IllegalStateException("Ingen tomme fade på lager");
-    }
 
     public void sætPåLager(Lager lager, Reol reol, Hylde hylde, Fad fad, int plads) {
         if (!lager.getReoler().contains(reol)) return;

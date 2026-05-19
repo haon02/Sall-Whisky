@@ -160,11 +160,17 @@ public class Fad implements Serializable {
     }
 
     public Indholdshistorik fyldFad(Destillat destillat, LocalDate påfyldningsDato, double mængde) {
+        if (mængde <= 0) {
+            throw new IllegalArgumentException("Mængde skal være positiv");
+        }
         if (!erTom) {
             throw new IllegalArgumentException("Fadet skal være tomt");
         }
         if (mængde > størrelseLiter) {
             throw new IllegalArgumentException("Mængde er større end fadet");
+        }
+        if (destillat == null) {
+            throw new IllegalArgumentException("Destillat skal være defineret");
         }
         this.destillat = destillat;
         this.mængdeDestillatLiter = mængde;
