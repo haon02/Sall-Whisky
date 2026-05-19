@@ -89,13 +89,22 @@ public class FlaskeHistorikVindue {
         }
 
         // ── Trin 1: Flaske ───────────────────────────────────────────────────
-        container.getChildren().add(byggTrin("FLASKE", C_GREEN, List.of(entry("Navn", flaske.getNavn()), entry("Størrelse", String.format("%.0f ml", flaske.getStørrelseLiter() * 1000)), entry("Alkohol", String.format("%.1f %%", reg.getSlutAlkholProcent())), entry("Vand tilsat", String.format("%.3f L pr. flaske", reg.getVandTilføjeLiter())),   // total – korrekt pr. regulering
+        container.getChildren().add(byggTrin("FLASKE", C_GREEN, List.of(
+                entry("Navn", flaske.getNavn()),
+                entry("Størrelse", String.format("%.0f ml", flaske.getStørrelseLiter() * 1000)),
+                entry("Alkohol", String.format("%.1f %%", reg.getSlutAlkholProcent())),
+                entry("Vand tilsat", String.format("%.3f L pr. flaske", reg.getVandTilføjeLiter())),
                 entry("Status", flaske.erTom() ? "Tom" : "Fyldt"))));
 
         container.getChildren().add(pil());
 
         // ── Trin 2: Regulering ───────────────────────────────────────────────
-        container.getChildren().add(byggTrin("REGULERING", C_AMBER, List.of(entry("Fadmængde brugt", String.format("%.2f L", reg.getFadMængdeLiter())), entry("Alkohol original", String.format("%.1f %%", reg.getAlkoholProcentOriginal())), entry("Vand tilsat (total)", String.format("%.3f L", reg.getVandTilføjeLiter())), entry("Slut alkohol", String.format("%.1f %%", reg.getSlutAlkholProcent())), entry("Total mængde", String.format("%.2f L", reg.getTotalMængde())))));
+        container.getChildren().add(byggTrin("REGULERING", C_AMBER, List.of(
+                entry("Fadmængde brugt", String.format("%.2f L", reg.getFadMængdeLiter())),
+                entry("Alkohol original", String.format("%.1f %%", reg.getAlkoholProcentOriginal())),
+                entry("Vand tilsat (total)", String.format("%.3f L", reg.getVandTilføjeLiter())),
+                entry("Slut alkohol", String.format("%.1f %%", reg.getSlutAlkholProcent())),
+                entry("Total mængde", String.format("%.2f L", reg.getTotalMængde())))));
 
         Fad fad = reg.getFad();
         if (fad == null) return container;
@@ -103,7 +112,13 @@ public class FlaskeHistorikVindue {
         container.getChildren().add(pil());
 
         // ── Trin 3: Fad ──────────────────────────────────────────────────────
-        container.getChildren().add(byggTrin("FAD  #" + fad.getFadNummer(), "#5b4636", List.of(entry("Størrelse", String.format("%.0f L", fad.getStørrelseLiter())), entry("Beskrivelse", fad.getBeskrivelse()), entry("Produktionsdato", fad.getProduktionsDato().toString()), entry("Tidligere brugt", fad.isTidligereBrugt() ? "Ja" : "Nej"), entry("Lager", fad.getLager() != null ? fad.getLager().getAdresse() : "—"), entry("Dage på lager", fad.getDagePåLager() + " dage"))));
+        container.getChildren().add(byggTrin("FAD  #" + fad.getFadNummer(), "#5b4636", List.of(
+                entry("Størrelse", String.format("%.0f L", fad.getStørrelseLiter())),
+                entry("Beskrivelse", fad.getBeskrivelse()),
+                entry("Produktionsdato", fad.getProduktionsDato().toString()),
+                entry("Tidligere brugt", fad.isTidligereBrugt() ? "Ja" : "Nej"),
+                entry("Lager", fad.getLager() != null ? fad.getLager().getAdresse() : "—"),
+                entry("Dage på lager", fad.getDagePåLager() + " dage"))));
 
         // Fadets leverandør
         Leverandør fadLev = fad.getLeverandør();
@@ -111,51 +126,65 @@ public class FlaskeHistorikVindue {
             container.getChildren().add(indrykketNote("Fadleverandør: " + fadLev.getNavn() + "  ·  Kontakt: " + fadLev.getBeskrivelse()));
         }
 
-        // ── Trin 4: Destillat via Indholdshistorik ───────────────────────────
+        // ── Trin 4: Seneste Indholdshistorik ─────────────────────────────────
         List<Indholdshistorik> historik = fad.getIndholdshistorik();
         if (historik.isEmpty()) return container;
 
         container.getChildren().add(pil());
 
-        // Vis alle påfyldninger (normalt én, men fadet kan genbruges)
-        for (Indholdshistorik ih : historik) {
-            Destillat dest = ih.getDestillat();
+        // ── RETTELSE: Tag kun den seneste påfyldning (ikke loop over alle) ───
+        Indholdshistorik ih = historik.get(historik.size() - 1);
+        Destillat dest = ih.getDestillat();
 
-            container.getChildren().add(byggTrin("DESTILLAT  (påfyldt " + ih.getPåfyldningsDato() + ")", "#1a5276", List.of(entry("Rent destillat", String.format("%.2f L", dest.getRentDestillatLiter())), entry("Vand tilføjet", String.format("%.2f L", dest.getVandTilføjetLiter())), entry("Alkohol %", String.format("%.1f %%", dest.getSlutAlkoholProcent())), entry("Mængde påfyldt", String.format("%.2f L", ih.getMængde())))));
+        container.getChildren().add(byggTrin("DESTILLAT  (påfyldt " + ih.getPåfyldningsDato() + ")", "#1a5276", List.of(
+                entry("Rent destillat", String.format("%.2f L", dest.getRentDestillatLiter())),
+                entry("Vand tilføjet", String.format("%.2f L", dest.getVandTilføjetLiter())),
+                entry("Alkohol %", String.format("%.1f %%", dest.getSlutAlkoholProcent())),
+                entry("Mængde påfyldt", String.format("%.2f L", ih.getMængde())))));
 
-            // ── Trin 5: Produktionslinje ─────────────────────────────────────
-            Produktionslinje pl = dest.getProduktionslinje();
-            if (pl == null) continue;
+        // ── Trin 5: Produktionslinje ─────────────────────────────────────────
+        Produktionslinje pl = dest.getProduktionslinje();
+        if (pl == null) return container;
 
-            container.getChildren().add(pil());
+        container.getChildren().add(pil());
 
-            // Korn
-            VBox kornSektion = new VBox(4);
-            for (Map.Entry<Korn, Double> ke : pl.getKornMap().entrySet()) {
-                Korn k = ke.getKey();
-                kornSektion.getChildren().add(byggTrin("KORN  – " + k.getNavn(), "#4a6741", List.of(entry("Mængde brugt", String.format("%.0f kg", ke.getValue())), entry("Mark", k.getMark()), entry("Beskrivelse", k.getBeskrivelse()), entry("Produktionsår", String.valueOf(k.getProduktionsÅr())), entry("Økologisk", k.getØkologisk() ? "Ja" : "Nej"), entry("Leverandør", k.getleverandør() != null ? k.getleverandør().getNavn() + "  (kontakt: " + k.getleverandør().getBeskrivelse() + ")" : "—"))));
+        // Korn
+        VBox kornSektion = new VBox(4);
+        for (Map.Entry<Korn, Double> ke : pl.getKornMap().entrySet()) {
+            Korn k = ke.getKey();
+            kornSektion.getChildren().add(byggTrin("KORN  – " + k.getNavn(), "#4a6741", List.of(
+                    entry("Mængde brugt", String.format("%.0f kg", ke.getValue())),
+                    entry("Mark", k.getMark()),
+                    entry("Beskrivelse", k.getBeskrivelse()),
+                    entry("Produktionsår", String.valueOf(k.getProduktionsÅr())),
+                    entry("Økologisk", k.getØkologisk() ? "Ja" : "Nej"),
+                    entry("Leverandør", k.getleverandør() != null
+                            ? k.getleverandør().getNavn() + "  (kontakt: " + k.getleverandør().getBeskrivelse() + ")"
+                            : "—"))));
+        }
+        container.getChildren().add(kornSektion);
+
+        container.getChildren().add(pil());
+
+        // Gær
+        VBox gærSektion = new VBox(4);
+        for (Map.Entry<Gær, Double> ge : pl.getGærMap().entrySet()) {
+            Gær g = ge.getKey();
+            gærSektion.getChildren().add(byggTrin("GÆR  – " + g.getNavn(), "#5d4e75", List.of(
+                    entry("Mængde brugt", String.format("%.1f kg/L", ge.getValue())),
+                    entry("Beskrivelse", g.getBeskrivelse()),
+                    entry("Maks. temperatur", String.format("%.0f °C", g.getMaksTemp())))));
+        }
+        container.getChildren().add(gærSektion);
+
+        // Medarbejdere
+        if (!pl.getMedarbejderSet().isEmpty()) {
+            StringBuilder mb = new StringBuilder();
+            for (Medarbejder m : pl.getMedarbejderSet()) {
+                if (mb.length() > 0) mb.append(", ");
+                mb.append(m.getNavn());
             }
-            container.getChildren().add(kornSektion);
-
-            container.getChildren().add(pil());
-
-            // Gær
-            VBox gærSektion = new VBox(4);
-            for (Map.Entry<Gær, Double> ge : pl.getGærMap().entrySet()) {
-                Gær g = ge.getKey();
-                gærSektion.getChildren().add(byggTrin("GÆR  – " + g.getNavn(), "#5d4e75", List.of(entry("Mængde brugt", String.format("%.1f kg/L", ge.getValue())), entry("Beskrivelse", g.getBeskrivelse()), entry("Maks. temperatur", String.format("%.0f °C", g.getMaksTemp())))));
-            }
-            container.getChildren().add(gærSektion);
-
-            // Medarbejdere
-            if (!pl.getMedarbejderSet().isEmpty()) {
-                StringBuilder mb = new StringBuilder();
-                for (Medarbejder m : pl.getMedarbejderSet()) {
-                    if (mb.length() > 0) mb.append(", ");
-                    mb.append(m.getNavn());
-                }
-                container.getChildren().add(indrykketNote("Medarbejdere: " + mb));
-            }
+            container.getChildren().add(indrykketNote("Medarbejdere: " + mb));
         }
 
         return container;
@@ -163,11 +192,7 @@ public class FlaskeHistorikVindue {
 
     // ── Hjælper-komponenter ────────────────────────────────────────────────────
 
-    /**
-     * Én farvet sektion med titel og nøgle-værdi-rækker.
-     */
     private VBox byggTrin(String titel, String farve, List<String[]> felter) {
-        // Farvet bjælke øverst
         HBox bjælke = new HBox();
         bjælke.setPrefHeight(3);
         bjælke.setStyle("-fx-background-color: " + farve + ";");
@@ -205,9 +230,6 @@ public class FlaskeHistorikVindue {
         return row;
     }
 
-    /**
-     * Lille pil der forbinder to trin visuelt.
-     */
     private VBox pil() {
         Label arrow = new Label("▼");
         arrow.setFont(Font.font("Helvetica", 14));
@@ -219,9 +241,6 @@ public class FlaskeHistorikVindue {
         return v;
     }
 
-    /**
-     * Lille grå note under et trin (fx leverandør-info).
-     */
     private HBox indrykketNote(String tekst) {
         Label l = new Label("  ↳  " + tekst);
         l.setFont(Font.font("Helvetica", 10));

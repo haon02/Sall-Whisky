@@ -12,7 +12,7 @@ public class Regulering implements Serializable {
     double slutAlkholProcent;
     double totalMængde;
 
-    Regulering(Fad fad, double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
+    public Regulering(Fad fad, double fadMængdeLiter, double alkoholProcentOriginal, double vandTilføjeLiter, double slutAlkoholProcent) {
         this.fad = fad;
         this.fadMængdeLiter = fadMængdeLiter;
         this.alkoholProcentOriginal = alkoholProcentOriginal;
