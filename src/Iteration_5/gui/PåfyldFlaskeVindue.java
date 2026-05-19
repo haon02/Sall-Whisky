@@ -380,7 +380,7 @@ public class PåfyldFlaskeVindue {
         String lager = fad.getLager() != null ? fad.getLager().getAdresse() : "Ikke på lager";
         fadInfoLabel.setText("Fad #" + fad.getFadNummer()
                 + "  ·  " + fad.getStørrelseLiter() + " L"
-                + "  ·  Indhold: " + fad.getMængdeDestillatLiter() + " L"
+                + "  ·  Indhold: " + fad.beregnNuværendeBeholdning() + " L"
                 + "  ·  Lager: " + lager);
         fadInfoLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #444;");
         hældPåFlaskeBtn.setDisable(false);
