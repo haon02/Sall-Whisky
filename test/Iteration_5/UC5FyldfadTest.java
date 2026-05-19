@@ -1,6 +1,5 @@
 package Iteration_5;
 
-import Iteration_5.controller.Controller;
 import Iteration_5.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,21 +10,6 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UC5FyldfadTest {
-    /*
-        public Indholdshistorik fyldFad(Destillat destillat, LocalDate påfyldningsDato, double mængde) {
-        if (!erTom) {
-            throw new IllegalArgumentException("Fadet skal være tomt");
-        }
-        if (mængde > størrelseLiter) {
-            throw new IllegalArgumentException("Mængde er større end fadet");
-        }
-        this.destillat = destillat;
-        this.mængdeDestillatLiter = mængde;
-        this.erTom = false;
-
-        return createIndholdshistorik(destillat, påfyldningsDato, mængde);
-    }
-     */
 
     private Destillat destillat;
     private final double destillatLiter = 100;
